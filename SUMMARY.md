@@ -1,7 +1,7 @@
 # Table of contents
 
-- [CCTDD: Cypress Component Test Driven Design](README.md)
-- [ch00-styles](ch00-styles/README.md)
+- [CCTDD: Cypress Bileşen Test Odaklı Tasarım](README.md)
+- [ch00-stiller](ch00-stiller/README.md)
 - [ch01-ButtonFooter](ch01-ButtonFooter/README.md)
 - [ch02-CardContent](ch02-cardcontent/README.md)
 - [ch03-HeaderBarBrand](ch03-headerbarbrand/README.md)

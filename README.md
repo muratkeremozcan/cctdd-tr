@@ -1,5 +1,3 @@
-# CCTDD: Cypress Bileşen Test Odaklı Tasarım
-
 ## Önsöz
 
 Cypress Bileşen Testi ile TDD (Test Driven Design) uygulamanın, mühendisliğimizi bir üst seviyeye taşıyabileceğine inanıyorum.
@@ -84,4 +82,3 @@ yarn cy:open-e2e
 # Jest test yürütücüsünü yerel olarak izleme modunda başlatır
 yarn test
 ```
-# 
