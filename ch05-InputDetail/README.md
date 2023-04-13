@@ -1,10 +1,10 @@
 # InputDetail
 
-In the Angular version of the app, we can see that this component will be a `div` wrapping a `label` and an `input`. This is a classic form field.
+Angular sürümünde uygulamanın bu bileşeninin, bir `label` ve `input` içeren bir `div` olacağını görebiliriz. Bu klasik bir form alanıdır.
 
 ![InputDetail-initial](../img/InputDetail-initial.png)
 
-Create a branch `feat/inputDetail`. Create 2 files under `src/components/` folder; `InputDetail.cy.tsx`, `InputDetail.tsx`. As usual, start minimal with a component rendering; copy the below to the files and execute the test after opening the runner with `yarn cy:open-ct`.
+`feat/inputDetail` adında bir dal oluşturun. `src/components/` klasörü altında `InputDetail.cy.tsx` ve `InputDetail.tsx` adında 2 dosya oluşturun. Her zamanki gibi, bir bileşen render ile minimal başlayın; aşağıdakileri dosyalara kopyalayın ve `yarn cy:open-ct` ile koşucuyu açtıktan sonra testi çalıştırın.
 
 ```tsx
 // src/components/InputDetail.cy.tsx
@@ -24,7 +24,7 @@ export default function InputDetail() {
 }
 ```
 
-Let's add our first failing test. There needs to be an `input` with a placeholder attribute. We can use Testing Library's `findByPlaceholderText` to check for both (Red 1).
+İlk başarısız testimize geçelim. Bir `input` etiketinin placeholder niteliği olması gerekiyor. Hem bunu hem de Testing Library'nin `findByPlaceholderText`'ini kullanarak kontrol edebiliriz (Kırmızı 1).
 
 ```tsx
 // src/components/InputDetail.cy.tsx
@@ -38,7 +38,7 @@ describe("InputDetail", () => {
 });
 ```
 
-We enhance to component, with hard-coding, to pass the test (Green 1).
+Bileşeni, sert kodlamayla iyileştirerek testi geçiririz (Yeşil 1).
 
 ```tsx
 // src/components/InputDetail.tsx
@@ -51,7 +51,7 @@ export default function InputDetail() {
 }
 ```
 
-We can immediately tell that this needs to be a property, because of the hard-coded value. We enhance the test and the component to accept a prop (Refactor 1).
+Hemen bu değerin bir özellik olması gerektiğini söyleyebiliriz, çünkü sert kodlanmış değer nedeniyle. Testi ve bileşeni bir prop kabul etmek üzere geliştiriyoruz (Düzenleme 1).
 
 ```tsx
 // src/components/InputDetail.cy.tsx
@@ -83,7 +83,7 @@ export default function InputDetail({ placeholder }: InputDetailProps) {
 
 ![InputDetail-refactor1](../img/InputDetail-refactor1.png)
 
-The next tag we need is `label`. This is a usual pattern in forms, a `div` wrapping a `label` and an `input` with css & attributes. Let's write a failing test (Red 2).
+İhtiyacımız olan bir sonraki etiket `label`'dır. Bu, formlarda yaygın bir düzendir; css ve niteliklerle bir `div` etiketi içinde `label` ve `input` etiketlerini içeren bir yapıdır. Başarısız bir test yazalım (Kırmızı 2).
 
 ```tsx
 // src/components/InputDetail.cy.tsx
@@ -101,7 +101,7 @@ describe("InputDetail", () => {
 });
 ```
 
-Add the new prop to the types, to the component arguments and into a label tag to get a passing test (Green 2).
+Yeni prop'u türlere, bileşen argümanlarına ve etiket etiketine ekleyerek geçen bir test alın (Yeşil 2).
 
 ```tsx
 // src/components/InputDetail.tsx
@@ -120,11 +120,11 @@ export default function InputDetail({ name, placeholder }: InputDetailProps) {
 }
 ```
 
-We can add the css from the specification, alongside the usual form field attributes.
+CSS'yi ve alışılagelmiş form alanı niteliklerini ekleyebiliriz.
 
-`input type="text"` makes an `input` a text input.
+`input type="text"` bir `input`'u metin girişi yapar.
 
-`label htmlFor={someValue}` links the `label` and `input` tags (Refactor 2).
+`label htmlFor={someValue}` `label` ve `input` etiketlerini bağlar (Refactor 2).
 
 ```tsx
 // src/components/InputDetail.tsx
@@ -150,7 +150,7 @@ export default function InputDetail({ name, placeholder }: InputDetailProps) {
 }
 ```
 
-Form fields also have a `value` attribute, which can be used display a `readonly` value from the network, or writable form fields. For now, let's write a failing test checking for the `defaultValue` of a form, while also adding the styles (Red 3).
+Form alanlarının da bir `value` özelliği bulunmaktadır. Bu özellik, ağdan gelen `readonly` değerleri veya yazılabilir form alanları için kullanılabilir. Şimdilik, bir formun `defaultValue` değerini kontrol eden başarısız bir test yazalım ve aynı zamanda stilleri ekleyelim (Kırmızı 3).
 
 ```tsx
 // src/components/InputDetail.cy.tsx
@@ -173,7 +173,7 @@ describe("InputDetail", () => {
 });
 ```
 
-We make the test green by adding a `defaultValue` attribute, with a `value` prop. We also add it as a type and as an argument to the component (Green 3).
+Testi, `value` özelliği ile bir `defaultValue` özelliği ekleyerek yeşil yaparız. Ayrıca bunu bir tip ve bileşene argüman olarak da ekleriz (Yeşil 3).
 
 ```tsx
 // src/components/InputDetail.tsx
@@ -205,11 +205,11 @@ export default function InputDetail({
 }
 ```
 
-The component is rendering nicely with the css.
+Bileşen CSS ile güzel bir şekilde oluşturuluyor.
 
 ![InputDetail-green3](../img/InputDetail-green3.png)
 
-We suggested 2 variants of the form field; a readonly vs a writable field. Let's create two cases. The first test which checks that a field can be modified should pass. The second test checking that the input is readonly should fail for now. We also get a compiler indicator that we are trying to pass a non-existing `readOnly` prop (Red 4).
+Form alanı için 2 çeşit önerdik; salt okunur ve yazılabilir alan. İki durum yaratalım. Bir alanın değiştirilebilir olduğunu kontrol eden ilk test geçmelidir. İkinci test, girişin salt okunur olduğunu kontrol eder ve şimdilik başarısız olmalıdır. Ayrıca, mevcut olmayan bir `readOnly` özelliği geçmeye çalışırken derleyici göstergesi alırız (Kırmızı 4).
 
 ```tsx
 //  src/components/InputDetail.cy.tsx
@@ -250,7 +250,7 @@ describe("InputDetail", () => {
 });
 ```
 
-We can add the readOnly prop to the types, to the arguments and the readonly attribute of the component to get a passing test (Green 4). At this time, it is worth noting that `name` and `value` are the mandatory fields, and the rest are optional.
+readOnly özelliğini tiplere, argümanlara ve bileşenin salt okunur özelliğine ekleyerek geçen bir test alabiliriz (Yeşil 4). Bu noktada, `name` ve `value` zorunlu alanlar olduğunu ve geri kalanların isteğe bağlı olduğunu belirtmek önemlidir.
 
 ```tsx
 //  src/components/InputDetail.tsx
@@ -285,7 +285,7 @@ export default function InputDetail({
 }
 ```
 
-The final attribute we need for a form field is `onChange`, in case it is a writable field. Let's enhance the test to check that the `onChange` event is called when the form field changes (Red 5). The value of `onChange` is simply `cy.stub().as('onChange')`
+Bir form alanı için ihtiyaç duyduğumuz son özellik, yazılabilir bir alan olduğunda `onChange`'dir. Form alanı değiştiğinde `onChange` olayının çağrıldığını kontrol etmek için testi geliştirelim (Kırmızı 5). `onChange` değeri basitçe `cy.stub().as('onChange')`'dir.
 
 ```tsx
 //  src/components/InputDetail.cy.tsx
@@ -333,7 +333,7 @@ describe("InputDetail", () => {
 });
 ```
 
-To make the test pass, once again we have to add the type for the new prop `onChange`, the prop as the argument to the component, and we need an attribute for the input tag (Green 5).
+Testi geçmek için, yeni `onChange` özelliği için tipi eklemeliyiz, bileşenin argümanını ve giriş etiketinin özelliğini eklemeliyiz (Yeşil 5).
 
 ```tsx
 import { ChangeEvent } from "react";
@@ -372,7 +372,7 @@ export default function InputDetail({
 }
 ```
 
-We can enhance the test to be more specific with the onChange check. It should be called 2 times when typing 42 (Refactor 5).
+onChange kontrolü ile testi daha spesifik hale getirebiliriz. 42 yazarken 2 kez çağrılmalıdır (Düzenleme 5).
 
 ```tsx
 // src/components/InputDetail.cy.tsx
@@ -421,7 +421,7 @@ describe("InputDetail", () => {
 });
 ```
 
-As a final touch up, we add a `data-cy` selector to make the component easier to reference when it is used as a child.
+Son dokunuş olarak, bileşeni bir alt öğe olarak kullanıldığında başvurmayı kolaylaştırmak için bir `data-cy` seçici ekleriz.
 
 ```tsx
 import { ChangeEvent } from "react";
@@ -460,7 +460,7 @@ export default function InputDetail({
 }
 ```
 
-## RTL version of the component test
+## Bileşen testinin RTL versiyonu
 
 ```tsx
 // src/components/InputDetail.test.tsx
@@ -511,41 +511,48 @@ describe("InputDetail", () => {
 });
 ```
 
-## Summary
+## Özet
 
-We started with an input placeholder text check using Testing Library's `findByPlaceholderText` command (Red 1).
+`findByPlaceholderText` komutunu kullanarak input placeholder metin kontrolü ile başladık (Kırmızı 1).
 
-We hard-coded a value for the placeholder attribute to make the test pass (Green 1).
+Testin geçmesi için placeholder özelliğine sabit bir değer atadık (Yeşil 1).
 
-We refactored the hard-coded value to be instead a prop. We added the prop to the types, to the arguments of the component, and we used that argument for the value of the placeholder attribute (Refactor 1).
-
-</br>
-
-We identified a usual pattern in forms; a `div` wrapping a `label` and an `input` with css and attributes. We wrote a failing test that checks for the field name under a label tag (Red 2).
-
-We added the new prop to the types, to the arguments of the component, and to the `label` tag. (Green 2).
-
-We identified a key knowledge on forms that `input type="text"` makes an `input` a text input, `label htmlFor={someValue}` links the `label` and `input` tags. We enhanced the component with this knowledge (Refactor 2).
+Sabit değeri bir prop ile değiştirdik. Prop'u tiplere, bileşenin argümanlarına ekledik ve placeholder özelliğinin değeri için bu argümanı kullandık (Düzenleme 1).
 
 </br>
 
-We added a test for a new prop `value` / `defaultValue` (Red 3).
+Formlarda sıkça rastlanan bir model belirledik; bir `div`'ın, css ve özniteliklerle birlikte bir `label` ve `input`'u sarmalıyor. Etiket etiketi altındaki alan adını kontrol eden başarısız bir test yazdık (Kırmızı 2).
 
-As in the previous cycles, we made the test green by adding defaultValue to the type, to the arguments of the component, and to the `input` attribute (Green 3)
+Yeni prop'u tiplere, bileşenin argümanlarına ve `label` etiketine ekledik (Yeşil 2).
 
-</br>
-
-We decided to add support for two variants of the component; one for writable fields, and the other for readonly fields. We added a new test verifying that a readonly field should not be modified (Red 4).
-
-As in the previous cycles, we added the readOnly type, the argument to the component, and the attribute with a matching prop (Green 4).
+Formlar üzerinde önemli bir bilgi belirledik: `input type="text"` bir `input`'u metin girişi yapar, `label htmlFor={someValue}` `label` ve `input` etiketlerini bağlar. Bileşeni bu bilgi ile geliştirdik (Düzenleme 2).
 
 </br>
 
-Finally, we wanted an `onChange` prop for the field. We added a test checking that the `onChange` event is called while modifying the field (Red 5).
+Yeni bir prop için `value` / `defaultValue` testi ekledik (Kırmızı 3).
 
-We added the type for the new prop, the argument to the component, and the attribute with a matching prop (Green 5).
+Önceki döngülerde olduğu gibi, defaultValue'yi tip, bileşenin argümanları ve `input` özniteliğine ekleyerek testi yeşile çevirdik (Yeşil 3).
 
-We enhanced the test to check for a specific number of `onChange` calls (Refactor 5).
+</br>
+
+Bileşenin iki çeşidini desteklemeye karar verdik; yazılabilir alanlar için biri ve salt okunur alanlar için diğeri. Salt okunur alanın değiştirilmemesi gerektiğini doğrulayan yeni bir test ekledik (Kırmızı 4).
+
+Önceki döngülerde olduğu gibi, readOnly tipini, bileşene argümanı ve eşleşen bir prop ile özniteliği ekledik (Yeşil 4).
+
+</br>
+
+Sonunda, alanda `onChange` prop'u istedik. Alanı değiştirirken `onChange` olayının çağrıldığını kontrol eden bir test ekledik (Kırmızı 5).
+
+Yeni prop için tip ekledik, bileşene argümanı ve eşleşen bir prop ile özniteliği ekledik (Yeşil 5).
+
+Testi, belirli sayıda `onChange` çağrısını kontrol etmek için geliştirdik (Düzenleme 5).
+
+## Alınacak Dersler
+
+- Bileşen testine bir prop eklerken:
+  1. Prop'u bileşen tiplerine ekleyin.
+  2. Bileşene veya argümanlara ekleyin.
+  3. Bileşende prop'u kullanın.
 
 ## Takeaways
 
@@ -553,4 +560,4 @@ We enhanced the test to check for a specific number of `onChange` calls (Refacto
   1. Add the prop to the component types.
   2. Add it to the arguments or the component.
   3. Use the prop in the component.
-- A `div` wrapping a `label` and an `input` is a usual pattern to create form fields. `input type="text"` makes an `input` a text input, `label htmlFor={someValue}` links the `label` and `input` tags.
+- Bir `div`'ın `label` ve `input`'u sarmalaması, form alanları oluşturmak için yaygın bir modeldir. `input type="text"` bir `input`'u metin girişi yapar, `label htmlFor={someValue}` `label` ve `input` etiketlerini bağlar.
