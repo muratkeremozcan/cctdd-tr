@@ -1,17 +1,17 @@
-# Styles
+# Stiller
 
-In a visual testing tool, where the tool can also be used for design, leaving out styles would be a pity. We want our components to look the same in the component tests and the served app.
+Stil ve tasarımı önemli bir faktör olduğundan ve uygulamanın görsel bir şekilde test edilebilmesini sağlamak istediğinizden, global stil dosyaları oluşturarak bu amaca hizmet edebilirsiniz. Bu şekilde, bileşenlerinizin hem bileşen testlerinde hem de sunulan uygulamada aynı görünmesini sağlayabilirsiniz.
 
-We have some needs to emphasize component test driven design; we do not want styles to be of importance in the component code and we want styles in the rendered component, whether it is the app being served or a component test. For this reason we will prefer to use global styles, and take advantage of [react-icons](https://react-icons.github.io/react-icons) where profitable.
+Global stil dosyaları kullanarak, bileşen kodlarında stilin önemli olmadığı ve uygulamanın sunulan veya bileşen testi yapılan her yerde stilin aynı şekilde uygulandığı bir yapı oluşturabilirsiniz. Bu, tasarım ve test süreçlerinde bir tutarlılık sağlar ve farklı alanlarda aynı görünümü elde etmenize yardımcı olur.
 
-To setup global styles Add `node-sass` and `bulma` to dependencies.
+İlk olarak, `node-sass` ve `bulma` paketlerini projenize ekleyin:
 
 ```bash
 yarn add -D node-sass
 yarn add bulma
 ```
 
-Create `src/styles.scss` and paste the following. We will be importing this file in the component tests.
+Sonrasında, `src/styles.scss` adında bir dosya oluşturun ve yukarıdaki kodu bu dosyaya yapıştırın. Böylece bileşen testlerinizde bu dosyayı içe aktararak kullanabilirsiniz.
 
 ```scss
 $vue: #42b883;
