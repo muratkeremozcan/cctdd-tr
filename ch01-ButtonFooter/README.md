@@ -1,12 +1,12 @@
 # ButtonFooter
 
-This is what our component might look like eventually. We need a button that wraps a label and CSS icon. The icon and the text can vary; Cancel, Save, Edit or Delete.
+Bileşenimizin sonunda nasıl görünebileceği budur. Etiketi ve CSS simgesini saran bir düğmeye ihtiyacımız var. İkon ve metin değişebilir; İptal, Kaydet, Düzenle veya Sil.
 
 ![button-footer](../img/button-footer.png)
 
-Create a branch `feat/button-footer`. Create 2 files under `src/components/` folder; `ButtonFooter.cy.tsx`, `ButtonFooter.tsx`.
+`feat/button-footer` adında bir dal oluşturun. `src/components/` klasörü altında 2 dosya oluşturun; `ButtonFooter.cy.tsx`, `ButtonFooter.tsx`.
 
-We start minimal with a test that checks that the component mounts (Red 1).
+Bileşenin monte edildiğini kontrol eden minimal bir testle başlarız (Kırmızı 1).
 
 ```tsx
 // src/components/ButtonFooter.cy.tsx
@@ -19,7 +19,7 @@ describe("ButtonFooter", () => {
 });
 ```
 
-The compiler complains that there is no such component, let's make it green (Green 1).
+Derleyici böyle bir bileşen olmadığını belirtiyor, hadi yeşil yapalım (Yeşil 1).
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -29,9 +29,9 @@ export default function ButtonFooter() {
 }
 ```
 
-Start the Cypress component test runner and execute the test; `yarn cy:open-ct`.
+Cypress bileşen test koşucusunu başlatın ve testi çalıştırın; `yarn cy:open-ct`.
 
-Let's test that the string renders. Once we have a passing test, we can keep adding to it until we get a new failure, or until we want to refactor.
+Dizenin işlendiğini test edelim. Başarılı bir test geçtikten sonra, yeni bir başarısızlık alana kadar veya yeniden düzenlemek isteyene kadar buna devam edebiliriz.
 
 ```typescript
 // src/components/ButtonFooter.cy.tsx
@@ -47,7 +47,7 @@ describe("ButtonFooter", () => {
 
 ![ButtonFooter-2](../img/ButtonFooter-hello.png)
 
-Let's have the button wrap a span, the span will include a string.
+Düğmenin bir etiketi içerecek olan span etiketi ile sarılmasını sağlayalım.
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -61,7 +61,7 @@ export default function ButtonFooter() {
 }
 ```
 
-We really want the "hello" string to be a variable, a prop that we can pass in to the component. Let's name the variable for the string `label`, and make it a prop. We mount the component with this new prop. The test still passes, but we get compiler error (Red 2).
+Aslında "merhaba" dizesini, bileşene geçirebileceğimiz bir özellik olan bir değişken yapmak istiyoruz. Dize için değişkenin adını `etiket` olarak adlandıralım ve bir özellik yapalım. Bileşeni bu yeni özellikle monte ederiz. Test hala geçiyor, ancak derleyici hatası alıyoruz (Kırmızı 2).
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -76,7 +76,7 @@ describe("ButtonFooter", () => {
 });
 ```
 
-Now we need a passing test. Let's add the prop and its type to the component (Green 2).
+Şimdi başarılı bir test yapmamız gerekiyor. Haydi bileşene özelliği ve türünü ekleyelim (Yeşil 2).
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -93,14 +93,14 @@ export default function ButtonFooter({ label }: ButtonFooterProps) {
 }
 ```
 
-Styling is not a major part of this guide, and we prefer to have global styles for most components. In the case of this one, [react-icons](https://react-icons.github.io/react-icons/) makes a lot of sense, because for each component we can have a specific styling.
+Stil, bu rehberin önemli bir parçası değildir ve çoğu bileşen için küresel stiller tercih ederiz. Bu durumda, [react-icons](https://react-icons.github.io/react-icons/) çok mantıklıdır, çünkü her bileşen için özelleştirilmiş bir stil uygulayabiliriz.
 
 ```bash
 yarn add react-icons
 yarn add -D @types/react-icons
 ```
 
-Per the specification, we want to be able to use different kinds of icons within the button; Edit, Delete, Save, Cancel. We can have the button wrap that style, and customize it as a prop. We will call the prop `IconClass` specify the possible types.
+Özelliklerine göre, düğme içinde farklı türde ikonlar kullanmak istiyoruz; Düzenle, Sil, Kaydet, İptal. Düğmenin bu stili içermesini ve bir özellik olarak özelleştirmesini sağlayabiliriz. Bu özelliği `IconClass` olarak adlandıracağız ve olası türleri belirleyeceğiz.
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -121,11 +121,11 @@ export default function ButtonFooter({ label, IconClass }: ButtonFooterProps) {
 }
 ```
 
-That fails the test because now we have to pass a `IconClass` prop to the component we are mounting. Become familiar with this error; it says we expected some prop but got undefined (Red 3). The same failure could also be caught via a TS error in the test. In this case, it is worthwhile to get familiar with the errors we might run into with Cypress component tests.
+Bu testin başarısız olmasının nedeni, şimdi monte ettiğimiz bileşene bir `IconClass` özelliği geçmemiz gerektiğidir. Bu hatayla tanışın; beklenen bazı özelliklerin tanımsız (Kırmızı 3) olduğunu söylüyor. Aynı başarısızlık, testteki bir TS hatasıyla da yakalanabilir. Bu durumda, Cypress bileşen testlerinde karşılaşabileceğimiz hatalarla tanışmak faydalıdır.
 
 ![ButtonFooter-error](../img/ButtonFooter-error.png)
 
-If we pass a prop `IconClass` with a value of type `FaEdit`, then our test will pass again (Green 3).
+Eğer `IconClass` adında, `FaEdit` türünde bir değere sahip bir özellik geçersek, testimiz tekrar başarılı olacaktır (Yeşil 3).
 
 ```tsx
 // src/components/ButtonFooter.cy.tsx
@@ -143,7 +143,7 @@ describe("ButtonFooter", () => {
 
 ![ButtonFooter-Green3](../img/ButtonFooter-Green3.png)
 
-This means we can have different styles, and probably should call a click handler on click. Let's write the test for it (Red 4).
+Bu, farklı stillere sahip olabileceğimiz ve tıklama işlemi üzerinde bir tıklama işleyici çağırmamız gerektiği anlamına gelir. Bunu test etmek için bir test yazalım (Kırmızı 4).
 
 ```tsx
 // src/components/ButtonFooter.cy.tsx
@@ -166,7 +166,7 @@ describe("ButtonFooter", () => {
 });
 ```
 
-We can immediately tell that we need an `onClick` prop. Let's enhance our component to fulfill this requirement (Green 4).
+Bir `onClick` özelliğine ihtiyacımız olduğunu hemen anlayabiliriz. Bileşenimizi bu gerekliliği yerine getirecek şekilde geliştirelim (Yeşil 4).
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -193,7 +193,7 @@ export default function ButtonFooter({
 }
 ```
 
-We can now enhance our selector, and base it on the `label` string. We keep `cy.contains(label)` to make sure there is a text being displayed, but we will do the clicking with our `data-cy` selector, which should fail the test (Red 5).
+Şimdi seçicimizi geliştirebilir ve `label` dizesine dayalı hale getirebiliriz. Metnin görüntülendiğinden emin olmak için `cy.contains(label)` kullanmaya devam ediyoruz, ancak tıklamayı `data-cy` seçicimizle yapacağız, bu da testin başarısız olmasına neden olmalıdır (Kırmızı 5).
 
 ```tsx
 // src/components/ButtonFooter.cy.tsx
@@ -216,7 +216,7 @@ describe("ButtonFooter", () => {
 });
 ```
 
-Now we can add the `data-cy` selector to the button attributes. While we are here, we can also add an `aria-label` because it will have a similar value as a freebie. Here we can also add a `&nbsp;` a non-breaking space to have a space between the icon and the text for a nicer look (Refactor 5).
+Şimdi `data-cy` seçiciyi düğme özelliklerine ekleyebiliriz. Buradayken, benzer bir değere sahip olacağı için `aria-label` de ekleyebiliriz. Ayrıca daha güzel bir görünüm için simge ve metin arasında boşluk bırakmak amacıyla ` ` kullanabiliriz (Refaktör 5).
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -248,7 +248,7 @@ export default function ButtonFooter({
 }
 ```
 
-There is only one line left to cover; we should make sure that the `svg` icon is rendered. We can also finalize the name of the test. We are rendering an Edit button, verifying the label and the click operation. It is almost like a small scale e2e test.
+Şimdi svg simgesinin render edildiğinden emin olmamız gereken sadece bir satır kaldı. Testin adını da sonlandırabiliriz. Bir Düzenle düğmesi oluşturuyoruz, etiketi ve tıklama işlemini doğruluyoruz. Bu, küçük ölçekli bir e2e test gibi görünmektedir.
 
 ```tsx
 // src/components/ButtonFooter.cy.tsx
@@ -275,7 +275,7 @@ describe("ButtonFooter", () => {
 });
 ```
 
-What else can we do with this component? There is only the label and icon props. Let's write another test for a different kind of icon (Green 5).
+Başka ne yapabiliriz bu bileşenle? Sadece etiket ve simge özellikleri var. Farklı bir simge türü için başka bir test yazalım (Yeşil 5).
 
 ```tsx
 // src/components/ButtonFooter.cy.tsx
@@ -319,11 +319,11 @@ describe("ButtonFooter", () => {
 });
 ```
 
-There are diverging opinions about code duplication in tests. Some prefer to have long tests with duplication, as opposed to using test hooks and helpers, so that failure diagnosis is easier. Always think about how the test may fail and if the refactor will make diagnosis harder. In this case, the two components will most likely fail the same way. If we keep the helper function nearby, we can refactor the test to be drier (Refactor 6).
+Testlerde kod tekrarına dair farklı görüşler vardır. Bazıları, test kancaları ve yardımcıları kullanmaktansa, başarısızlık teşhisi daha kolay olduğu için uzun testlerde tekrarlamayı tercih eder. Testin nasıl başarısız olabileceğini ve yeniden düzenlemenin teşhisi zorlaştırıp zorlaştırmayacağını düşünün. Bu durumda, iki bileşenin büyük olasılıkla aynı şekilde başarısız olması muhtemeldir. Yardımcı işlevi yakında tutarsak, testi daha kuru hale getirebiliriz (Refaktör 6).
 
-> Tip: use [`cy.pause()`](https://docs.cypress.io/api/commands/pause#Pause-and-step-through-each-click-command) to step through tests during diagnosis, or demos. Another useful diagnosis command is [`cy.debug()`](https://docs.cypress.io/api/commands/debug#Syntax).
+> İpucu: Teşhis veya sunumlar sırasında testler boyunca adım adım ilerlemek için [`cy.pause()`](https://docs.cypress.io/api/commands/pause#Pause-and-step-through-each-click-command) kullanın. Başka yararlı bir teşhis komutu da [`cy.debug()`](https://docs.cypress.io/api/commands/debug#Syntax) 'dır.
 
-We can add an additional css check, since in the second test we are adding a style to the component. Import the styles for the final look.
+İkinci testte bileşene bir stil eklediğimiz için ek bir css kontrolü ekleyebiliriz. Son görünüm için stilleri içe aktarın.
 
 ```tsx
 // src/components/ButtonFooter.cy.tsx
@@ -368,11 +368,11 @@ describe("ButtonFooter", () => {
 });
 ```
 
-## Important note about styles
+## Stiller hakkında önemli not
 
-Instead of having to import styles in every component test file, we can import them at `cypress/support/component.ts` file (or `.tsx` in the future), which runs before every component test.
+Bileşen test dosyalarında stilleri her seferinde içe aktarmak zorunda kalmamak için, stilleri `cypress/support/component.ts` dosyasında (veya gelecekte `.tsx`) içe aktarabiliriz, bu dosya her bileşen testinden önce çalışır.
 
-Note that in the upcoming examples, we will explicitly import the styles for TDD purposes. In the final project, you can remove the imports from the test files and have it only at the support file.
+Yaklaşan örneklerde, TDD amaçları için stilleri açıkça içe aktaracağız. Son projede, test dosyalarındaki içe aktarmaları kaldırabilir ve yalnızca destek dosyasında bulundurabilirsiniz.
 
 ```tsx
 // cypress/support/component.tsx
@@ -386,7 +386,7 @@ Cypress.Commands.add("mount", mount);
 
 ![ButtonFooter-Refactor6](../img/ButtonFooter-Refactor6.png)
 
-## React Testing Library (RTL) version of the component test
+## Bileşen testinin React Testing Library (RTL) sürümü
 
 ```tsx
 // src/components/ButtonFooter.test.tsx
@@ -426,49 +426,49 @@ describe("ButtonFooter", () => {
 });
 ```
 
-## Summary
+## Özet
 
-We looked at the requirement and wrote a minimal failing test that mounts a component (Red 1).
+Gereksinime baktık ve bir bileşeni yerleştiren başarısız bir test yazdık (Kırmızı 1).
 
-We added a component to pass the test (Green 1).
-
-</br>
-
-We made the hard-coded string into a variable in the test, and made it so that it is a prop being passed in to `cy.mount`. (Red 2)
-
-We added the prop `label` and its type to the component (Green 2).
+Testi geçmek için bir bileşen ekledik (Yeşil 1).
 
 </br>
 
-We added an icon to the component as a new prop and got a failing test (Red 3).
+Testteki sabit kodlu dizeyi bir değişkene çevirdik ve bunun `cy.mount`'a bir prop olarak geçirildiğini sağladık. (Kırmızı 2)
 
-We enhanced the test to also use that new prop (Green 3).
-
-</br>
-
-We added a test for the onClick event (Red 4).
-
-We enhanced the component to accommodate the new feature (Green 4).
+Bileşene `label` prop'unu ve türünü ekledik (Yeşil 2).
 
 </br>
 
-We decided to use a data-cy query for the button click (Red 5).
+Bileşene yeni bir prop olarak bir simge ekledik ve başarısız bir test aldık (Kırmızı 3).
 
-And enhanced the component with the data-cy attribute (Green 5, Refactor 5).
-
-We enhanced the test and made sure that the `svg` is rendered.
+Testi, bu yeni prop'u da kullanacak şekilde geliştirdik (Yeşil 3).
 
 </br>
 
-We increased the test coverage by trying a different component; a Save button (Green 6).
+onClick olayı için bir test ekledik (Kırmızı 4).
 
-And we refactored the test to be leaner (Refactor 6).
+Bileşeni, yeni özelliği barındıracak şekilde geliştirdik (Yeşil 4).
 
-## Takeaways
+</br>
 
-- Having first a failing test, ensures a fault-finding one.
-- TypeScript and ESlint can serve as "tests" that give us a Red.
-- Once we have a passing test, we can keep adding to it until we get a new failure, or until we want to refactor.
-- The RedGreenRefactor cycles do not always have to be in that order. It can be a few cycles of Red + Green, and then Refactor. Or it can be a Red, followed by a few Greens, and no Refactor. The key idea is to start with something failing, do the mimimum to get it to work, and then make it better.
-- Using `data-cy` attributes for selectors, with template literals and JSX, we can have a precise and effortless way to refer to a component or its variants (ex: save vs edit).
-- Refactoring can be applied to tests so long as they will not be detrimental to failure diagnosis, evaluate case by case.
+Buton tıklaması için data-cy sorgusunu kullanmaya karar verdik (Kırmızı 5).
+
+Ve bileşeni, data-cy özelliğiyle geliştirdik (Yeşil 5, Refaktör 5).
+
+Testi geliştirdik ve `svg`'nin işlendiğinden emin olduk.
+
+</br>
+
+Test kapsamını, farklı bir bileşen deneyerek artırdık; Kaydet düğmesi (Yeşil 6).
+
+Ve testi daha sade hale getirmek için yeniden yapılandırdık (Refaktör 6).
+
+## Çıkarılacak Dersler
+
+- İlk önce başarısız bir test yaparak, hataları bulan bir test sağlanır.
+- TypeScript ve ESlint, bize Kırmızı veren "testler" olarak hizmet edebilir.
+- Geçerli bir teste sahip olduğumuzda, yeni bir başarısızlık alana kadar veya yeniden yapılandırmak isteyene kadar ona eklemeye devam edebiliriz.
+- Kırmızı-Yeşil-Refaktör döngüleri her zaman bu sırayla olmak zorunda değildir. Birkaç Kırmızı + Yeşil döngüsü ve ardından Refaktör olabilir. Ya da bir Kırmızı, ardından birkaç Yeşil ve Refaktör olur. Ana fikir, başarısız olan bir şeyle başlamak, onu çalışır hale getirmek için minimumu yapmak ve ardından onu daha iyi hale getirmektir.
+- `data-cy` özelliklerini, şablon dize literalleri ve JSX ile seçiciler için kullanarak, bir bileşene veya varyantlarına (ör: kaydet vs düzenle) hassas ve çabasız bir şekilde başvurabiliriz.
+- Başarısızlık teşhisi açısından zararlı olmayacakları sürece, testlere refaktörleme uygulanabilir; duruma göre değerlendirin.
