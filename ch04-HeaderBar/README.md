@@ -1,10 +1,10 @@
 # HeaderBar
 
-In the Angular version of the app, there is a parent component above `HeaderBarBrand`. Let's create it too.
+Uygulamanın Angular versiyonunda, `HeaderBarBrand` üzerinde bir üst bileşen bulunmaktadır. Bunu da oluşturalım.
 
 ![HeaderBar-initial](../img/HeaderBar-initial.png)
 
-Create a branch `feat/headerBar`. Create 2 files under `src/components/` folder; `HeaderBar.cy.tsx`, `HeaderBar.tsx`. As usual, start minimal with a component rendering; copy the below to the files and execute the test after opening the runner with `yarn cy:open-ct`.
+`feat/headerBar` adında bir dal oluşturun. `src/components/` klasörü altında 2 dosya oluşturun; `HeaderBar.cy.tsx`, `HeaderBar.tsx`. Her zamanki gibi, bileşen işlemi ile minimal başlayın; aşağıdakileri dosyalara kopyalayın ve `yarn cy:open-ct` ile çalıştırıcıyı açtıktan sonra testi çalıştırın.
 
 ```typescript
 // src/components/HeaderBar.cy.tsx
@@ -25,7 +25,7 @@ export default function HeaderBar() {
 }
 ```
 
-In `HeaderBar` component, which is the child of `HeaderBar`, we added a top level `data-cy` selector with the value of `header-bar-brand`. Let's add a failing test to check the existence of the child component (Red 1).
+`HeaderBar` bileşeninde, `HeaderBar`ın alt bileşeni olan, üst düzey bir `data-cy` seçici ekledik ve değeri `header-bar-brand` oldu. Alt bileşenin varlığını kontrol etmek için başarısız bir test ekleyelim (Kırmızı 1).
 
 ```tsx
 // src/components/HeaderBar.cy.tsx
@@ -39,7 +39,7 @@ describe("HeaderBar", () => {
 });
 ```
 
-Insert the child component into the parent.
+Alt bileşeni ana bileşene ekleyin.
 
 ```tsx
 // src/components/HeaderBar.tsx
@@ -54,7 +54,7 @@ export default function HeaderBar() {
 }
 ```
 
-We get the same `react-router` related error that we got with the `HeaderBarBrand` component. If a child component is using `react-router`, when testing the parent component, we also have to wrap the parent in `BrowserRouter` (Green 1).
+`HeaderBarBrand` bileşeni ile aldığımız `react-router` ile ilgili hatayı alıyoruz. Bir alt bileşen `react-router` kullanıyorsa, ana bileşeni test ederken, ana bileşeni de `BrowserRouter` içine sarmamız gerekir (Yeşil 1).
 
 ```tsx
 // src/components/HeaderBar.cy.tsx
@@ -74,11 +74,11 @@ describe("HeaderBar", () => {
 });
 ```
 
-The child component renders.
+Alt bileşen işlem görüyor.
 
 ![HeaderBar-Green1](../img/HeaderBar-Green1.png)
 
-The specification shows that the child component is wrapped by a `header` and a `nav` There is also some css that gives it the dark theme. We can copy those off of the browser. We also add a `data-cy` selector to the top tag of the component.
+Özellikler, alt bileşenin bir `header` ve bir `nav` tarafından sarıldığını gösteriyor. Ayrıca koyu temayı veren bir css de var. Bunları tarayıcıdan kopyalayabiliriz. Bileşenin en üst etiketine de bir `data-cy` seçici ekliyoruz.
 
 ```tsx
 // src/components/HeaderBar.tsx
@@ -99,13 +99,13 @@ export default function HeaderBar() {
 }
 ```
 
-The component is looking great with CSS.
+Bileşen, CSS ile harika görünüyor.
 
 ![HeaderBar-css](../img/HeaderBar-css.png)
 
-Realize that we did not necessarily go through a traditional RedGreenRefactor cycle; our Red in this case was the component not rendering in its final form and we kept improving that step by step.
+Geleneksel bir KırmızıYeşilDüzenleme döngüsüne gerekli olmadığını fark edin; Kırmızımız bu durumda bileşenin son haliyle işlem görmemesiydi ve bunu adım adım geliştirdik.
 
-What else can be tested at this point? We do not need to repeat the tests for the child component, because we covered all of it at the child. The only valuable additional check would be to check for an attribute of the `nav` tag. We can easily add that with [Cypress testing library](https://testing-library.com/docs/cypress-testing-library/intro/) (Refactor 1).
+Bu noktada başka ne test edilebilir? Alt bileşen için testleri tekrarlamamıza gerek yok, çünkü bunların hepsini çocukta ele aldık. `nav` etiketinin bir özelliğini kontrol etmek dışında değerli başka bir ek kontrol yoktur. Bunu, [Cypress testing library](https://testing-library.com/docs/cypress-testing-library/intro/) ile kolayca ekleyebiliriz (Düzenleme 1).
 
 ```tsx
 // src/components/HeaderBar.cy.tsx
@@ -126,7 +126,7 @@ describe("HeaderBar", () => {
 });
 ```
 
-## RTL version of the component test
+## Bileşen testinin RTL sürümü
 
 ```tsx
 // src/components/HeaderBar.test.tsx
@@ -147,12 +147,12 @@ describe("HeaderBar", () => {
 });
 ```
 
-## Summary & takeaways
+## Özet ve çıkarılacak dersler
 
-The main takeaway in this section is the parent-child relationship between the components, and a demo of how top level `data-cy` selectors make child components easier to reference in higher level tests.
+Bu bölümün ana çıkarımı, bileşenler arasındaki ebeveyn-çocuk ilişkisi ve üst düzey `data-cy` seçicilerin çocuk bileşenlerin daha yüksek düzeydeki testlerde daha kolay başvurulmasını nasıl sağladığına dair bir gösterimdir.
 
-If a child component is using `react-router`, when testing the parent component we also have to wrap the parent in `BrowserRouter`.
+Eğer bir çocuk bileşen `react-router` kullanıyorsa, ebeveyn bileşeni test ederken, ebeveyn bileşenini de `BrowserRouter` içine sarmamız gerekir.
 
-In a parent component, we do not need to repeat the tests for the child component, because we covered all of it at the child. The same thought process applies to higher level tests with e2e.
+Bir ebeveyn bileşeninde, çocuk bileşenin tüm testlerini tekrarlamamıza gerek yoktur, çünkü tümünü çocukta ele aldık. Aynı düşünce süreci, e2e ile daha yüksek düzeydeki testlere de uygulanır.
 
-When designing the component, we do not necessarily have to go through a traditional RedGreenRefactor cycle. When our test tool is also the design tool, our RGR can as well be incremental visual enhancements to the component whilst adding classes and css.
+Bileşeni tasarlarken, mutlaka geleneksel bir KırmızıYeşilDüzenleme döngüsünden geçmemiz gerekmez. Test aracımız aynı zamanda tasarım aracı olduğunda, KırmızıYeşilDüzenleme, bileşene sınıflar ve css eklerken bileşene kademeli görsel iyileştirmeler de olabilir.

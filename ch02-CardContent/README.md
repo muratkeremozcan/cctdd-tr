@@ -124,7 +124,7 @@ import "../styles.scss";
 // ...
 ```
 
-Bileşenimiz Cypress çalıştırıcısında hala aynı görünüyor. Daha güzel görünmesi için bazı css sınıfları ekleyelim (Refaktör 3).
+Bileşenimiz Cypress çalıştırıcısında hala aynı görünüyor. Daha güzel görünmesi için bazı css sınıfları ekleyelim (Düzenleme 3).
 
 ```tsx
 // src/components/CardContent.tsx

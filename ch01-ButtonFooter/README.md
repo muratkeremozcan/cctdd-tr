@@ -216,7 +216,7 @@ describe("ButtonFooter", () => {
 });
 ```
 
-Şimdi `data-cy` seçiciyi düğme özelliklerine ekleyebiliriz. Buradayken, benzer bir değere sahip olacağı için `aria-label` de ekleyebiliriz. Ayrıca daha güzel bir görünüm için simge ve metin arasında boşluk bırakmak amacıyla ` ` kullanabiliriz (Refaktör 5).
+Şimdi `data-cy` seçiciyi düğme özelliklerine ekleyebiliriz. Buradayken, benzer bir değere sahip olacağı için `aria-label` de ekleyebiliriz. Ayrıca daha güzel bir görünüm için simge ve metin arasında boşluk bırakmak amacıyla ` ` kullanabiliriz (Düzenleme 5).
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -319,7 +319,7 @@ describe("ButtonFooter", () => {
 });
 ```
 
-Testlerde kod tekrarına dair farklı görüşler vardır. Bazıları, test kancaları ve yardımcıları kullanmaktansa, başarısızlık teşhisi daha kolay olduğu için uzun testlerde tekrarlamayı tercih eder. Testin nasıl başarısız olabileceğini ve yeniden düzenlemenin teşhisi zorlaştırıp zorlaştırmayacağını düşünün. Bu durumda, iki bileşenin büyük olasılıkla aynı şekilde başarısız olması muhtemeldir. Yardımcı işlevi yakında tutarsak, testi daha kuru hale getirebiliriz (Refaktör 6).
+Testlerde kod tekrarına dair farklı görüşler vardır. Bazıları, test kancaları ve yardımcıları kullanmaktansa, başarısızlık teşhisi daha kolay olduğu için uzun testlerde tekrarlamayı tercih eder. Testin nasıl başarısız olabileceğini ve yeniden düzenlemenin teşhisi zorlaştırıp zorlaştırmayacağını düşünün. Bu durumda, iki bileşenin büyük olasılıkla aynı şekilde başarısız olması muhtemeldir. Yardımcı işlevi yakında tutarsak, testi daha kuru hale getirebiliriz (Düzenleme 6).
 
 > İpucu: Teşhis veya sunumlar sırasında testler boyunca adım adım ilerlemek için [`cy.pause()`](https://docs.cypress.io/api/commands/pause#Pause-and-step-through-each-click-command) kullanın. Başka yararlı bir teşhis komutu da [`cy.debug()`](https://docs.cypress.io/api/commands/debug#Syntax) 'dır.
 
@@ -454,7 +454,7 @@ Bileşeni, yeni özelliği barındıracak şekilde geliştirdik (Yeşil 4).
 
 Buton tıklaması için data-cy sorgusunu kullanmaya karar verdik (Kırmızı 5).
 
-Ve bileşeni, data-cy özelliğiyle geliştirdik (Yeşil 5, Refaktör 5).
+Ve bileşeni, data-cy özelliğiyle geliştirdik (Yeşil 5, Düzenleme 5).
 
 Testi geliştirdik ve `svg`'nin işlendiğinden emin olduk.
 
@@ -462,14 +462,13 @@ Testi geliştirdik ve `svg`'nin işlendiğinden emin olduk.
 
 Test kapsamını, farklı bir bileşen deneyerek artırdık; Kaydet düğmesi (Yeşil 6).
 
-Ve testi daha sade hale getirmek için yeniden yapılandırdık (Refaktör 6).
+Ve testi daha sade hale getirmek için yeniden yapılandırdık (Düzenleme 6).
 
 ## Çıkarılacak Dersler
 
 - İlk önce başarısız bir test yaparak, hataları bulan bir test sağlanır.
 - TypeScript ve ESlint, bize Kırmızı veren "testler" olarak hizmet edebilir.
 - Geçerli bir teste sahip olduğumuzda, yeni bir başarısızlık alana kadar veya yeniden yapılandırmak isteyene kadar ona eklemeye devam edebiliriz.
-- Kırmızı-Yeşil-Refaktör döngüleri her zaman bu sırayla olmak zorunda değildir. Birkaç Kırmızı + Yeşil döngüsü ve ardından Refaktör olabilir. Ya da bir Kırmızı, ardından birkaç Yeşil ve Refaktör olur. Ana fikir, başarısız olan bir şeyle başlamak, onu çalışır hale getirmek için minimumu yapmak ve ardından onu daha iyi hale getirmektir.
+- Kırmızı-Yeşil-Düzenleme döngüleri her zaman bu sırayla olmak zorunda değildir. Birkaç Kırmızı + Yeşil döngüsü ve ardından Düzenleme olabilir. Ya da bir Kırmızı, ardından birkaç Yeşil ve Düzenleme olur. Ana fikir, başarısız olan bir şeyle başlamak, onu çalışır hale getirmek için minimumu yapmak ve ardından onu daha iyi hale getirmektir.
 - `data-cy` özelliklerini, şablon dize literalleri ve JSX ile seçiciler için kullanarak, bir bileşene veya varyantlarına (ör: kaydet vs düzenle) hassas ve çabasız bir şekilde başvurabiliriz.
-- Başarısızlık teşhisi açısından zararlı olmayacakları sürece, testlere refaktörleme uygulanabilir; duruma göre değerlendirin.
-
+- Başarısızlık teşhisi açısından zararlı olmayacakları sürece, testlere Düzenlemeleme uygulanabilir; duruma göre değerlendirin.

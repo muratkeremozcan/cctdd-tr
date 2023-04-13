@@ -149,7 +149,7 @@ export default function HeaderBarBrand() {
 
 > Cypress'te bir 2. sekme ile başa çıkmanın [3 yolu var](https://glebbahmutov.com/blog/cypress-second-tab/). Yaklaşımımız düşük maliyetli ve güvenlidir; bileşenin dışına çıkıp tıklama yapmaya gerek yok.
 
-CSS'e baktığımızda, `navbar-brand` ve `navbar-item` sınıflarımız var. Renderın daha iyi görünmesi için bunları ekleyebiliriz (Refaktör 3).
+CSS'e baktığımızda, `navbar-brand` ve `navbar-item` sınıflarımız var. Renderın daha iyi görünmesi için bunları ekleyebiliriz (Düzenleme 3).
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -368,7 +368,7 @@ Bu noktada bir test yeniden yapılandırması mümkündür, iki farklı bölüme
 
 Bir Cypress bileşen testi, küçük ölçekli bir e2e testidir; bir hatanın yarattığı zararın küçültülmesi için testleri kısa tutmaya gerek yoktur, çünkü çalıştırıcı teşhis etmeyi kolaylaştırır. Bir test perspektifinden önemli olan, testin başlangıç durumudur; bu duruma ulaşmak yaygınsa, genellikle bir test geliştirme fırsatıdır, kısmi test çoğaltması yerine.
 
-Bizim durumumuzda, basit bir bileşen olduğu için, testi uzun tutabilir veya ortak durum için bir before hook kullanabiliriz (bileşenin montajı), böylece 2 ayrı test olur. İşte iki farklı sürüm (Refaktör 6):
+Bizim durumumuzda, basit bir bileşen olduğu için, testi uzun tutabilir veya ortak durum için bir before hook kullanabiliriz (bileşenin montajı), böylece 2 ayrı test olur. İşte iki farklı sürüm (Düzenleme 6):
 
 > İpucu: Uzun bir testte [`cy.log()`](https://docs.cypress.io/api/commands/log#Syntax), sınır belirlemede kullanılabilir.
 
@@ -500,7 +500,7 @@ Dış bağlantıya tıklandığında yeni bir sekme açmak için yeni bir özell
 
 `target=_blank` ve `rel` özniteliklerini bileşene ekledik (Yeşil 3).
 
-Bileşenin görünümünü iyileştirmek için CSS ekledik (Refaktör 3).
+Bileşenin görünümünü iyileştirmek için CSS ekledik (Düzenleme 3).
 
 </br>
 
@@ -520,7 +520,7 @@ Dahili bağlantı için `react-router` ekledik ve yönlendirme için `NavLink` k
 
 Bileşeni testi geçmesi için iyileştirdik (Yeşil 6).
 
-Testi yeniden düzenledik (Refaktör 6).
+Testi yeniden düzenledik (Düzenleme 6).
 
 ## Çıkarılacak Dersler
 
