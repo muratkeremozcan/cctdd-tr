@@ -1,12 +1,12 @@
 # CardContent
 
-This is what our component might look like eventually. We need a div wrapping two other divs.
+Sonunda bileşenimiz şöyle görünebilir. İki başka div'i saran bir div'e ihtiyacımız var.
 
 ![card-content](../img/card-content.png)
 
-Create a branch `feat/cardContent`. Create 2 files under `src/components/` folder; `CardContent.cy.tsx`, `CardContent.tsx`.
+`feat/cardContent` adında bir dal oluşturun. `src/components/` klasörü altında 2 dosya oluşturun; `CardContent.cy.tsx`, `CardContent.tsx`.
 
-We start minimal with a test that renders the component (Red 1).
+Bileşeni işleyen minimal bir testle başlıyoruz (Kırmızı 1).
 
 ```tsx
 // src/components/CardContent.cy.tsx
@@ -19,7 +19,7 @@ describe("CardContent", () => {
 });
 ```
 
-We do the mimimum to make the compiler green.
+Derleyiciyi yeşil yapmak için minimumu yapıyoruz.
 
 ```tsx
 // src/components/CardContent.tsx
@@ -29,9 +29,9 @@ export default function CardContent() {
 }
 ```
 
-Start the Cypress component test runner and execute the test; `yarn cy:open-ct`.
+Cypress bileşen test çalıştırıcısını başlatın ve testi çalıştırın; `yarn cy:open-ct`.
 
-Let's test that the string renders (Green 1).
+Dizenin işlendiğini test edelim (Yeşil 1).
 
 ```tsx
 // src/components/CardContent.cy.tsx
@@ -47,7 +47,7 @@ describe("CardContent", () => {
 
 ![CardContent-hello](../img/CardContent-hello.png)
 
-Let's write a test for the divs we want; we need two divs, one contains a name, the other a description (Red 2).
+İstediğimiz div'ler için bir test yazalım; bir isim içeren iki div'e ihtiyacımız var, diğeri bir açıklama içeriyor (Kırmızı 2).
 
 ```tsx
 // src/components/CardContent.cy.tsx
@@ -63,7 +63,7 @@ describe("CardContent", () => {
 });
 ```
 
-We make it green by hard-coding the values being tested for (Green 2).
+Test edilen değerleri sabit kodlayarak yeşil yaparız (Yeşil 2).
 
 ```tsx
 // src/components/CardContent.tsx
@@ -77,7 +77,7 @@ export default function CardContent() {
 }
 ```
 
-It is becoming obvious we should be passing name and description as props (Red 3).
+İsim ve açıklamanın prop'lar olarak geçirilmesi gerektiği açık hale geliyor (Kırmızı 3).
 
 ```tsx
 // src/components/CardContent.cy.tsx
@@ -95,7 +95,7 @@ describe("CardContent", () => {
 });
 ```
 
-The test still passes, but the compiler is complaining about the props that don not exist. Let's add those to the component (Green 3). We can also add the types for these props since we know they will both be strings.
+Test hala başarılı, ancak derleyici, mevcut olmayan prop'lar hakkında şikayet ediyor. Hadi bunları bileşene ekleyelim (Yeşil 3). Ayrıca, bunların her ikisinin de dize olacağını bildiğimiz için bu prop'lar için türleri ekleyebiliriz.
 
 ```tsx
 // src/components/CardContent.tsx
@@ -114,7 +114,7 @@ export default function CardContent({ name, description }: CardContentProps) {
 }
 ```
 
-Now we can add some styles to our component.
+Şimdi bileşenimize bazı stiller ekleyebiliriz.
 
 ```tsx
 // src/components/CardContent.cy.tsx
@@ -124,7 +124,7 @@ import "../styles.scss";
 // ...
 ```
 
-Our component is still looking the same in the Cypress runner. Let's add some css classes to make it look nicer (Refactor 3).
+Bileşenimiz Cypress çalıştırıcısında hala aynı görünüyor. Daha güzel görünmesi için bazı css sınıfları ekleyelim (Refaktör 3).
 
 ```tsx
 // src/components/CardContent.tsx
@@ -143,7 +143,7 @@ export default function CardContent({ name, description }: CardContentProps) {
 }
 ```
 
-Finally, we add a `data-cy` attribute to top tag of the component to make it easier to reference when it is used.
+Son olarak, bileşeni kullanırken başvurmayı kolaylaştırmak için bileşenin üst etiketine `data-cy` özniteliği ekleriz.
 
 ```tsx
 type CardContentProps = {
@@ -161,11 +161,61 @@ export default function CardContent({ name, description }: CardContentProps) {
 }
 ```
 
-This finalizes our work with the component.
+Şimdi bileşenimize bazı stiller ekleyebiliriz.
+
+```
+javascriptCopy code
+// src/components/CardContent.cy.tsx
+import CardContent from "./CardContent";
+import "../styles.scss";
+
+// ...
+```
+
+Bileşenimiz Cypress çalıştırıcısında hala aynı görünüyor. Daha güzel görünmesi için bazı css sınıfları ekleyelim (Yeniden düzenleme 3).
+
+```
+typescriptCopy code
+// src/components/CardContent.tsx
+type CardContentProps = {
+  name: string;
+  description: string;
+};
+
+export default function CardContent({ name, description }: CardContentProps) {
+  return (
+    <div className="card-content">
+      <div className="name">{name}</div>
+      <div className="description">{description}</div>
+    </div>
+  );
+}
+```
+
+Son olarak, bileşeni kullanırken başvurmayı kolaylaştırmak için bileşenin üst etiketine `data-cy` özniteliği ekleriz.
+
+```
+typescriptCopy code
+type CardContentProps = {
+  name: string;
+  description: string;
+};
+
+export default function CardContent({ name, description }: CardContentProps) {
+  return (
+    <div data-cy="card-content" className="card-content">
+      <div className="name">{name}</div>
+      <div className="description">{description}</div>
+    </div>
+  );
+}
+```
+
+Bu, bileşenle çalışmamızı tamamlar.
 
 ![CardContent-final](../img/CardContent-final.png)
 
-## RTL version of the component test
+## Bileşen testinin RTL sürümü
 
 ```tsx
 // src/components/CardContent.test.tsx
@@ -185,31 +235,31 @@ describe("CardContent", () => {
 });
 ```
 
-## Summary
+## Özet
 
-We started with a minimal test that renders the component (Red 1)
+Bileşeni işleyen minimal bir testle başladık (Kırmızı 1)
 
-We added the function component to make it green (Green1)
+Fonksiyon bileşenini yeşil yapmak için ekledik (Yeşil 1)
 
-We added a test to verify the render (Green 1)
-
-</br>
-
-We wrote a failing test for the divs (Red 2).
-
-We hard-coded the values into the divs that we created for the component (Green2).
+İşlemeyi doğrulamak için bir test ekledik (Yeşil 1)
 
 </br>
 
-We enhanced the test to render with props instead of hard-coded values (Red 3).
+Div'ler için başarısız bir test yazdık (Kırmızı 2).
 
-We added the props and their types to the component (Green 3).
-
-We added styles and classes to the component (Refactor 3).
+Bileşen için oluşturduğumuz div'lere değerleri sabit kodladık (Yeşil 2).
 
 </br>
 
-## Takeaways
+Testi, sabit kodlanmış değerler yerine prop'larla işlemek üzere geliştirdik (Kırmızı 3).
 
-- It is encouraged to use hard coded values to make the tests pass initially.
-- Using a `data-cy` attribute in the top tag of the component will make it easier to reference when other components or the app uses it.
+Prop'ları ve türlerini bileşene ekledik (Yeşil 3).
+
+Bileşene stiller ve sınıflar ekledik (Yeniden düzenleme 3).
+
+</br>
+
+## Çıkarılacak Dersler
+
+- Testlerin başlangıçta geçmesi için sabit kodlanmış değerler kullanılması teşvik edilir.
+- Bileşenin üst etiketine `data-cy` özniteliği kullanmak, diğer bileşenler veya uygul
