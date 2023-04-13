@@ -1,10 +1,10 @@
 # HeaderBarBrand
 
-This is what our component might look like eventually. We need two links; one to https://reactjs.org/ the other to `/heroes` route of our app. We need the React icon displayed and some css for the text.
+Bileşenimiz sonunda neye benzeyebileceğini görelim. Uygulamamızın https://reactjs.org/ adresine ve `/heroes` yoluna iki bağlantıya ihtiyacımız var. React simgesinin görüntülenmesi ve metin için biraz css'e ihtiyacımız var.
 
 ![HeaderBarBrand](../img/HeaderBarBrand.png)
 
-Create a branch `feat/headerBarBrand`. Create 2 files under `src/components/` folder; `HeaderBarBrand.cy.tsx`, `HeaderBarBrand.tsx`. As usual, start minimal with a component rendering; copy the below to the files and execute the test after opening the runner with `yarn cy:open-ct`.
+`feat/headerBarBrand` adında bir dal oluşturun. `src/components/` klasörü altında 2 dosya oluşturun; `HeaderBarBrand.cy.tsx`, `HeaderBarBrand.tsx`. Her zamanki gibi, bileşen işlemesiyle minimal başlangıç yapın; aşağıdakileri dosyalara kopyalayın ve `yarn cy:open-ct` ile çalıştırıcıyı açtıktan sonra testi çalıştırın.
 
 ```tsx
 // src/components/HeaderBarBrand.cy.tsx
@@ -26,9 +26,9 @@ export default function HeaderBarBrand() {
 }
 ```
 
-## Link to the external address
+## Harici adrese bağlantı
 
-We need a `div` wrapping two links. Let's start with the easier one in a failing test (Red 1).
+İki bağlantıyı içeren bir `div`'e ihtiyacımız var. Başarısız bir testle (Kırmızı 1) daha kolay başlayalım.
 
 ```tsx
 // src/components/HeaderBarBrand.cy.tsx
@@ -43,7 +43,7 @@ describe("HeaderBarBrand", () => {
 });
 ```
 
-Add the link to the component to make the test pass (Green 1).
+Testin geçmesi için bileşene bağlantıyı ekleyin (Yeşil 1).
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -57,7 +57,7 @@ export default function HeaderBarBrand() {
 }
 ```
 
-Let's click that link and see if there is any navigation. Cypress runner will complain that the element is not visible (Red 2).
+Bağlantıya tıklayalım ve herhangi bir yönlendirme olup olmadığını görelim. Cypress çalıştırıcısı, öğenin görünür olmadığından şikayet edecek (Kırmızı 2).
 
 ```tsx
 // src/components/HeaderBarBrand.cy.tsx
@@ -74,9 +74,9 @@ describe("HeaderBarBrand", () => {
 
 ![HeaderBarBrand-not-visible](../img/HeaderBarBrand-not-visible.png)
 
-We could add a force to the click operation `.click({force: true})`, but let's do better. We installed `react-icons` in the first chapter, therefore we can import `FaReact` (Green 2) .
+Tıklama işlemine bir güç ekleyebiliriz `.click({force: true})`, ama daha iyisini yapalım. İlk bölümde `react-icons`'u yükledik, bu nedenle `FaReact`'i içe aktarabiliriz (Yeşil 2).
 
-For now, remove the `.click()` in the test, and just check for visibility.
+Şimdilik testten `.click()`'i çıkarın ve sadece görünürlük için kontrol edin.
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -108,11 +108,11 @@ describe("HeaderBarBrand", () => {
 });
 ```
 
-The icon renders (Green 2).
+Simge oluşturulur (Yeşil 2) .
 
 ![HeaderBarBrand-react-icon](../img/HeaderBarBrand-react-icon.png)
 
-We want the link to open a new tab to https://reactjs.org. We can achieve this by adding `target='_blank'` and `rel="noopener noreferrer">` attributes to the link. Let's write a failing test for the new functionality (Red 3).
+Linkin [https://reactjs.org](https://reactjs.org/) adresinde yeni bir sekmede açılmasını istiyoruz. Bunun için link'e `target='_blank'` ve `rel="noopener noreferrer">` özelliklerini ekleyebiliriz. Yeni işlevsellik için hatalı bir test yazalım (Kırmızı 3).
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -130,7 +130,7 @@ describe("HeaderBarBrand", () => {
 });
 ```
 
-We add the attributes to the component to have the test pass (Green 3).
+Testin geçmesi için bileşene özellikleri ekliyoruz (Yeşil 3).
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -147,9 +147,9 @@ export default function HeaderBarBrand() {
 }
 ```
 
-> There are [3 ways to deal with a 2nd tab](https://glebbahmutov.com/blog/cypress-second-tab/) in Cypress. Our approach is low cost and confident; no need to click and navigate out of the component.
+> Cypress'te bir 2. sekme ile başa çıkmanın [3 yolu var](https://glebbahmutov.com/blog/cypress-second-tab/). Yaklaşımımız düşük maliyetli ve güvenlidir; bileşenin dışına çıkıp tıklama yapmaya gerek yok.
 
-Looking at the css, we have classes `navbar-brand` and `navbar-item`. We can add those to make the render look better (Refactor 3).
+CSS'e baktığımızda, `navbar-brand` ve `navbar-item` sınıflarımız var. Renderın daha iyi görünmesi için bunları ekleyebiliriz (Refaktör 3).
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -171,7 +171,7 @@ export default function HeaderBarBrand() {
 }
 ```
 
-At the moment we are only checking the link. We could also verify that there is an `svg` inside the component. We want to have a `data-cy` attribute for the component instead of referring to with a css selector. Let's add a failing test for it (Red 4).
+Şimdilik yalnızca bağlantıyı kontrol ediyoruz. Bileşenin içinde bir `svg` olup olmadığını da doğrulayabiliriz. Bir css seçicisiyle değil bileşen için bir `data-cy` özelliği olmasını istiyoruz. Bu için başarısız bir test yazalım (Kırmızı 4).
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -190,7 +190,7 @@ describe("HeaderBarBrand", () => {
 });
 ```
 
-Include the `data-cy` attribute in the component and we are done with the link portion of the component.
+Bileşenimizdeki link kısmında `data-cy` özelliğini ekledik ve bu kısmı tamamladık.
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -212,13 +212,13 @@ export default function HeaderBarBrand() {
 }
 ```
 
-## Link to the `/heroes` route
+## `/heroes` rotası için bağlantı
 
-We are going to be using `react-router` as the routing solution in our app. React Router's `Link` component is used to navigate the different routes on the app, and `NavLink` is used to add the style attributes to the active routes so that the user has a visual indication for the route they are on. We will opt to `NavLink`. Here is a sample snap showing the link highlight feature of `NavLink`.
+Uygulamamızda yönlendirme çözümü olarak `react-router` kullanacağız. React Router'ın `Link` bileşeni, uygulamadaki farklı rotalara geçmek için kullanılır ve `NavLink`, kullanıcının hangi rotada olduğuna dair görsel bir işaret eklemek için kullanılır. Biz `NavLink`i tercih edeceğiz. İşte `NavLink`nin bağlantı vurgu özelliğini gösteren bir örnek görüntü:
 
 ![NavLink-explained](../img/HeaderBarBrand-NavLink-explained.png)
 
-Add React-router to our app with `yarn add react-router-dom`. Add the `NavLink` under the `div` and let's see what things are looking like.
+React-router'ı `yarn add react-router-dom` ile uygulamamıza ekleyin. `div`in altına `NavLink` ekleyin ve nasıl göründüklerine bakalım.
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -242,11 +242,11 @@ export default function HeaderBarBrand() {
 }
 ```
 
-We get two failures. One is a compiler warning about a missing attribute, the other is the `react-router` being used without wrapping the component in a `Router` component (Red 5). This one is another component test error we would like to get familiar with.
+İki hata alıyoruz. Biri eksik bir özniteliğe dair bir derleyici uyarısı, diğeri `react-router`ın bileşeni `Router` bileşeni içinde sarmalanmadan kullanılmasıdır (Red 5). Bu da başka bir bileşen testi hatasıdır ve bu hata ile de tanışmak istiyoruz.
 
 ![NavLink-red1](../img/HeaderBarBrand-NavLink-red1.png)
 
-We can address the compiler warning by adding a `to` attribute to `NavLink` (Green 5).
+`NavLink`'e `data-cy` özniteliğini ekleyerek, bileşenin bağlantı kısmıyla ilgili işlemi tamamlamış oluruz.
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -270,7 +270,7 @@ export default function HeaderBarBrand() {
 }
 ```
 
-We can address the component test failure by wrapping the mounted component in `BrowserRouter`. This is something we will see often see in the future component tests that have to do with routing.
+Bileşen testindeki hata mesajını ise, bileşeni `BrowserRouter` içinde sarmalayarak giderebiliriz. Bu, gelecekteki yönlendirmeyle ilgili bileşen testlerinde sık sık göreceğimiz bir durumdur.
 
 ```tsx
 // src/components/HeaderBarBrand.cy.tsx
@@ -294,11 +294,11 @@ tsxdescribe("HeaderBarBrand", () => {
 });
 ```
 
-The test is green again, but there is no visual difference. We are using the [Angular version of the app](https://papa-heroes-angular.azurewebsites.net/heroes) as the requirements specification. From there we can see that the text is three spans with different styles. We can also add the css classes to the `NavLink`.
+Testimiz tekrar başarılı oldu, ancak görsel olarak herhangi bir fark yok. Gereksinimler özelliklerini belirlemek için Angular sürümünü kullandık. Orada metnin üç farklı stildeki span ile gösterildiğini görebiliyoruz. `NavLink`'e css sınıflarını da ekleyebiliriz.
 
 ![HeaderBarBrand-angular-render](../img/HeaderBarBrand-angular-render.png)
 
-We can write a new failing test checking for this content. We want to check that `NavLink` is rendered, and we want to verify the strings under the spans. We can also verify that when clicking on this link, we are at the home route (Red 6). There is no concept of url in a Cypress component test, however clicking on links does indeed change a url value, which we can verify.
+Bu içeriği kontrol eden yeni bir hatalı test yazabiliriz. `NavLink`'in oluşturulup oluşturulmadığını kontrol etmek istiyoruz ve `span` altındaki dizeleri doğrulamak istiyoruz. Bu linke tıklandığında, anasayfada olduğumuzu doğrulayabiliriz (Red 6). Cypress bileşen testinde url kavramı yoktur, ancak bağlantılara tıklama işlemi gerçekten bir url değerini değiştirir, bunu doğrulayabiliriz.
 
 ```tsx
 // src/components/HeaderBarBrand.cy.tsx
@@ -331,7 +331,7 @@ describe("HeaderBarBrand", () => {
 });
 ```
 
-To address the failures, we add the `data-cy` attribute, and copy the DOM structure from the Angular version of the app (Green 6).
+Başarısızlıkları çözmek için, `data-cy` özniteliğini ekler ve uygulamanın Angular sürümündeki DOM yapısını kopyalarız (Green 6).
 
 ```tsx
 // src/components/HeaderBarBrand.tsx
@@ -364,13 +364,13 @@ export default function HeaderBarBrand() {
 
 ![HeaderBarBrand-NavLink-Green2](../img/HeaderBarBrand-NavLink-Green2.png)
 
-There is a possible test refactor at this point, should we segregate the test in to two distinct parts, or should it be all under a single `it` block?
+Bu noktada bir test yeniden yapılandırması mümkündür, iki farklı bölüme ayırmamız gerekiyor mu yoksa tek bir `it` bloğu altında mı olmalıdır?
 
-A Cypress component test is a small scale e2e; there is no need to keep the tests short to have a smaller blast radius in case of a failure because the runner makes diagnosis easy. What matters from a test perspective is the beginning state of a test; if reaching that state is common, then usually it is an opportunity for a test enhancement vs partial test duplication.
+Bir Cypress bileşen testi, küçük ölçekli bir e2e testidir; bir hatanın yarattığı zararın küçültülmesi için testleri kısa tutmaya gerek yoktur, çünkü çalıştırıcı teşhis etmeyi kolaylaştırır. Bir test perspektifinden önemli olan, testin başlangıç durumudur; bu duruma ulaşmak yaygınsa, genellikle bir test geliştirme fırsatıdır, kısmi test çoğaltması yerine.
 
-In our case, it is a simple component, we can either keep the test long or use a before hook for the common state (the mounting of the component) and have 2 distinct tests. Here are the two versions (Refactor 6):
+Bizim durumumuzda, basit bir bileşen olduğu için, testi uzun tutabilir veya ortak durum için bir before hook kullanabiliriz (bileşenin montajı), böylece 2 ayrı test olur. İşte iki farklı sürüm (Refaktör 6):
 
-> Tip: In a long test [`cy.log()`](https://docs.cypress.io/api/commands/log#Syntax) can be used for delimitation.
+> İpucu: Uzun bir testte [`cy.log()`](https://docs.cypress.io/api/commands/log#Syntax), sınır belirlemede kullanılabilir.
 
 ```tsx
 // src/components/HeaderBarBrand.cy.tsx
@@ -441,7 +441,7 @@ describe("HeaderBarBrand", () => {
 });
 ```
 
-### RTL version of the component test
+### Bileşen testinin RTL sürümü
 
 ```tsx
 // src/components/HeaderBarBrand.test.tsx
@@ -482,51 +482,51 @@ describe("HeaderBarBrand", () => {
 });
 ```
 
-## Summary
+## Özet
 
-We added a failing test for a link that goes to an href (Red 1).
+Bir href'ye giden bir bağlantı için başarısız bir test ekledik (Kırmızı 1).
 
-We added the link to the component (Green 1).
-
-</br>
-
-The icon / link was not visible (Red 2).
-
-We added a `react-icon` and verified the visibility of the link (Green 2).
+Bağlantıyı bileşene ekledik (Yeşil 1).
 
 </br>
 
-We added a failing test for a new feature to open a new tab when clicking on the external link (Red 3).
+Simgenin / bağlantının görünmediği tespit edildi (Kırmızı 2).
 
-We added the `target=_blank` and `rel` attributes to the component (Green 3).
-
-We added CSS to make the component look better (Refactor 3).
+`react-icon` ekledik ve bağlantının görünürlüğünü doğruladık (Yeşil 2).
 
 </br>
 
-We improved the test by making a deeper check and using the `data-cy` selector (Red 4).
+Dış bağlantıya tıklandığında yeni bir sekme açmak için yeni bir özellik için başarısız bir test ekledik (Kırmızı 3).
 
-Subsequently we improved the component to pass the test (Green 4).
+`target=_blank` ve `rel` özniteliklerini bileşene ekledik (Yeşil 3).
 
-</br>
-
-We added `react-router` and used `NavLink` for the internal link. We got two failures, one for NavLink not having a `to` attribute, the other about the test not being wrapped by a `Router` component (Red 5).
-
-We add the `to` attribute to `NavLink`, and wrapped the mounted component in `BrowserRouter` (Green 5).
+Bileşenin görünümünü iyileştirmek için CSS ekledik (Refaktör 3).
 
 </br>
 
-Looking at the [Angular version of the app](https://papa-heroes-angular.azurewebsites.net/heroes), we added new tests for the DOM structure (Red 6).
+Daha kapsamlı bir kontrol yapmak ve `data-cy` seçicisini kullanmak için testi iyileştirdik (Kırmızı 4).
 
-We improved the component to pass the test (Green 6).
+Ardından bileşeni teste geçmek için iyileştirdik (Yeşil 4).
 
-We refactored the test (Refactor 6)
+</br>
 
-## Takeaways
+Dahili bağlantı için `react-router` ekledik ve yönlendirme için `NavLink` kullandık. `NavLink`'in bir `to` özniteliği olmadığı için iki hata aldık, diğeri de testin `Router` bileşeni tarafından sarılmamış olmasıydı (Kırmızı 5).
 
-- There are [3 ways to deal with a 2nd tab](https://glebbahmutov.com/blog/cypress-second-tab/) in Cypress. Most the time it suffices to check for the `href` attribute
-- [`react-router`](https://reactrouter.com/en/main) is a de-facto solution to routing in React apps. We use [`NavLink`](https://reactrouter.com/en/main/components/nav-link) with a `to` attribute for navigation.
-- For component tests that have to do with `react-router`, wrap the component in `BrowserRouter`.
-- There is no concept of url in a Cypress component test, however clicking on links does indeed change a url attribute which we can verify.
-- A Cypress component test is a small scale e2e; there is no need to keep the tests short to have a smaller blast radius in case of a failure because the runner makes diagnosis easy. What matters from a test perspective is the beginning state of a test; if reaching that state is common, then usually it is an opportunity for a test enhancement vs partial test duplication.
-- In a long test [`cy.log()`](https://docs.cypress.io/api/commands/log#Syntax) can be used for delimitation.
+`NavLink`'e `to` özniteliğini ekledik ve bileşeni `BrowserRouter` ile sararak sorunu çözdük (Yeşil 5).
+
+</br>
+
+[Angular uygulamasının](https://papa-heroes-angular.azurewebsites.net/heroes) görsel yapısal özelliklerini inceleyerek bileşene yeni testler ekledik (Kırmızı 6).
+
+Bileşeni testi geçmesi için iyileştirdik (Yeşil 6).
+
+Testi yeniden düzenledik (Refaktör 6).
+
+## Çıkarılacak Dersler
+
+- Cypress'te ikinci sekme ile ilgili [3 yöntem](https://glebbahmutov.com/blog/cypress-second-tab/) vardır. Çoğu zaman `href` özniteliği için kontrol yeterlidir.
+- React uygulamalarında yönlendirmede [`react-router`](https://reactrouter.com/en/main) de facto bir çözümdür. Navigasyon için [`NavLink`](https://reactrouter.com/en/main/components/nav-link) ile bir `to` özniteliği kullanırız.
+- `react-router` ile ilgili bileşen testleri için bileşeni `BrowserRouter` ile sarmak gerekir.
+- Cypress bileşen testinde URL kavramı yoktur, ancak bağlantılara tıklamak gerçekten bir URL özniteliğini değiştirir, bunu doğrulayabiliriz.
+- Bir Cypress bileşen testi küçük ölçekli bir end-to-end testidir. Bir hata durumunda tanı koymayı kolaylaştırmak için testleri kısa tutmak gerekli değildir. Test açısından önemli olan, bir testin başlangıç durumudur; eğer bu duruma ulaşmak yaygınsa, genellikle bir test geliştirme fırsatıdır, kısmi test kopyalaması değil.
+- Uzun bir testte, delimitasyon için [`cy.log()`](https://docs.cypress.io/api/commands/log#Syntax) kullanılabilir.
