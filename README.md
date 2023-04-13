@@ -1,6 +1,6 @@
 ## Önsöz
 
-> [CCTDD: Cypress Component Test Driven Design](https://muratkerem.gitbook.io/cctdd/) kitabının Türkçe çevirisi
+[CCTDD: Cypress Component Test Driven Design](https://muratkerem.gitbook.io/cctdd/) kitabının Türkçe çevirisidir.
 
 Cypress Bileşen Testi ile TDD (Test Driven Design) uygulamanın, mühendisliğimizi bir üst seviyeye taşıyabileceğine inanıyorum.
 
