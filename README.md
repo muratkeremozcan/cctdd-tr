@@ -1,5 +1,7 @@
 ## Önsöz
 
+> [CCTDD: Cypress Component Test Driven Design](https://muratkerem.gitbook.io/cctdd/) kitabının Türkçe çevirisi
+
 Cypress Bileşen Testi ile TDD (Test Driven Design) uygulamanın, mühendisliğimizi bir üst seviyeye taşıyabileceğine inanıyorum.
 
 Bu kitapta Angular'ın Kahramanlar Turu'nu (Tour of Heroes), Cypress, React ve TS kullanarak bileşen test odaklı bir şekilde yeniden oluşturacağız. Bileşenleri oluşturduktan sonra, TDD'nin yönlendirme, durum yönetimi ve Cypress e2e testi ile nasıl uygulanabileceğini inceleyeceğiz. Ayrıca Cypress ile API e2e testi hakkında bilgi edineceğiz ve UI entegrasyon testlerinin nerede yer alacağını göreceğiz.
