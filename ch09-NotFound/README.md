@@ -1,10 +1,10 @@
 # NotFound
 
-In the Angular version of the app, the component mainly consists of an icon and span, wrapped by divs for styling.
+Angular sürümündeki uygulamada, bileşen esas olarak stil için div'lerle sarılı bir simge ve span'dan oluşur.
 
 ![NotFound-initial](../img/NotFound-initial.png)
 
-Create a branch `feat/NotFound`. Create 2 files under `src/components/` folder; `NotFound.cy.tsx`, `NotFound.tsx`. As usual, start minimal with a component rendering; copy the below to the files and execute the test after opening the runner with `yarn cy:open-ct`.
+`feat/NotFound` adında bir dal oluşturun. `src/components/` klasörü altında 2 dosya oluşturun; `NotFound.cy.tsx`, `NotFound.tsx`. Her zamanki gibi, bir bileşeni işlemeye başlamak için minimal başlayın; dosyalara aşağıdakileri kopyalayın ve `yarn cy:open-ct` ile çalıştırıcıyı açtıktan sonra testi çalıştırın.
 
 ```tsx
 // src/components/NotFound.cy.tsx
@@ -25,7 +25,7 @@ export default function NotFound() {
 }
 ```
 
-Write a test for the skeleton of the component we would like to have (Red 1). Until now we have been using Cypress' [within](https://docs.cypress.io/api/commands/within). Since we are testing a component and everything is under one tag, using within is optional. We can also import the styles into component at the beginning, since we will do it later as with every component.
+Bileşenin iskeleti için bir test yazın (Kırmızı 1). Şimdiye kadar Cypress'in [within](https://docs.cypress.io/api/commands/within) kullanıyorduk. Bir bileşeni test ediyoruz ve her şey tek bir etiketin altında olduğu için içinde kullanmak isteğe bağlıdır. Ayrıca başlangıçta, her bileşenle olduğu gibi daha sonra da stilleri bileşene aktarabiliriz.
 
 ```tsx
 // src/components/NotFound.cy.tsx
@@ -43,7 +43,7 @@ describe("NotFound", () => {
 });
 ```
 
-To make the test pass, we create a minimal component (Green 1).
+Testi geçmek için minimal bir bileşen oluşturuyoruz (Yeşil 1).
 
 ```tsx
 // src/components/NotFound.tsx
@@ -57,7 +57,7 @@ export default function NotFound() {
 }
 ```
 
-We would like that `svg` to be an actual icon. Let's import a triangle icon with an exclamation inside from [react-icons](https://react-icons.github.io/react-icons/search?q=tria). Of significance here is the test tool aiding our design in a RedGreenRefactor cycle (Refactor 1).
+Bu `svg`'nin gerçek bir simge olmasını istiyoruz. [react-icons](https://react-icons.github.io/react-icons/search?q=tria) adresinden içinde ünlem olan bir üçgen simge içe aktaralım. Burada önemli olan, test aracının RedGreenRefactor döngüsünde tasarımımıza yardımcı olmasıdır (Düzenleme 1).
 
 ```tsx
 // src/components/NotFound.tsx
@@ -73,7 +73,7 @@ export default function NotFound() {
 }
 ```
 
-This one is a simple component, there aren't any more worthwhile tests to add. All we have left are the styles. We can copy those from the Angular version of the app (Refactor 1).
+Bu basit bir bileşendir, eklemeye değer başka testler yoktur. Geriye kalan tek şey stillerdir. Bunları uygulamanın Angular sürümünden kopyalayabiliriz (Düzenleme 1).
 
 ```tsx
 import { FaExclamationTriangle } from "react-icons/fa";
@@ -95,7 +95,7 @@ export default function NotFound() {
 
 ![NotFound-Refactor1](../img/NotFound-Refactor1.png)
 
-## RTL version of the component test
+## Bileşen testinin RTL sürümü
 
 ```tsx
 // src/components/NotFound.test.tsx
@@ -116,12 +116,12 @@ describe("NotFound", () => {
 });
 ```
 
-## Summary
+## Özet
 
-This one was a simple component where we solidified some of the past learnings.
+Bu, geçmişte öğrendiklerimizi pekiştirdiğimiz basit bir bileşendi.
 
-In a component test, we can immediately setup the styles. In our examples so far this has been a simple import.
+Bir bileşen testinde, stilleri hemen ayarlayabiliriz. Şimdiye kadar ki örneklerimizde bu basit bir içe aktarma olmuştur.
 
-It is profitable to take advantage of `react-icons` and / or `styles-icons`.
+`react-icons` ve/veya `styles-icons` kullanmanın avantajlarından yararlanmak faydalıdır.
 
-Cypress component tests can aid our visual design in RedGreenRefactor cycles.
+Cypress bileşen testleri, RedGreenRefactor döngülerinde görsel tasarımımıza yardımcı olabilir.
