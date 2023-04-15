@@ -1,10 +1,10 @@
 # NavBar
 
-In the Angular version of the app, the component consists of a `nav`, a `p` with a hard-coded string "Menu", a `ul`, and three links to our routes.
+Angular sürümündeki uygulamada, bileşen `nav`, "Menu" yazan `p` ve üç rotaya bağlantı içeren `ul` içerir.
 
 ![NavBar-initial](../img/NavBar-initial.png)
 
-Create a branch `feat/NavBar`. Create 2 files under `src/components/` folder; `NavBar.cy.tsx`, `NavBar.tsx`. As usual, start minimal with a component rendering; copy the below to the files and execute the test after opening the runner with `yarn cy:open-ct`.
+`feat/NavBar` adında bir dal oluşturun. `src/components/` klasörü altında `NavBar.cy.tsx`, `NavBar.tsx` adında 2 dosya oluşturun. Her zamanki gibi, bileşenin işlemesi için en az düzeyde başlayın; aşağıdakileri dosyalara kopyalayın ve `yarn cy:open-ct` ile koşucuyu açtıktan sonra testi çalıştırın.
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -25,7 +25,7 @@ export default function NavBar() {
 }
 ```
 
-We start with a failing test that verifies the skeleton of the component. We want the top tag to have a `data-cy` attribute with the component name, making the component easier to reference when it is used. We can also add `data-cy` attributes for the tags that may be of importance later (Red 1).
+Bileşenin iskeletini doğrulayan başarısız bir testle başlıyoruz. Üst etiketin bileşen adıyla `data-cy` niteliği içermesini istiyoruz, bu da bileşeni kullanıldığında daha kolay başvurulabilir hale getirir. Daha sonra önemli olabilecek etiketler için de `data-cy` nitelikleri ekleyebiliriz (Kırmızı 1).
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -43,7 +43,7 @@ describe("NavBar", () => {
 });
 ```
 
-The minimal component that passes this test is like so (Green 1):
+Bu testi geçen en küçük bileşen şu şekildedir (Yeşil 1):
 
 ```tsx
 // src/components/NavBar.tsx
@@ -61,7 +61,7 @@ export default function NavBar() {
 }
 ```
 
-In the previous components that had to do with application routes (`HeaderBarBrand`, `ListHeader`), we used `NavLink` from `react-router-dom`. We can refactor the component the same way. The refactor results in a familiar `Router` error we saw in the previous routing related components. In the component test, we wrap the mount with `BrowserRouter` to address the issue (Refactor 1).
+Uygulama rotalarıyla ilgili önceki bileşenlerde (`HeaderBarBrand`, `ListHeader`) `react-router-dom`'dan `NavLink` kullandık. Bileşeni aynı şekilde yeniden düzenleyebiliriz. Yeniden düzenleme, önceki yönlendirme ile ilgili bileşenlerde gördüğümüz tanıdık bir `Router` hatasıyla sonuçlanır. Bileşen testinde, sorunu gidermek için `BrowserRouter` ile bağlamayı sararız (Düzenleme 1).
 
 ```tsx
 // src/components/NavBar.tsx
@@ -102,7 +102,7 @@ describe("NavBar", () => {
 });
 ```
 
-We have a new failure in the test `*(uncaught exception)**TypeError: Cannot read properties of undefined (reading 'pathname')*`. There is also a TS error that gives us a hint `Property 'to' is missing in type '{}' but required in type 'NavLinkProps` (Red 2). We need to enhance the links with `to` attributes (Green 2). It is of significance here that TS also aids us, alongside a failing test, figuring out the source of the failure.
+Testte yeni başarısızlık var  `*(uncaught exception)**TypeError: Cannot read properties of undefined (reading 'pathname')*`. Ayrıca, başarısızlığın kaynağını anlamamıza yardımcı olan bir TS hatası var `Property 'to' is missing in type '{}' but required in type 'NavLinkProps` (Kırmızı 2). Bağlantıları `to` nitelikleriyle güçlendirmemiz gerekiyor (Yeşil 2). Burada önemli olan, TS'nin de başarısız bir testle birlikte, başarısızlığın kaynağını anlamamıza yard
 
 ```tsx
 // src/components/NavBar.tsx
@@ -122,15 +122,15 @@ export default function NavBar() {
 }
 ```
 
-We have a walking skeleton of the component.
+Bileşenin iskeleti olmuş durumda.
 
 ![NavBar-Refactor1](../img/NavBar-Refactor1.png)
 
-Any time we have a green test, we can either refactor or add additional tests until we get another red. Let's add some tests which verify that clicking on these routes takes us to the respective urls. The test is similar to what was done in `HeaderBarBrand` and `ListHeader` components. We can use Cypress' selector playground for this enhancement. `cy.get` targeting an `href` is a good selector in this case, which will not change unless the route changes (Green 3).
+Yeşil bir testimiz olduğunda, başka bir kırmızı elde edene kadar kodu yeniden düzenleyebilir veya ek testler ekleyebiliriz. Bu rotalara tıkladığımızda bizi ilgili URL'lere götüren testler ekleyelim. Test, `HeaderBarBrand` ve `ListHeader` bileşenlerinde yapılanlara benzer. Bu geliştirmeler için Cypress'ın seçici oyun alanını kullanabiliriz. Bu durumda, rota değişmedikçe değişmeyecek olan `href` hedefli `cy.get` iyi bir seçicidir (Yeşil 3).
 
 ![NavBar-selector-playground](../img/NavBar-selector-playground.png)
 
-Adding the route checks, the test is still green.
+Rota kontrollerini ekleyerek, test hala yeşil.
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -162,7 +162,7 @@ describe("NavBar", () => {
 });
 ```
 
-The repetition is not looking great. Let's refactor the test a bit (Refactor 3).
+Tekrarlama iyi görünmüyor. Testi biraz düzenleyelim (Düzenleme 3).
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -190,7 +190,7 @@ describe("NavBar", () => {
 });
 ```
 
-The test is still green as a part of the refactor. The only additional test we can think of at this time is checking the string in the link. We can indicate that the `route` is of type `string`, and we can match either casing with `{matchCase: false}` (Refactor 3).
+Test yeniden yapılandırma sırasında hala yeşil. Şu anda düşünebileceğimiz tek ek test, bağlantıdaki dizeyi kontrol etmektir. `route`'un `string` türünde olduğunu belirtebiliriz ve `{matchCase: false}` ile her iki büyük/küçük harf eşlemesini yapabiliriz (Düzenleme 3).
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -223,7 +223,7 @@ describe("NavBar", () => {
 
 ![Navbar-Green4](../img/Navbar-Refactor3.png)
 
-We went through RedGreenRefactor cycles, we enhanced the test as much as possible, and we did not get any failures. At this time we can use the test tool as the design tool and enhance the visuals. Let's add the css from the Angular version of the component. Remember to add `import '../styles.scss'` to the component test.
+KırmızıYeşilDüzenleme döngülerinden geçtik, testi mümkün olduğunca geliştirdik ve başarısızlık almadık. Şu anda test aracını tasarım aracı olarak kullanabilir ve görselleri geliştirebiliriz. Angular bileşeninin CSS'ini ekleyelim. Bileşen testine `import '../styles.scss'` eklemeyi unutmayın.
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -247,11 +247,11 @@ export default function NavBar() {
 }
 ```
 
-Adding the styles, we realize an issue in the visuals; every link is active all the time (Red 4).
+Stilleri eklerken, görsellerde bir sorun fark ettik; her bağlantı sürekli olarak etkin (Kırmızı 4).
 
 .![NavLink-Red4](../img/NavLink-Red4.png)
 
-Of significance here is component test aiding us as the design tool to create a new failing test. What we need is the active node to have the class `active-link` and the other nodes not to have it. Let's write a failing test (Red 4).
+Burada önemli olan, bileşen testinin bize tasarım aracı olarak yardımcı olması ve yeni bir başarısız test oluşturmasıdır. Aktif düğümün `active-link` sınıfına sahip olması ve diğer düğümlerin sahip olmaması gerekiyor. Başarısız bir test yazalım (Kırmızı 4).
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -286,7 +286,7 @@ describe("NavBar", () => {
 });
 ```
 
-To pass this test, we need a logic per link to have the `active-link` css if the link is active, otherwise have no css (Green 4).
+Bu testi geçmek için, bağlantı aktifse `active-link` css'sine sahip olan ve değilse css'siz bir mantığa ihtiyacımız var (Yeşil 4).
 
 ```tsx
 // src/components/NavBar.tsx
@@ -321,7 +321,7 @@ export default function NavBar() {
 }
 ```
 
-We can refactor the repeated code into a helper (Refactor 4).
+Tekrar eden kodu bir yardımcıya çıkarabiliriz (Düzenleme 4).
 
 ```tsx
 // src/components/NavBar.tsx
@@ -350,7 +350,7 @@ export default function NavBar() {
 }
 ```
 
-In the component test, we also realize that the subject `cy.get(`\[href="/${_route_}"]`)` is common to each assertion. We can take advantage of Cypress' chain syntax to lean out the assertions. We can also have a little less hard-coding with the menu length assertion (Refactor 4).
+Bileşen testinde, `cy.get(`[href="/${*route*}"]`)` öznesinin her doğrulama için ortak olduğunu fark ediyoruz. Cypress' zincir sözdiziminden faydalanarak doğrulamaları daha hafif hale getirebiliriz. Ayrıca menü uzunluğu doğrulamasında daha az sabit kodlama yapabiliriz (Düzenleme 4).
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -387,7 +387,7 @@ describe("NavBar", () => {
 
 ![NavBar-refactor7](../img/NavBar-refactor7.png)
 
-## RTL version of the component test
+## Bileşen testinin RTL sürümü
 
 ```tsx
 // src/components/NavBar.test.tsx
@@ -432,42 +432,42 @@ describe("NavBar", () => {
 });
 ```
 
-## Summary
+## Özet
 
-We identified the skeleton of the component and wrote a failing test for it (Red 1).
+Bileşenin iskeletini belirledik ve onun için başarısız bir test yazdık (Kırmızı 1).
 
-We created a minimal component to pass the test (Green 1).
+Testi geçmek için minimal bir bileşen oluşturduk (Yeşil 1).
 
-We refactored the component to use NavLinks instead of anchor tags (Refactor 1)
-
-</br>
-
-We had a test failure, aided by TS errors, about a missing an attribute from the NavLinks (Red 2).
-
-The `to` attributes and their routes got added to the NavLinks (Green 2).
-
-Similar to the previous chapters, of significance here was TS also aiding us, alongside a failing test.
+Bileşeni, bağlantı etiketleri yerine NavLinks kullanacak şekilde yeniden düzenledik (Düzenleme 1)
 
 </br>
 
-Any time we have a green test, \*we can either refactor or add additional tests until we get another red\*.
+NavLinks'ten eksik bir öznitelikle ilgili olarak TS hatalarıyla desteklenen bir test hatası yaşadık (Kırmızı 2).
 
-Our preference is adding tests before styles.
+`to` öznitelikleri ve rotaları NavLinks'lere eklendi (Yeşil 2).
 
-We added tests for route checks (Green 3), and refactored the test further (Refactor 3).
+Önceki bölümlere benzer şekilde, burada önemli olan TS'nin de başarısız bir testle birlikte bize yardımcı olmasıydı.
 
 </br>
 
-Once we exhausted the tests we can think of, we added styles to the component and realized something off with visuals. Every link was active (Red 4).
+Her zaman yeşil bir testimiz olduğunda, *yeniden düzenleme yapabilir veya başka bir kırmızı elde edene kadar ek testler ekleyebiliriz*.
 
-We wrote a failing test to double check the styles, using `have.class` vs `not.have.class` assertions (Red 4).
+Tercihimiz, stillerden önce test eklemektir.
 
-We added logic to the component css to determine the style of active vs inactive links (Green 4).
+Rota kontrolleri için testler ekledik (Yeşil 3) ve testi daha da düzenledik (Düzenleme 3).
 
-We refactored the logic to be more DRY (Refactor 4).
+</br>
 
-Finally, we refactored the component test to take advantage of Cypress' chaining syntax and use less magic numbers (Refactor 4).
+Düşünebileceğimiz tüm testleri tükettikten sonra, bileşene stiller ekledik ve görsellerle ilgili bir şeylerin ters gittiğini fark ettik. Her bağlantı etkindi (Kırmızı 4).
 
-## Takeaway
+Stilleri iki kez kontrol etmek için başarısız bir test yazdık, `have.class` ve `not.have.class` iddialarını kullanarak (Kırmızı 4).
 
-Of significance here was component testing aiding us as the design tool to create a new failing test. We wrote as many tests as we could think of, but only when we saw that all links are always active, we thought about an additional feature.
+Bileşen css'sine aktif ve pasif bağlantıların stilini belirlemek için mantık ekledik (Yeşil 4).
+
+Mantığı daha DRY (Don't Repeat Yourself) olacak şekilde yeniden düzenledik (Düzenleme 4).
+
+Sonunda, bileşen testini Cypress'in zincirleme sözdiziminden faydalanacak şekilde yeniden düzenledik ve daha az sihirli sayı kullandık (Düzenleme 4).
+
+## Çıkarılacak Ders
+
+Burada önemli olan, bileşen testinin bize yeni başarısız bir test oluşturmak için tasarım aracı olarak yardımcı olmasıydı. Düşünebildiğimiz kadar çok test yazdık, ancak tüm bağlantıların her zaman etkin olduğunu gördüğümüzde, ek bir özellik düşündük.
