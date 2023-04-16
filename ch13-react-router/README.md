@@ -1,24 +1,24 @@
 # react-router
 
-Our `Heroes` component is needing to take advantage of routes, but we have not set that up in our app yet. Until now, every component has been designed in isolation. Meanwhile, the real app launches on the generic page, and a user cannot do much with it. During this section we will be setting up [`react-router`](https://reactrouter.com/en/v6.3.0/getting-started/overview) and we will be using e2e to test it.
+`Heroes` bileşenimiz, rotaları kullanmaya ihtiyaç duyuyor, ancak uygulamamızda bunu henüz ayarlamadık. Şu ana kadar, her bileşen izole bir şekilde tasarlandı. Bu arada, gerçek uygulama genel bir sayfada başlatılır ve kullanıcı bununla çok fazla işlem yapamaz. Bu bölümde [`react-router`](https://reactrouter.com/en/v6.3.0/getting-started/overview) ayarlayacağız ve bunu test etmek için e2e kullanacağız.
 
-> `react-router-dom` and `react-router-native` are included in `react-router`. We will be referring to `react-router-dom` as `react-router` since we are in working on a web app.
+> `react-router-dom` ve `react-router-native` `react-router` içindedir. Web uygulaması üzerinde çalıştığımız için `react-router-dom`'u `react-router` olarak adlandıracağız.
 
-## Using e2e
+## e2e Kullanımı
 
-We can test some of the routing capability in components in a component test, if those components have navigation links in them. We implemented examples of these in `HeaderBar` and `NavBar` components. Moving past that, the most confident way to test routing is using e2e tests because it lets us cover the app's routing features and possible flows entirely.
+Bileşenlerin içinde gezinme bağlantıları olan bileşenlerde, rotalama özelliğinin bir kısmını bileşen testinde test edebiliriz. `HeaderBar` ve `NavBar` bileşenlerinde bunların örneklerini uyguladık. Bunun ötesinde, rotayı test etmenin en güvenilir yolu e2e testler kullanmaktır çünkü uygulamanın rotalama özelliklerini ve olası akışlarını tamamen kapsamamızı sağlar.
 
-We start the e2e runner with `yarn cy:open-e2e`. This command internally runs `yarn start` which also serves the app on `localhost:3000`. At the moment we are seeing the generic React app when running the `spec` file. We can rename that to `routes-nav.cy.ts`.
+e2e koşucusunu `yarn cy:open-e2e` ile başlatıyoruz. Bu komut, `localhost:3000` adresinde uygulamaya hizmet veren `yarn start` komutunu da çalıştırır. Şu anda, `spec` dosyasını çalıştırırken genel React uygulamasını görüyoruz. Bunu `routes-nav.cy.ts` olarak yeniden adlandırabiliriz.
 
 ![react-router-initial](../img/react-router-initial.png)
 
-Our requirement is to serve our app, be able to click on the links, land on the right urls and render the respective components.
+Gereksinimimiz, uygulamamızı sunmak, bağlantılara tıklamak, doğru URL'lere gitmek ve ilgili bileşenleri işlemektir.
 
-> We have not implemented Villains component yet, that is okay for now.
+> Henüz Villains bileşenini uygulamadık, şimdilik bu sorun değil.
 
 ## ![react-router-initial2](../img/react-router-initial2.png)
 
-Starting top down, our first failing test is to see if we can render the `HeaderBar` component (Red 1).
+Yukarıdan aşağıya doğru başlayarak, ilk başarısız testimiz `HeaderBar` bileşenini işlemek için (Kırmızı 1).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -30,7 +30,7 @@ describe("e2e sanity", () => {
 });
 ```
 
-Whenever we are testing a component that includes other components, we have a best practice to take a look at the child component source and the component test. This is all the same when testing the app with e2e. `src/components/HeaderBar.cy.tsx` uses `BrowserRouter` to wrap the `HeaderBar` while mounting it, that means our main app will need `BrowserRouter` as well (Green 1).
+Diğer bileşenleri içeren bir bileşeni test ettiğimizde, çocuk bileşenin kaynağına ve bileşen testine bakmak gibi en iyi bir uygulama vardır. e2e ile uygulamayı test ederken de aynıdır. `src/components/HeaderBar.cy.tsx`, `HeaderBar`'ı monte ederken `BrowserRouter` ile sarmalar, bu da ana uygulamamızın da `BrowserRouter`'a ihtiyacı olduğu anlamına gelir (Yeşil 1).
 
 ```tsx
 // src/App.tsx
@@ -49,7 +49,7 @@ function App() {
 export default App;
 ```
 
-Our second requirement is to display the `NavBar` component (Red 2).
+İkinci gereklilik `NavBar` bileşenini göstermektir (Kırmızı 2).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -62,7 +62,7 @@ describe("e2e sanity", () => {
 });
 ```
 
-Add the `NavBar />` to our app and the test is passing (Green 2).
+`NavBar />`'ı uygulamamıza ekleyin ve test geçiyor (Yeşil 2).
 
 ```tsx
 // src/App.tsx
@@ -83,7 +83,7 @@ function App() {
 export default App;
 ```
 
-We can fine tune the render by adding some of the css from the original app (Refactor 2).
+Özgün uygulamadan bazı css ekleyerek işlemeyi daha da düzgün hale getirebiliriz (Refaktör 2).
 
 ```tsx
 // src/App.tsx
@@ -107,13 +107,13 @@ export default App;
 
 ![react-router-Refactor2](../img/react-router-Refactor2.png)
 
-Looking at `NavBar.cy.tsx` we see that we already covered click navigation to heroes, villains, and about. We do not have to repeat this test in e2e. Always check the test coverage of lower level tests and prefer not to duplicate the effort at a higher level, because it will have extra cost but might not provide extra confidence.
+`NavBar.cy.tsx`'ye baktığımızda kahramanlar, kötü adamlar ve hakkında tıklama navigasyonunu zaten kapsadığımızı görüyoruz. Bu testi e2e'de tekrarlamamıza gerek yok. Daha düşük seviyedeki testlerin kapsamını her zaman kontrol edin ve daha yüksek seviyede çaba harcamaktansa çabayı çoğaltmamayı tercih edin, çünkü bu daha fazla maliyet getirebilir ama ekstra güven sağlamayabilir.
 
-Whether using e2e or component tests, the flow of TDD is the same; start with something failing, do the mimimum to get it to work, and then make it better. The main distinction is scale; with e2e we need to be even more careful to have small incremental steps because the impact on the large scale of the app can be higher, making failures harder to diagnose. The obvious, but hard to implement, practice in test driven design is to write very small incremental tests at a time.
+e2e veya bileşen testleri kullanıyor olsanız bile, TDD'nin akışı aynıdır; başarısız olan bir şeyle başlayın, çalışacak şekilde en aza indirgeyin ve ardından daha iyi hale getirin. Ana ayrım ölçektir; e2e ile daha küçük artımlı adımlara sahip olmak için daha dikkatli olmamız gerekiyor çünkü uygulamanın büyük ölçekteki etkisi daha yüksek olabilir ve başarısızlıkları teşhis etmeyi daha zor hale getirebilir. Test odaklı tasarımda uygulaması zor olan açık uygulama, bir seferde çok küçük artımlı testler yazmaktır.
 
-## Routing
+## Yönlendirme
 
-Write a failing test that checks that we render the `NotFound` component when visiting a non-existing route (Red 3).
+Mevcut olmayan bir rotayı ziyaret ettiğimizde `NotFound` bileşenini işleyip işlemediğimizi kontrol eden başarısız bir test yazın (Kırmızı 3).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -130,7 +130,7 @@ describe("e2e sanity", () => {
 });
 ```
 
-To use `react-router` we need to import and wrap our component in a `Routes` component. Each component becomes an `element` prop in a `Route` component. We map the component to a `path` prop. `*` means that anything that does not match other routes will fall-over to this one (Green 3)
+`react-router` kullanmak için bileşenimizi bir `Routes` bileşeniyle sarmalamanız ve içe aktarmanız gerekir. Her bileşen, bir `Route` bileşenindeki bir `element` özelliği olur. Bileşeni bir `path` özelliğine eşleriz. `*` ise diğer yollara uymayan her şeyin buna yönlendirileceği anlamına gelir (Yeşil 3).
 
 ```tsx
 // src/App.tsx
@@ -156,7 +156,7 @@ function App() {
 export default App;
 ```
 
-We can slightly enhance the render with styling (Refactor 3).
+`react-router` kullanarak render'ı biraz daha geliştirebiliriz (Refactor 3).
 
 ```tsx
 // src/App.tsx
@@ -187,7 +187,7 @@ export default App;
 
 ![react-router-Refactor3](../img/react-router-Refactor3.png)
 
-Let's make the route setup a bit more interesting by adding the `About` component. Copy the below into `src/About.tsx`
+`About` bileşenini ekleyerek yol ayarını biraz daha ilginç hale getirelim. Aşağıdakileri `src/About.tsx`'ye kopyalayın.
 
 ```tsx
 // src/About.tsx
@@ -233,7 +233,7 @@ const About = () => (
 export default About;
 ```
 
-Now we can write a failing test that directly navigates to the route. Recall that we already wrote the click-nav version in the `NavBar` component test and we are not repeating that in the e2e (Red 4).
+Şimdi yola doğrudan gitmeyi test eden başarısız bir test yazabiliriz. `NavBar` bileşen testinde tıklama-nav sürümünü zaten yazdık ve bunu e2e'de tekrar etmiyoruz (Kırmızı 4).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -255,7 +255,7 @@ describe("e2e sanity", () => {
 });
 ```
 
-We setup the `About` component for the `/about` route to pass the test (Green 4).
+`About` bileşenini `/about` yoluna ayarlayarak testi geçerli hale getiriyoruz (Yeşil 4).
 
 ```tsx
 // src/App.tsx
@@ -288,7 +288,7 @@ export default App;
 
 ![react-router-Green4](../img/react-router-Green4.png)
 
-Any time we have passing tests, we want to consider a refactor or add more tests before adding more source code. We can supplement the tests with url checks, in addition to the component render when navigating to a url (Refactor 4).
+test eklemeyi düşünmek istiyoruz. URL kontrollerini ekleyerek testleri, bir url'ye yönlendirirken bileşen render'ının yanı sıra destekleyebiliriz (Refactor 4).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -314,7 +314,7 @@ describe("e2e sanity", () => {
 });
 ```
 
-The first test begs the question, what should the default url be for our app? The most involved component is `Heroes`, so that is an appropriate choice. We want to be redirected to `/heroes` route and display `Heroes` component when navigating to an empty route. Let's add a failing test for this need (Red 5).
+Uygulamamız için varsayılan URL'nin ne olması gerektiği konusunda bir soru sormak istiyoruz. En karmaşık bileşen `Heroes` olduğundan, bu uygun bir seçimdir. Boş bir yola gidildiğinde `/heroes` yoluna yönlendirilmek ve `Heroes` bileşenini görüntülemek istiyoruz. Bu ihtiyaca yönelik başarısız bir test ekleyelim (Kırmızı 5).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -342,7 +342,7 @@ describe("e2e sanity", () => {
 });
 ```
 
-The way to implement this feature in `react-router` is by using `Navigate` component. We also need the `/heroes` route now so that it can be navigated to (Green 5).
+`react-router`da bu özelliği kullanmanın yolu `Navigate` bileşenini kullanmaktır. Şimdi, yönlendirilebilecek `/heroes` yoluna da ihtiyacımız var (Yeşil 5).
 
 ```tsx
 // src/App.tsx
@@ -376,7 +376,7 @@ function App() {
 export default App;
 ```
 
-We can tweak the initial test that checks for `HeaderBar` and `NavBar` render, which are true in all routing tests. Here it is preferred to add on to the test rather than writing a new one for redirect. Always look for opportunities to tweak what test is already existing as opposed to writing partially duplicated tests for new specs. What matters from a test perspective is the beginning state of a test; if reaching that state is common, then it is an opportunity for a test enhancement vs partial test duplication. We can also add a new test checking the direct-navigation functionality for `/heroes` route (Refactor 5).
+İlk testi, `HeaderBar` ve `NavBar`ın tüm yönlendirme testlerinde doğru olduğunu kontrol eden testi değiştirebiliriz. Burada, yönlendirmeye yönelik yeni bir test yazmak yerine testi değiştirmek tercih edilir. Mevcut testi değiştirmek için fırsatlar arayın, yeni özellikler için kısmen yinelenen testler yazmak yerine. Bir test açısından önemli olan şey, bir testin başlangıç durumudur; bu duruma ulaşmak ortaksa, o zaman bu test iyileştirmesi için bir fırsattır ve kısmi test çoğaltma yerine. Ayrıca `/heroes` rotası için doğrudan gezinme işlevselliğini kontrol eden yeni bir test ekleyebiliriz (Refactor 5).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -413,7 +413,7 @@ describe("Routes and navigation", () => {
 });
 ```
 
-What other tests can we think of at this point? How about route history? We can add a test for it, because it is low cost and confident to cover in an e2e test. We can also make the test a bit more interesting by using a different order of routes than heroes -> villains -> about (Refactor 5).
+Bu noktada başka hangi testleri düşünebiliriz? Rota geçmişi hakkında ne dersiniz? Bunun için düşük maliyetli ve güvenilir bir e2e testi ile kapsayabileceğimiz bir test ekleyebiliriz. Testi, kahramanlar -> kötü adamlar -> hakkında'dan farklı bir rota sırası kullanarak daha ilginç hale getirebiliriz (Refactor 5).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -467,9 +467,9 @@ describe("e2e sanity", () => {
 });
 ```
 
-## Using component testing
+## Bileşen testi kullanma
 
-We are very confident about direct-navigation & routing related tests with e2e. We also covered click navigation in `src/components/NotFound.cy.tsx`. In a component test, the url does not exist upon mount, and we cannot use `cy.visit`. But we can use click navigation. We can update `App.cy.tsx` as such. Switch to component testing from Cypress runner, or start it with `yarn cy:open-ct`.
+Doğrudan gezinme ve yönlendirme ile ilgili testler konusunda e2e ile çok güveniyoruz. Ayrıca `src/components/NotFound.cy.tsx` dosyasında tıklama ile gezinmeyi de ele aldık. Bir bileşen testinde, url bağlanma sırasında mevcut değildir ve `cy.visit` kullanamayız. Ancak tıklama ile gezinme kullanabiliriz. `App.cy.tsx` dosyasını bu şekilde güncelleyebiliriz. Cypress koşucusundan bileşen testine geçin veya `yarn cy:open-ct` ile başlatın.
 
 ```tsx
 import App from "./App";
@@ -500,7 +500,7 @@ describe("ct sanity", () => {
 });
 ```
 
-We check that upon mount the url is uncertain using `cy.getByCy('not-found').should('be.visible')`. The rest of the test is a copy paste from `src/components/NotFound.cy.tsx`. We could instead check the render of the child components of App component.
+Bağlanma işlemi sırasında url'nin belirsiz olduğunu `cy.getByCy('not-found').should('be.visible')` kullanarak kontrol ediyoruz. Geri kalan test, `src/components/NotFound.cy.tsx` dosyasından kopyalanan ve yapıştırılan bir kısımdır. Bunun yerine, App bileşeninin alt bileşenlerinin render'ını kontrol edebiliriz.
 
 ```tsx
 import App from "./App";
@@ -521,7 +521,7 @@ describe("ct sanity", () => {
 
 ![react-router-final](../img/react-router-final.png)
 
-This test does not add additional confidence, because it does not do anything extra over the existing e2e and component tests. At best, it can serve as a sanity test. We will keep it for now for a side project where we will compare Cypress component testing to React Testing library. Here is the initial RTL replica of the same test.
+Bu test, mevcut e2e ve bileşen testlerinin üzerinde fazladan bir güven sağlamaz çünkü ekstra bir şey yapmaz. En iyisi, akıl sağlığı testi olarak hizmet edebilir. Şimdilik Cypress bileşen testini React Testing Library ile karşılaştıran yan projede saklayacağız. İşte aynı testin başlangıç RTL kopyası.
 
 ```tsx
 // src/App.test.tsx
@@ -542,7 +542,7 @@ test("renders tour of heroes", async () => {
 // CT vs RTL: src/App.cy.tsx
 ```
 
-Update `src/setupTests.ts` to overwrite the default test id selector as `data-cy`.
+`src/setupTests.ts` dosyasını güncelleyin ve varsayılan test kimliği seçiciyi `data-cy` olarak yeniden yazın.
 
 ```tsx
 // src/setupTests.ts
@@ -553,47 +553,47 @@ import { configure } from "@testing-library/react";
 configure({ testIdAttribute: "data-cy" });
 ```
 
-Execute the unit test with `yarn test`.
+Birim testini `yarn test` ile çalıştırın.
 
-## Summary
+## Özet
 
-We wrote an e2e test to check if we can render some of the main components when the app is served (Red 1, Red 2)
+Uygulama hizmete sunulduğunda ana bileşenlerin bazılarını oluşturup oluşturamadığımızı kontrol etmek için bir e2e testi yazdık (Kırmızı 1, Kırmızı 2)
 
-We added `BrowserRouter` wrapping the main component to pass the tests (Green 1, Green 2).
+Testleri geçmek için ana bileşeni saran `BrowserRouter` ekledik (Yeşil 1, Yeşil 2).
 
-We added styles (Refactor 2).
-
-</br>
-
-We added a failing test for an invalid route, rendering the `NotFound` component (Red 3).
-
-We created the backbone of the route setup; a Routes component wrapping a Route component, with an element prop of `NotFound` (Green 3).
-
-We added styles (Refactor 3).
+Stil ekledik (Refaktör 2).
 
 </br>
 
-We added a test for a direct navigation to /about routes (Red 4).
+Geçersiz bir rota için başarısız olan bir test ekledik ve `NotFound` bileşenini oluşturduk (Kırmızı 3).
 
-We setup the route for `About` component (Green 4).
+Rota kurulumunun temelini oluşturduk; `NotFound` öğesi olan Route bileşenini saran Routes bileşeni (Yeşil 3).
 
-</br>
-
-We added a test for the initial redirect of the app from / to /heroes (Red 5).
-
-We enhanced the setup of routes with `Navigate` (Green 5).
-
-We added a test to check the direct navigation to /heroes, and another to test the route history (Refactor 5).
+Stil ekledik (Refaktör 3).
 
 </br>
 
-We had a look at the test `App.cy.tsx`, and discussed test duplication. We deemed the test okay to keep as a sanity although it does not do anything extra over another component test or the e2e. The other reason to keep it was to start a study of 1:1 comparisons of CT with RTL. We updated the App RTL test to mirror the App sanity component test.
+/about rotaları için doğrudan bir navigasyon testi ekledik (Kırmızı 4).
 
-### Takeaways
+`About` bileşeni için rotayı ayarladık (Yeşil 4).
 
-- E2e testing lets us cover the app's routing features and possible flows in a better way.
-- Whether using e2e or component tests, the main idea of TDD is the same; start with something failing, do the mimimum to get it to work, and then make it better.
-- The obvious, but hard to implement, practice in test driven design is to write very small incremental tests at a time. Be more considerate about smaller increments with e2e tests, because of the higher impact radius of the changes.
-- Whenever we are testing a component that includes other components, take a look at the child component source and the component test. The same rule applies to e2e as well. Always check the test coverage of lower level tests and prefer not to duplicate the effort at a higher level, because it will have extra cost but might not provide extra confidence.
-- Any time we have passing tests, we want to prefer to refactor or add more tests before adding more source code.
-- Always look for opportunities to tweak what test is already existing as opposed to writing partially duplicated tests for new specs. What matters from a test perspective is the beginning state of a test; if reaching that state is common, then it is an opportunity for a test enhancement vs partial test duplication.
+</br>
+
+Uygulamanın başlangıç yönlendirmesini /heroes'tan (Kırmızı 5) kontrol etmek için bir test ekledik.
+
+`Navigate` ile rotaların ayarını geliştirdik (Yeşil 5).
+
+Doğrudan /heroes'a yönlendirmeyi kontrol etmek için bir test ekledik ve rota geçmişini test etmek için başka bir test ekledik (Refaktör 5).
+
+</br>
+
+`App.cy.tsx` adlı testi inceledik ve test çoğaltma konusunu tartıştık. Testin, başka bir bileşen testi veya e2e testinden başka bir şey yapmadığı halde, mantıklı olduğuna karar verdik. Başka bir neden ise, CT ile RTL arasındaki 1: 1 karşılaştırmalarını incelemeye başlamaktı. App RTL testini, App mantıklı bileşen testini yansıtacak şekilde güncelledik.
+
+### Çıkarılacak Dersler
+
+- E2e testi, uygulamanın yönlendirme özelliklerini ve olası akışları daha iyi bir şekilde kapsamamıza olanak tanır.
+- E2e veya bileşen testleri kullanıyor olun, TDD'nin temel fikri aynıdır; başarısız olan bir şeyle başlayın, çalışmasını sağlamak için minimumu yapın ve ardından daha iyi hale getirin.
+- Test odaklı tasarımda uygulamaya açık ama zor olan uygulama, bir seferde çok küçük artımlı testler yazmaktır. Değişikliklerin daha yüksek etki yarıçapı nedeniyle, e2e testlerle daha küçük artışları daha dikkatli değerlendirin.
+- Başka bileşenleri içeren bir bileşeni test ettiğimizde, çocuk bileşen kaynağına ve bileşen testine bakın. Aynı kural e2e için de geçerlidir. Daha düşük seviyeli testlerin kapsamını her zaman kontrol edin ve çaba sarf etmeyi yüksek seviyede tekrarlamaktan kaçının, çünkü ekstra maliyeti olacaktır ancak ekstra güvence sağlamayabilir.
+- Geçerli testlerimiz olduğunda, daha fazla kaynak kodu eklemekten önce refactor yapmayı veya daha fazla test eklemeyi tercih ederiz.
+- Zaten mevcut olan testi değiştirmek için fırsatlar arayın, yeni özellikler için kısmen yinelenen testler yazmak yerine. Bir test açısından önemli olan şey, bir testin başlangıç durumudur; bu duruma ulaşmak yaygın ise, bu, testin iyileştirilmesi veya kısmi test çoğaltması açısından bir fırsattır.
