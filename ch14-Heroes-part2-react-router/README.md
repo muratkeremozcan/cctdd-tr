@@ -1,10 +1,10 @@
-# Heroes part 2 - react-router
+# Heroes 2.bölüm - react-router
 
-We are back in the `Heroes` component, and this time we have routing capabilities. On initial render, `Heroes` displays its child `HeroList` component. We need it to be able to display `HeroDetail` when clicking the + button of the `ListHeader`. Then we need `HeroList` displayed again when clicking the refresh button of the `ListHeader`. `Cancel` button should go back from `HeroDetail` to `HeroList`. Create a new branch `feat/Heroes-part2`
+`Heroes` bileşenine geri döndük ve bu sefer yönlendirme özelliklerine sahibiz. İlk render'da `Heroes`, alt `HeroList` bileşenini gösterir. `ListHeader`daki + düğmesine tıklayarak `HeroDetail`i görüntüleyebilmemiz gerekiyor. Daha sonra `ListHeader`daki yenileme düğmesine tıkladığında `HeroList`i tekrar görüntülememiz gerekiyor. `Cancel` düğmesi `HeroDetail`den `HeroList`e geri dönmelidir. Yeni bir dal oluşturun `feat/Heroes-part2`
 
 ![HeroesPart2-initial](../img/HeroesPart2-initial.png)
 
-For the time being, instead of switching between `HeroList` and `HerdoDetail` depending on the route, we can display them both together. Let's write the test (Red 1).
+Şimdilik, rotaya bağlı olarak `HeroList` ve `HeroDetail` arasında geçiş yapmak yerine, her ikisini bir arada gösterelim. Testi yazalım (Red 1).
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -73,7 +73,7 @@ describe("Heroes", () => {
 });
 ```
 
-To pass the test, we add the `HeroDetail` near `HeroList`. It has a prop `hero`, which can temporarily be index 0 of the `heroes` array (Green 1).
+Testi geçmek için, `HeroList`in yanına `HeroDetail`i ekleyin. Geçici olarak `heroes` dizisinin 0. indeksi olan bir `hero` özelliği olabilir (Green 1).
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -129,7 +129,7 @@ export default function Heroes() {
 
 ## [`useNavigate`](https://reactrouter.com/en/main/hooks/use-navigate)
 
-We want to switch the displayed component when the route changes. What drives this in React is first the route, then the child component, as we saw in the `react-router` chapter. In a component test, on the initial mount there is no url, but when clicking a link the route changes. We can drive the test with the refresh and + buttons to check the route. We will use `cy.location` in this test to check for the pathname. Here is an excerpt from [Gleb Bahmutov's Cypress tips](https://glebbahmutov.com/cypress-examples/9.7.0/commands/location.html#cy-hash):
+Yolu değiştirdiğinde görüntülenen bileşeni değiştirmek istiyoruz. React'te bunu yönlendiren şey, önce yol, ardından alt bileşendir, `react-router` bölümünde gördüğümüz gibi. Bir bileşen testinde başlangıçta url yoktur, ancak bir bağlantıya tıkladığında yol değişir. Yolu kontrol etmek için yenileme ve + düğmeleri ile testi kullanabiliriz. Bu testte yolu kontrol etmek için `cy.location` kullanacağız. İşte [Gleb Bahmutov'un Cypress ipuçlarından](https://glebbahmutov.com/cypress-examples/9.7.0/commands/location.html#cy-hash) bir alıntı:
 
 ```tsx
 cy.visit("https://example.cypress.io/commands/location?search=value#top");
@@ -141,7 +141,7 @@ cy.location("search").should("equal", "?search=value");
 cy.location("hash").should("equal", "#top");
 ```
 
-For brevity, we will keep the test code focused on the `.only` section. We write a test that checks that when clicking the refresh button the path becomes `/heroes` (Red 2).
+Kısalık adına, test kodunu `.only` bölümüne odaklı tutacağız. Yenileme düğmesine tıklayarak yolun `/heroes` olmasını kontrol eden bir test yazıyoruz (Red 2).
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -159,7 +159,7 @@ it.only("should display hero list on render", () => {
 });
 ```
 
-The test fails, but in the console we see `handleRefresh` log. Instead of the log, we can have something that changes the url. React-router's [`useNavigate`](https://reactrouter.com/en/v6.3.0/api#usenavigate) can be used for this purpose which lets us programmatically navigate to any url (Green 2).
+Test başarısız oldu, ancak konsolda `handleRefresh` günlüğünü görüyoruz. Günlüğün yerine, url'yi değiştiren bir şey kullanabiliriz. React-router'ın [`useNavigate`](https://reactrouter.com/en/v6.3.0/api#usenavigate) işlevi, programlamalı olarak herhangi bir url'ye yönlendirmemize olanak tanır (Green 2).
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -214,7 +214,7 @@ export default function Heroes() {
 }
 ```
 
-We can now try another test that clicks on the add button and checks the url. We wish for that path to be `add-hero` (Red 3).
+Şimdi ekle düğmesine tıklayarak url'yi kontrol etmek için başka bir test deneyebiliriz. Yolun `add-hero` olmasını istiyoruz (Red 3).
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -236,7 +236,7 @@ it.only("should display hero list on render", () => {
 });
 ```
 
-Similar to the previous cycle, we see `handleAdd` being console.logged. We can utilize `useNavigate` once more (Green 3).
+Önceki döngüye benzer şekilde, `handleAdd`'ın console.logged olduğunu görüyoruz. Bir kez daha `useNavigate` kullanabiliriz (Yeşil 3).
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -291,15 +291,15 @@ export default function Heroes() {
 }
 ```
 
-Our pathnames are looking good, but what we need is rendering different components based on the route.
+Yol adlarımız iyi görünüyor, ancak ihtiyacımız olan şey, rotaya bağlı olarak farklı bileşenlerin görüntülenmesi.
 
-## `react-router` descendant routes
+## `react-router` soyut rotalar
 
-1. On initial render we want to see `HeroList`.
-2. On clicking add button of `ListHeader`, we want to see `HeroDetail`.
-3. On clicking refresh button of `ListHeader`, we want to see `HeroList` again, so on and so forth.
+1. İlk işlemde `HeroList`'i görmek istiyoruz.
+2. `ListHeader`'daki ekle düğmesine tıkladığında, `HeroDetail`'i görmek istiyoruz.
+3. `ListHeader`'daki yenile düğmesine tıkladığında tekrar `HeroList`'i görmek istiyoruz, böyle devam eder.
 
-We need some React Router v6 knowledge here. Remember our `react-router` setup in the top app component. We are concerned about `/heroes` route here. When the pathname is just `/heroes` we want to display `HeroesList`, when it is `/heroes/addd-hero` we want to display `HeroDetail`. That means `/heroes` will need a descendent route.
+Burada biraz React Router v6 bilgisine ihtiyacımız var. Üst düzey uygulama bileşenindeki `react-router` kurulumunu hatırlayın. Burada `/heroes` rotası ile ilgileniyoruz. Yol adı sadece `/heroes` olduğunda `HeroesList`'i görüntülemek istiyoruz, `/heroes/add-hero` olduğunda `HeroDetail`'i görüntülemek istiyoruz. Bu, `/heroes` için soyut bir rota gerektireceği anlamına gelir.
 
 ```tsx
 // src/App.tsx
@@ -334,7 +334,7 @@ function App() {
 export default App;
 ```
 
-In `react-router v6` we need a trailing `*` when there is another `<Routes>` somewhere in that route's descendant tree. In that case, the descendant `<Routes>` will match the portion of the pathname that remains. We need to modify our `App.tsx` file for the `path="/heroes"` prop to `path="heroes/*"`. This will let the descendant `Routes` component we will be adding to take over the route control.
+`react-router v6`'da, bir rotanın soyut ağacında başka bir `<Routes>` olduğunda sonunda `*`'a ihtiyacımız var. Bu durumda, soyut `<Routes>` kalan yol adı kısmını eşleştirir. `App.tsx` dosyasındaki `path="/heroes"` özelliğini `path="heroes/*"` olarak değiştirmemiz gerekiyor. Bu, ekleyeceğimiz soyut `Routes` bileşeninin rota kontrolünü devralmasına izin verecektir.
 
 ```tsx
 // src/App.tsx
@@ -368,14 +368,14 @@ function App() {
 export default App;
 ```
 
-In the `Heroes` component what we need is to go from this:
+`Heroes` bileşeninde ihtiyacımız olan şey şu:
 
 ```tsx
 <HeroList heroes={heroes} handleDeleteHero={handleDeleteHero} />
 <HeroDetail hero={heroes[0]} />
 ```
 
-To this:
+Bunu şuna dönüştürmek:
 
 ```tsx
 <Routes>
@@ -388,9 +388,9 @@ To this:
 </Routes>
 ```
 
-If the route is `/heroes`, we display the `HeroList`.
+Rota `/heroes` ise, `HeroList`'i görüntüleriz.
 
-If the route is `/heroes/add-hero`, we display the `HeroDetail`.
+Rota `/heroes/add-hero` ise, `HeroDetail`'i görüntüleriz.
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -453,9 +453,9 @@ export default function Heroes() {
 }
 ```
 
-With that setup we have 2 failures; our test fails because it doesn't render anything, TS gives an error because `HeroDetail` wants to have a `hero` prop with a defined `hero` (Red 4).
+Bu yapıyla 2 başarısızlık var; test hiçbir şey görüntülemediği için başarısız oluyor, TS `HeroDetail`'in tanımlı bir `hero` ile `hero` özelliğine sahip olmasını istediği için hata veriyor (Kırmızı 4).
 
-We had setup the `HeroDetail` to be used in two conditions; render the heroId field if `heroId` exists or not. Therefore we should be able to use the component for adding a new hero. For now we can make the prop optional, and have a default hero object with empty `id`, `name` and `description` properties. Here is how `HeroDetail` should look for the time being:
+`HeroDetail`'i iki koşulda kullanmak için ayarlamıştık; `heroId` alanını `heroId` varsa veya yoksa görüntülemek için kullanabiliriz. Bu nedenle, yeni bir kahraman eklemek için bileşeni kullanabilmeliyiz. Şimdilik özelliği isteğe bağlı yapabiliriz ve boş `id`, `name` ve `description` özelliklerine sahip varsayılan bir kahraman nesnesi oluşturabiliriz. Şimdilik `HeroDetail` şu şekilde:
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -541,7 +541,7 @@ export default function HeroDetail({
 }
 ```
 
-It is great that `HeroDetail.cy.tsx` passes after that change. Our only concern is that we broke our `Heroes` test.
+`HeroDetail.cy.tsx`'in o değişiklikten sonra geçiyor olması harika. Tek endişemiz, `Heroes` testimizi bozmuş olmamız.
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -564,7 +564,7 @@ it.only("should display hero list on render", () => {
 
 ![HeroesPart2-Red4](../img/HeroesPart2-Red4.png)
 
-We recall from `react-router` chapter that a component test has no idea about routes, and unless we click navigate in the test, the route is uncertain. This also justifies a test for an invalid heroes route, for example `heroes/foo42`. When such is the case, we are looking for a heroId that does not exist, we would like to view the `HeroList`. We need to add a new `Route` element that renders the `HeroList` with path being \*.
+`react-router` bölümünden hatırlayacağımız gibi, bir bileşen testi yollar hakkında fikir sahibi değildir ve teste tıklayarak gezinmediğimiz sürece, yol belirsizdir. Bu, geçersiz bir kahramanlar rotası için de bir test gerektirebilir; örneğin `heroes/foo42`. Böyle bir durum söz konusu olduğunda, var olmayan bir heroId arıyoruz, `HeroList`i görmek istiyoruz. Yolun * olduğu `HeroList`i oluşturan yeni bir `Route` öğesi eklememiz gerekiyor.
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -632,7 +632,7 @@ export default function Heroes() {
 }
 ```
 
-Because the url is uncertain on component mount in a test, we also need to change the url verification to checking that `HeroList` renders (Green 4).
+Bileşenin testte bağlantısı belirsiz olduğundan, url doğrulamayı da `HeroList`in oluşturulduğunu kontrol etmeye değiştirmeliyiz (Green 4).
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -653,7 +653,7 @@ it.only("should display the hero list on render", () => {
 });
 ```
 
-That change makes the test work, but the suite is not making cohesive sense between the first two `it` blocks. The first test that was checking for the `console.log` on `handleAdd` and `handleRefresh` is not valid, nor needed anymore, since we are changing the route with `useNavigate`. We could spy on `useNavigate`, but that is implementation detail and we are already checking that the url is changing; **we are testing things in a better way, at a higher level, without extra cost**. Here is the refactor to the test (Refactor 4):
+Bu değişiklik, testin çalışmasını sağlar, ancak süite ilk iki `it` bloğu arasında uyumlu bir anlam kazandırmaz. `handleAdd` ve `handleRefresh` üzerindeki `console.log`'ları kontrol etmek için yapılan ilk test artık geçerli değil ve artık gerekmeyecek çünkü rotayı `useNavigate` ile değiştiriyoruz. `useNavigate` üzerinde casusluk yapabiliriz, ancak bu uygulama detayı ve zaten url'nin değiştiğini kontrol ediyoruz; **daha yüksek seviyede, ekstra maliyet olmadan şeyleri daha iyi bir şekilde test ediyoruz**. İşte testin yeniden düzenlenmesi (Düzenleme 4):
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -710,7 +710,7 @@ describe("Heroes", () => {
 });
 ```
 
-In the `react-router` chapter, we concluded that the best way to test routing is with e2e tests. We are testing the pathnames in the component here, but we cannot test that the right child component is being rendered when the route changes. We can start the e2e test covering a similar flow, which will also serve as a larger test that covers the CRUD hero flow in the future. **When there is functionality that we cannot test, or cannot test confidently at a lower level, we move up in the test pyramid**, in this case from a component test to an e2e test. Start the e2e runner with `yarn cy:open-e2e`. Create a new e2e test `cypress/e2e/create-hero.cy.ts`.
+`react-router` bölümünde, yönlendirmeyi e2e testleri ile test etmenin en iyi yoluna karar verdik. Bileşenlerde yolları test ediyoruz, ancak yol değiştiğinde doğru alt bileşenin oluşturulup oluşturulmadığını test edemiyoruz. Benzer bir akışı kapsayan e2e testi başlatabiliriz, bu da gelecekte CRUD kahraman akışını kapsayan daha büyük bir test olarak hizmet edecektir. **Daha düşük seviyede test edemeyeceğimiz veya güvenle test edemeyeceğimiz bir işlevsellik olduğunda, test piramidinde yukarı çıkarız**, bu durumda bileşen testinden e2e testine. `yarn cy:open-e2e` ile e2e koşucusunu başlatın. `cypress/e2e/create-hero.cy.ts` adlı yeni bir e2e test oluşturun.
 
 ```tsx
 // cypress/e2e/create-hero.cy.ts
@@ -732,9 +732,9 @@ describe("Create hero", () => {
 });
 ```
 
-This test enables us to check that `HeroDetail` renders on add, and that it renders without the `id` field since this is a new hero. The refresh create hero flow gives us a new idea; whether the backend is operational or not, the cancel flow for hero edit or add should also work. After having reached a certain milestone, e2e tests, or simply ad-hoc usage of the app can often give us new ideas for features. This is the scientific method after all, we know more and now we can try for more, and that in essence captures the original mindset behind TDD, as well as agile.
+Bu test, `HeroDetail` bileşenin ekleme sırasında nasıl görüntülendiğini ve yeni bir kahraman olduğundan `id` alanı olmadan nasıl görüntüleneceğini kontrol etmemize olanak tanır. Yenileme kahramanı oluşturma akışı bize yeni bir fikir verir; arka uç çalışıyor olsun veya olmasın, kahraman düzenleme veya ekleme için iptal akışı da çalışmalıdır. Belirli bir dönüm noktasına ulaştıktan sonra, uçtan uca testler veya uygulamanın basitçe reklam amaçlı kullanımı genellikle bize yeni özellikler için fikirler sunar. Sonuçta bu, bilimsel yöntemdir, şimdi daha fazlasını biliyoruz ve daha fazlasını denemek için çalışabiliriz ve bu, TDD'nin arkasındaki orijinal düşünceyi ve çevikliği esas alır.
 
-Let's add a failing e2e test for edit hero cancel flow (Red 5). Create a file `cypress/e2e/edit-hero.cy.ts`. It starts similarly to the add flow, but instead clicks the Edit button and expects to be in a relevant route.
+Düzenleme kahramanı iptal akışı için başarısız bir e2e testi ekleyelim (Kırmızı 5). `cypress/e2e/edit-hero.cy.ts` adında bir dosya oluşturun. Ekleme akışına benzer şekilde başlar, ancak Düzenle düğmesine tıklar ve ilgili bir rota içinde olmayı bekler.
 
 ```tsx
 // cypress/e2e/edit-hero.cy.ts
@@ -749,7 +749,7 @@ describe("Edit hero", () => {
 });
 ```
 
-When it was not certain what to do with click handlers in our app, we started them off with `console.log`. In the console of the e2e test we can see `handleSelectHero`. This function resides in `HeroList` component. We just need to enhance it to utilize `useNavigate` like we did so in the parent `Heroes` component (Green 5).
+Uygulamamızdaki tıklama işleyicileriyle ne yapacağımızdan emin olmadığımızda, onları `console.log` ile başlattık. E2e testinin konsolunda `handleSelectHero`'yu görebiliriz. Bu işlev `HeroList` bileşeninde bulunmaktadır. Sadece onu, ana `Heroes` bileşeninde yaptığımız gibi `useNavigate` kullanacak şekilde geliştirmemiz gerekiyor (Yeşil 5).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -793,7 +793,7 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-We can navigate to the first hero, but can we navigate to another and end up on the right url? Let's write a test for it (Red 6).
+İlk kahramana gidebiliriz, ancak başka bir kahramana gidip doğru URL'de bitebilir miyiz? Bunu test etmek için bir test yazalım (Kırmızı 6).
 
 ```tsx
 // cypress/e2e/edit-hero.cy.ts
@@ -814,14 +814,14 @@ describe("Edit hero", () => {
 });
 ```
 
-The test fails, because `react-router` needs a way to know the route parameter. We need to be able to do something better than a hardcoded `heroId` navigation. When we are editing the hero, we should be able to acquire that `heroId` from the `heroes` prop that gets passed to this component. `handleSelectHero` should take the `id` as an argument, and nav to it.
+Test başarısız oluyor çünkü `react-router`ın rota parametresini bilmeye ihtiyacı var. `heroId` navigasyonundan daha iyi bir şey yapabilmemiz gerekiyor. Kahramanı düzenlerken, bu `heroId`'yi bileşene iletilen `heroes` özelliğinden alabilmeliyiz. `handleSelectHero`, `id`'yi bir argüman olarak almalı ve ona gitmelidir.
 
 ```tsx
 const handleSelectHero = (heroId: string) =>
   navigate(`/heroes/edit-hero/${heroId}`);
 ```
 
-That change causes a type error in the `ButtonFooer` because now `handleSelectHero` expects an argument. We can update the component like so (Green 6):
+Bu değişiklik, şimdi `handleSelectHero`'nun bir argüman beklemesi nedeniyle `ButtonFooer`'da bir tür hatasına neden oluyor. Bileşeni şu şekilde güncelleyebiliriz (Yeşil 6):
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -866,7 +866,7 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-Let us enhance the test and check that when were are editing a hero, not only we have the right url path, but also we display the `HeroDetail` (Red 7).
+Testi geliştirelim ve bir kahramanı düzenlerken sadece doğru URL yoluna sahip olmakla kalmayıp, aynı zamanda `HeroDetail`'i gösterdiğimizi kontrol edelim (Kırmızı 7).
 
 ```tsx
 // cypress/e2e/edit-hero.cy.ts
@@ -891,9 +891,9 @@ describe("Edit hero", () => {
 });
 ```
 
-## Path attributes & [`useParams`](https://reactrouter.com/en/main/hooks/use-params)
+## Yol özellikleri ve [`useParams`](https://reactrouter.com/en/main/hooks/use-params)
 
-We need a way to extract `heroId` in the path and let the component know about it. In `react-router` we can take advantage of path attributes and the `useParam` hook. Here is a simple example showing how path attributes work. Assume that our data is `milkshake` and the data model looks as such:
+Yoldaki `heroId`'yi çıkarmanın ve bileşenin bunu bilmesini sağlamanın bir yoluna ihtiyacımız var. `react-router`da yol özelliklerinden ve `useParam` kancasından yararlanabiliriz. İşte yol özelliklerinin nasıl çalıştığını gösteren basit bir örnek. Verimizin `milkshake` olduğunu ve veri modelinin şu şekilde göründüğünü varsayalım:
 
 ```json
 {
@@ -902,21 +902,21 @@ We need a way to extract `heroId` in the path and let the component know about i
 }
 ```
 
-If we setup our rotes like this:
+Eğer rota ayarlarını böyle yaparsak:
 
 ```tsx
 <Route path="/milkshake/:flavor/:size" element={<Milkshake />} />
 ```
 
-The url path will be `/milkshake/vanilla/medium`.
+URL yolu `/milkshake/vanilla/medium` olacaktır.
 
-To replicate that configuration, our `edit-hero` path needs a path attribute of `id`, and we need a way to extract that path attribute from the url. React-router's `useParam` returns an object with properties corresponding to URL parameters.
+Bu yapılandırmayı yeniden oluşturmak için, `edit-hero` yolunun `id` adında bir yol özelliğine ihtiyacı vardır ve URL'den bu yol özelliğini çıkarmanın bir yoluna ihtiyacımız vardır. React-router'ın `useParam`ı, URL parametrelerine karşılık gelen özelliklere sahip bir nesne döndürür..
 
 ```tsx
 const { flavor, size } = useParams();
 ```
 
-Mirroring that information to our app, the data looks as such:
+Bu bilgiyi uygulamamıza aktararak, veri şu şekildedir:
 
 ```json
 {
@@ -926,20 +926,20 @@ Mirroring that information to our app, the data looks as such:
 },
 ```
 
-Routes look so in comparison:
+Yollara kıyasla şu şekildedir:
 
 ```tsx
 <Route path="/milkshake/:flavor/:size" element={<Milkshake />} />
 <Route path="/edit-hero/:id" element={<HeroDetail />} />
 ```
 
-`useParams()` may be:
+`useParams()` böyle olabilir:
 
 ```typescript
 const { id } = useParams();
 ```
 
-Modify the `HeroDetail` route in Heroes component by adding a route parameter `:id` to `edit-hero` path (Green 7).
+Heroes bileşenindeki `HeroDetail` rotasını, `edit-hero` yoluna bir `:id` rotası parametresi ekleyerek değiştirin (Yeşil 7).
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -1008,11 +1008,11 @@ export default function Heroes() {
 }
 ```
 
-The test is passing, we have the right url with the `heroId`, we are displaying `HeroDetails`, but the `heroId` field is not being displayed.
+Test geçiyor, `heroId` ile doğru URL'ye sahibiz, `HeroDetails` görüntüleniyor, ancak `heroId` alanı görüntülenmiyor.
 
 ![HeroesPart2-Green6](../img/HeroesPart2-Green6.png)
 
-We write one more line of a test to ensure that the `heroId` field is visible when we are editing a hero (Red 8).
+Bir kahramanı düzenlerken `heroId` alanının görünür olduğundan emin olmak için bir test daha yazıyoruz (Kırmızı 8).
 
 ```tsx
 // cypress/e2e/edit-hero.cy.ts
@@ -1039,7 +1039,7 @@ describe("Edit hero", () => {
 });
 ```
 
-In order to use the path attribute, destructure the `id` out of `useParams()` with `const { id } = useParams()`, this is what binds the route setup to the component. Instead of relying on the hero data, we want to rely on the path attribute that we get from the url, and `useParams` is the hook for that. We also have side benefit of being able to directly navigate to a url (Green 8).
+URL'den `id` değerini almak için, `useParams()` ile `const { id } = useParams()` kullanarak rotayı bileşene bağlayın. Kahraman verilerine güvenmek yerine, URL'den aldığımız yol özniteliğine güvenmek istiyoruz ve `useParams` bunun için kullanılacak kancadır. Ayrıca, doğrudan bir URL'ye yönlendirebilme yan faydasına da sahibiz (Yeşil 8).
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -1123,11 +1123,11 @@ export default function HeroDetail({
 }
 ```
 
-No matter the edited hero, the id field displays with the value of the path attribute.
+URL'deki kahramanın `id` değerinden bağımsız olarak, `id` alanı yol özniteliği değeri ile görüntülenir.
 
 ![HeroesPart2-Green7](../img/HeroesPart2-Green7.png)
 
-If we can get the id of the hero from the url, why should we not be able to get name and description as well? Let's enhance the tests to check that name and description fields are also populated (Red 9). We can fake the data by using the `fixtures/heroes.json` file. We want to verify that the data for name and description are displayed in the fields (Red 9).
+Eğer URL'den kahramanın `id` değerini alabiliyorsak, neden `name` ve `description` değerlerini de almayalım ki? Ad ve açıklama alanlarının da doldurulduğunu kontrol etmek için testleri geliştirelim (Kırmızı 9). `fixtures/heroes.json` dosyasını kullanarak verileri sahteleyebiliriz. Ad ve açıklama için verilerin alanlarda görüntülendiğini doğrulamak istiyoruz (Kırmızı 9).
 
 ```tsx
 // cypress/e2e/edit-hero.cy.ts
@@ -1169,7 +1169,7 @@ describe("Edit hero", () => {
 });
 ```
 
-`HeroList` component knows about all the heroes, and clicking on the `Edit` can take us to the relevant hero. Previously we expressed this with:
+`HeroList` bileşeni tüm kahramanlar hakkında bilgi sahibidir ve `Edit` düğmesine tıklayarak ilgili kahramana götürebiliriz. Daha önce bunu şöyle ifade ettik:
 
 ```tsx
 const handleSelectHero = (heroId: string) => {
@@ -1177,9 +1177,9 @@ const handleSelectHero = (heroId: string) => {
 };
 ```
 
-We could add more route parameters by modifying `Heroes` route path like so : `<Route *path*="/edit-hero/:id/:name/:description" *element*={<HeroDetail />} />.`
+`Heroes` rotası yolunu şu şekilde değiştirerek daha fazla rota parametresi ekleyebiliriz: `<Route *path*="/edit-hero/:id/:name/:description" *element*={<HeroDetail />} />.`
 
-However, it would be better if we used search parameters and not have to change the `react-router` setup. Here is how `handleSelectHero` would look with search parameters:
+Ancak, `react-router` ayarlarını değiştirmeden arama parametrelerini kullanmak daha iyidir. İşte `handleSelectHero` arama parametreleri ile nasıl görünür:
 
 ```typescript
 const handleSelectHero = (heroId: string) => {
@@ -1189,13 +1189,13 @@ const handleSelectHero = (heroId: string) => {
 };
 ```
 
-Given the `heroes` array which gets passed as a prop to the component, we need a way to extract the `hero.name` and `hero.description` from a `heroId`, Array.find method could get us the hero we need :
+Verilen `heroes` dizisi, bileşene bir prop olarak geçirilirken, `heroId`'den `hero.name` ve `hero.description`'ı çıkarmamız için bir yol bulmamız gerekiyor. Array.find yöntemi, ihtiyacımız olan kahramanı bize sağlayabilir:
 
 ```typescript
 const hero = heroes.find((h: Hero) => h.id === heroId);
 ```
 
-Update `HeroList` accordingly.
+Kahraman listesini güncelleyin.
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -1244,24 +1244,26 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-The test is still failing, but upon clicking `Edit` on `HeroList`, now `HeroDetail` has all the relevant data in the url.
+Test hala başarısız olsa da, şimdi `HeroList` üzerinde `Edit`e tıkladığınızda, `HeroDetail` URL'de ilgili tüm verilere sahip.
 
 ![HeroesPart2-data-in-url](../img/HeroesPart2-data-in-url.png)
 
-Now we need a way to extract the search parameters from the url when looking at `HeroDetail`, so that we can grab all the `hero` state (id, name, description) from the url.
+Şimdi, `HeroDetail`'e bakarken URL'den arama parametrelerini çıkarmak için bir yola ihtiyacımız var, böylece URL'den tüm `hero` durumunu (id, isim, açıklama) alabiliriz.
 
 ## [`useSearchParams`](https://reactrouter.com/en/main/hooks/use-search-params)
 
-React router's `useSearchParams` hook can be utilized to extract the search parameters from the url.
+React router'ın `useSearchParams` hook'u, URL'den arama parametrelerini çıkarmak için kullanılabilir.
 
-Given a url such as:
+Öyle bir URL verildiğinde:
 
-`/heroes/edit-hero/${hero.id}?name=${hero.name}&description=${hero.description}`
+```
+/heroes/edit-hero/${hero.id}?name=${hero.name}&description=${hero.description}
+```
 
-- `useParams()` -> gets the route parameters -> yields `hero.id.`
-- useSearchParams() -> gets the search params -> `hero.name`, `hero.description`.
+- `useParams()` -> yol parametrelerini alır -> `hero.id`'yi elde eder.
+- useSearchParams() -> arama parametrelerini alır -> `hero.name`, `hero.description`.
 
-The interface looks like so:
+Arayüz şöyle görünüyor:
 
 ```
 const [searchParams] = useSearchParams();
@@ -1269,7 +1271,7 @@ const name = searchParams.get("name");
 const description = searchParams.get("description");
 ```
 
-Modify the `HeroDetail` component with this knowledge (Green 9).
+Bu bilgiyle `HeroDetail` bileşenini değiştirin (Yeşil 9).
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -1356,17 +1358,17 @@ export default function HeroDetail({
 }
 ```
 
-We have a passing test. The hero state is taken entirely from the url. The flow of data was as such:
+URL'den tüm kahraman durumunu alarak geçen bir testimiz var. Veri akışı şöyleydi:
 
-- `Heroes` component gets the data `hero`, and passes it to `HeroList` as a prop.
-- `HeroList` navigates to a url with this data: `/edit-hero/${hero?.id}?name=${hero?.name}&description=${hero?.description}`
-- `HeroDetail` grabs the data/state from the url with `useParams` and `useSearchParams`, and displays it.
+- `Heroes` bileşeni, `hero` verisini alır ve bunu `HeroList`'e bir özellik olarak iletir.
+- `HeroList`, bu verilerle bir URL'ye yönlendirir: `/edit-hero/${hero?.id}?name=${hero?.name}&description=${hero?.description}`
+- `HeroDetail`, `useParams` ve `useSearchParams` ile URL'den veri/durumu alır ve bunu görüntüler.
 
 ![HeroesPart2-Green10](../img/HeroesPart2-Green10.png)
 
-## [`useNavigate`](https://reactrouter.com/en/main/hooks/use-navigate) to cancel changes
+## Değişiklikleri iptal etmek için [`useNavigate`](https://reactrouter.com/en/main/hooks/use-navigate)
 
-When we hit `Cancel` on `HeroDetails`, we should have the `HeroList` display. Here is our failing test (Red 10).
+`HeroDetails`'ta `İptal` düğmesine bastığımızda `HeroList`'in görüntülenmesi gerekir. İşte başarısız olan testimiz (Kırmızı 10).
 
 ```tsx
 // cypress/e2e/edit-hero.cy.ts
@@ -1416,7 +1418,7 @@ describe("Edit hero", () => {
 });
 ```
 
-If we check the console, we see that `handleCancel` is called. That function lives in `HeroDetail` component as well. We can once again utilize `useNavigate` to change the url to `/heroes` on clicking cancel (Green 10).
+Eğer konsola bakarsak, `handleCancel`'in çağrıldığını görürüz. Bu fonksiyon da `HeroDetail` bileşeninde bulunuyor. İptal düğmesine tıkladığında URL'yi `/heroes`'e değiştirmek için bir kez daha `useNavigate`'i kullanabiliriz (Yeşil 10).
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -1504,7 +1506,7 @@ export default function HeroDetail({
 }
 ```
 
-The cancel flow in `edit-hero` e2e test also applies to the `add-hero` flow. We can add a test to `add-hero` without duplicating the checks in refresh flow, and by using direct navigation instead of click navigation (Refactor 10).
+`edit-hero` e2e testindeki iptal akışı, `add-hero` akışına da uygulanır. İkinci testi `add-hero`ya ekleyebiliriz, böylece yenileme akışındaki kontrolleri tekrarlamadan ve tıklama navigasyonu yerine doğrudan navigasyon kullanarak (Düzenleme 10).
 
 ```tsx
 // cypress/e2e/create-hero.cy.ts
@@ -1533,9 +1535,9 @@ describe("Create hero", () => {
 });
 ```
 
-## Final refactors
+## Son yeniden düzenlemeler
 
-Having a look at the `HeroDetail` component, we are getting all the data we need from the url, utilizing `useParams` and `useSearchParams`. We do not need any data to be passed as a prop anymore, since we have the `id`, `name` and `description`. They could get initialized in `useState`. Here is the refactor:
+`HeroDetail` bileşenine baktığımızda, `useParams` ve `useSearchParams` kullanarak URL'den tüm verileri alıyoruz. Artık hiçbir verinin özellik olarak geçmesine gerek kalmadı, çünkü `id`, `name` ve `description`'a sahibiz. Bunlar `useState` içinde başlatılabilir. İşte yeniden düzenleme:
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -1608,9 +1610,9 @@ export default function HeroDetail() {
 }
 ```
 
-We get a type error because `HeroDetail` component tests are still passing in the `hero` prop. Looking at `HeroDetail.cy.tsx` and `HeroList.cy.tsx` component tests with, we also get an error about `useNavigate` needing to be used under a `<Router>` component. In `src/heroes/HeroList.cy.tsx` we wrap the mounts in `BrowserRouter`. We remove the `console.log`, and now can actually assert the url when `edit-button` is clicked, which should be `/heroes/edit-hero/<someHeroId>`.
+Bir tür hatası alıyoruz çünkü `HeroDetail` bileşeni testleri hala `hero` özelliğini iletiyor. `HeroDetail.cy.tsx` ve `HeroList.cy.tsx` bileşen testlerine bakarak, `useNavigate`'in `<Router>` bileşeni altında kullanılması gerektiği konusunda bir hata alıyoruz. `src/heroes/HeroList.cy.tsx` dosyasında, mountları `BrowserRouter` içine alıyoruz. `console.log`'u kaldırıyoruz ve şimdi `edit-button`'a tıklandığında url'yi doğrulayabiliyoruz, bu da `/heroes/edit-hero/<someHeroId>` olmalı.
 
-We also realize an anti-pattern; we have been spying on `useState` when typing hero name and description into the fields. This is an implementation detail, and if we change state management, the test would need maintenance. We could lean more towards black box to avoid testing an implementation detail and have better confidence about how the component should work. Here is the updated test:
+Ayrıca bir anti-kalıp fark ediyoruz; `useState` üzerinde casusluk yapıyoruz, bu da kahraman adı ve açıklamasını alanlara yazarken oluyor. Bu bir uygulama ayrıntısıdır ve eğer durum yönetimini değiştirirsek, testin bakımı gerekebilir. Daha çok siyah kutu yaklaşımına yönelebilir ve bileşenin nasıl çalışması gerektiğine dair daha iyi bir güven sağlayabiliriz. İşte güncellenmiş test:
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -1740,9 +1742,9 @@ describe("HeroDetail", () => {
 });
 ```
 
-### Currying events
+### Currying olayları
 
-In `HeroList` component, take a look at the footer section:
+`HeroList` bileşeninde, footer bölümüne göz atalım:
 
 ```tsx
 const handleSelectHero = (heroId: string) => {
@@ -1768,7 +1770,7 @@ const handleSelectHero = (heroId: string) => {
 />
 ```
 
-This is a nice use case for currying. The outer function can take our custom arg and returns a function that accepts the event. We can refactor `HeroList` like so:
+Bu, currying için güzel bir kullanım örneğidir. Dış fonksiyon, özel argümanı alabilir ve olayı kabul eden bir işlev döndürebilir. `HeroList`'i şöyle yeniden düzenleyebiliriz:
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -1819,7 +1821,7 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-We also update the `ButtonFooter` props for `onClick`:
+`ButtonFooter` için `onClick` özelliklerini güncelleriz:
 
 ```tsx
 // src/components/ButtonFooter.tsx
@@ -1852,15 +1854,15 @@ export default function ButtonFooter({
 }
 ```
 
-#### Aside: the 3 event types in React
+#### Not: React'taki 3 olay türü
 
-- Change event (_onChange_): `React.ChangeEvent<HTMLInputElement>`, `React.ChangeEvent<HTMLSelectElement>`
-- Click event (_onClick_): `React.MouseEvent<HTMLButtonElement>`, `React.MouseEvent<HTMLAnchorElement>`
-- Form submit event (_onSubmit_): `React.FormEvent`
+- Değişiklik olayı (*onChange*): `React.ChangeEvent<HTMLInputElement>`, `React.ChangeEvent<HTMLSelectElement>`
+- Tıklama olayı (*onClick*): `React.MouseEvent<HTMLButtonElement>`, `React.MouseEvent<HTMLAnchorElement>`
+- Form gönderme olayı (*onSubmit*): `React.FormEvent`
 
-### Custom hook
+### Özel kanca
 
-We can extract the 3 lines related to `useSearchParams` into a custom hook, which can help us abstract it away.
+`useSearchParams` ile ilgili 3 satırı özel bir kancaya çıkarabiliriz, bu da bize soyutlama yapmamıza yardımcı olabilir.
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -1869,7 +1871,7 @@ const name = searchParams.get("name");
 const description = searchParams.get("description");
 ```
 
-Create a new file `src/hooks/useHeroParams.ts` and move the code to the hook. The only difference is that we are returning an object with what we need out of this hook.
+Yeni bir dosya oluşturun, `src/hooks/useHeroParams.ts` ve kodu kancaya taşıyın. Tek fark, bu kanca içinde ihtiyacımız olan şeyi döndüren bir nesneyle dönüyoruz.
 
 ```tsx
 import { useSearchParams } from "react-router-dom";
@@ -1883,7 +1885,7 @@ export function useHeroParams() {
 }
 ```
 
-Import the hook, remove the `useSearchParams` import, and replace the 3 lines with a one-liner `const {name, description} = useHeroParams()`:
+İçe aktarmayı, `useSearchParams` içe aktarmasını kaldırın ve 3 satırı `const {name, description} = useHeroParams()` tek satırlık kod ile değiştirin:
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -1955,72 +1957,72 @@ export default function HeroDetail() {
 }
 ```
 
-## Summary
+## Özet
 
-We added a failing test to render `HeroDetail` together with `HeroList` (Red 1), and added the two components to the `Heroes` (Green 1).
-
-</br>
-
-We wrote a test that scrutinizes the url when clicking the refresh button on `ListHeader` (Red 2).
-
-We used react-router's `useNavigate` to programmatically navigate to the url we need upon clicking refresh (Green 2).
+`HeroDetail`i `HeroList` ile birlikte işlemek için başarısız bir test ekledik (Kırmızı 1) ve iki bileşeni `Heroes`a ekledik (Yeşil 1).
 
 </br>
 
-We added a similar test for the add button, scrutinizing the url, again utilizing `useNavigate` (Red 3, Green 3).
+`ListHeader`daki yenile düğmesine tıklarken url'yi inceleyen bir test yazdık (Kırmızı 2).
+
+`useNavigate` kullanarak tıklama sonrası ihtiyaç duyduğumuz url'ye programlı olarak yönlendirdik (Yeşil 2).
 
 </br>
 
-We configured `react-router` for descendant routes, updated TS and the test to ensure everything still works (Red 4, Green 4). We refactored the test to be more cohesive and meaningful (Refactor 4).
-
-Recalling `react-router` chapter that routing is best tested with e2e, we added an e2e test to increase confidence in our component; verify more than the pathname, that the child components render a certain way. Our e2e test for create hero cancel flow worked great.
+Ekle düğmesi için benzer bir test ekledik, url'yi inceledik ve yine `useNavigate` kullandık (Kırmızı 3, Yeşil 3).
 
 </br>
 
-Next, we saw a similarity in the edit hero cancel flow and added a failing e2e test for it When the edit button is clicked, we wanted to land on a route such as `/heroes/edit-hero/HeroAslaug`(Red 5)
+`react-router`ı alt rotalar için yapılandırdık, TS ve testi her şeyin çalıştığından emin olmak için güncelledik (Kırmızı 4, Yeşil 4). Testi daha uyumlu ve anlamlı olacak şekilde yeniden düzenledik (Düzenleme 4).
 
-We utilized `useNavigate` in the already existing `handleSelectHero` function of `HeroList` component, hard coding the same url (Green 5).
-
-</br>
-
-We added a test to check if we can edit any hero and end up at the correct route (Red 6).
-
-We removed the hard coded /HeroAslaug from the `navigate` at HeroList`, instead made` handleSelectHero`a function driven by a`heroId\` argument (Green 6).
+`react-router` bölümünü hatırlayarak, yönlendirmenin en iyi şekilde e2e ile test edildiğini, bileşenlerimizde güveni artırmak için e2e test ekledik; pathname'den daha fazlasını doğrulayın, alt bileşenlerin belirli bir şekilde işlemesini sağlayın. Kahraman oluşturma iptal akışı için e2e testimiz mükemmel çalıştı.
 
 </br>
 
-We enhanced the test to check that `HeroDetail` is displayed in addition to being at the correct route (Red 7)
+Sonra, düzenleme kahramanı iptal akışındaki benzerliği gördük ve bunun için başarısız bir e2e test ekledik. Düzenle düğmesine tıkladığında, `/heroes/edit-hero/HeroAslaug` gibi bir rota üzerinde olmak istedik (Kırmızı 5).
 
-We made use of route parameter `:id` at `Heroes` edit-hero route. Once the `:id` was matching the `heroId` argument of `handleSelectHero`, we had a passing test (Green 7).
-
-</br>
-
-We enhanced the test for conditional rendering of the id field; if there is a heroId, there should be a field (Red 8).
-
-We made use of `useParams` and matched the `:id` router parameter by using `const {id} = useParams()` at `HeroDetail`. In the conditional rendering we used `id` instead of `hero.id` (Green 8).
+Zaten mevcut `HeroList` bileşeninin `handleSelectHero` işlevinde `useNavigate` kullanarak, aynı url'yi elle kodladık (Yeşil 5).
 
 </br>
 
-We enhanced the test by checking that name and description are displayed in `HeroDetail` when editing a hero (Red 9).
+Herhangi bir kahramanı düzenleyip doğru rotaya ulaşıp ulaşamayacağımızı kontrol etmek için bir test ekledik (Kırmızı 6).
 
-We decided to use search params in `HeroList` `handleSelectHero` instead of adding additional routes. `useSearchParams` helped grab the search parameters from the url (Green 9)
-
-</br>
-
-We added enhanced the test to check that cancel button lands us on `HeroList` component from `HeroDetails` (Red 10).
-
-We enhanced `HeroDetail` to utilize `useNavigate` to `/heroes` route when cancel is clicked (Green 10).
-
-We also added a test to the add hero flow, since the `HeroDetails` to `HeroList` navigation on `Cancel` is the same (Refactor 10).
+`HeroList`'teki sabit kodlu /HeroAslaug'u `navigate`'den kaldırdık, bunun yerine `handleSelectHero`'yu `heroId` argümanı tarafından yönlendirilen bir işlev haline getirdik (Yeşil 6).
 
 </br>
 
-## Takeaways
+Testi, doğru rotada olmanın yanı sıra `HeroDetail`'in gösterilip gösterilmediğini kontrol etmek için geliştirdik (Kırmızı 7)
 
-- It is ideal to test at higher level than implementation details, without extra costs. For example, we can test the consequences of the hooks vs if the hook is called; `useNavigate` & check url instead of spying on `useNavigate`.
-- When there is functionality that we cannot test, or cannot test confidently at a lower level, we move up in the test pyramid.
-- After having reached a certain milestone, e2e tests, or simply ad-hoc usage of the app can often give us a higher level perspective, with new ideas for features. This is the scientific method after all, we know more and now we can try for more, and that in essence captures the original mindset behind TDD, as well as agile.
-- In TDD, it is encouraged to use hard coded values to make the tests pass.
-- In component tests, we can lean more towards black box to avoid testing implementation details and have better confidence about how the component should work.
-- We can use currying to refactor event handlers : `onClick={() => handleSelectHero(hero.id)}` vs `onClick={handleSelectHero(hero.id)}`.
-- We can use custom hooks to abstract away some of the logic in components.
+`Heroes` düzenleme kahramanı rotasında `:id` rotası parametresini kullandık. `:id`, `handleSelectHero`'nun `heroId` argümanıyla eşleştiğinde, başarılı bir test elde ettik (Yeşil 7).
+
+</br>
+
+Testi, id alanının koşullu işlemesi için geliştirdik; eğer bir heroId varsa, bir alan olmalıdır (Kırmızı 8).
+
+`HeroDetail`'de `useParams` kullanarak ve `const {id} = useParams()` ile `:id` yönlendirici parametresini eşleştirerek kullandık. Koşullu işlemede `hero.id` yerine `id` kullandık (Yeşil 8).
+
+</br>
+
+Bir kahramanı düzenlerken `HeroDetail`'de ad ve açıklamanın görüntülenip görüntülenmediğini kontrol ederek testi geliştirdik (Kırmızı 9).
+
+Ek rotalar eklemek yerine `HeroList` `handleSelectHero`'da arama parametrelerini kullanmaya karar verdik. `useSearchParams`, url'deki arama parametrelerini yakalamamıza yardımcı oldu (Yeşil 9)
+
+</br>
+
+Testi, iptal düğmesinin bizi `HeroDetails`'den `HeroList` bileşenine götürdüğünü kontrol etmek için geliştirdik (Kırmızı 10).
+
+İptal'e tıklandığında `HeroDetail`'i `/heroes` rotasına yönlendirmek için `useNavigate` kullanmaya başladık (Yeşil 10).
+
+Ayrıca, `Cancel` üzerindeki `HeroDetails`'den `HeroList`'e yönlendirme aynı olduğundan, kahraman ekleme akışına da bir test ekledik (Düzenleme 10).
+
+</br>
+
+## Çıkarımlar
+
+- Uygulama detaylarından daha yüksek seviyede test etmek, ekstra maliyetler olmaksızın idealdir. Örneğin, kancaların sonuçlarını test edebiliriz, kancanın çağrılıp çağrılmadığını kontrol ederiz; `useNavigate` ve url kontrolü yerine `useNavigate` üzerinde casusluk yapma.
+- Test etmekte zorlandığımız veya daha düşük seviyede güvenle test edemediğimiz işlevler varsa, test piramidinde yukarı çıkarız.
+- Belirli bir dönüm noktasına ulaştıktan sonra, e2e testler veya basitçe uygulamanın geçici kullanımı, genellikle bize daha yüksek düzeyde bir perspektif ve yeni özellikler için fikirler sunar. Sonuçta bu, bilimsel yöntemdir; artık daha fazlasını biliyoruz ve daha fazlasını denemeye çalışabiliriz ve bu, TDD'nin arkasındaki orijinal zihniyeti ve çevikliği esas alır.
+- TDD'de, testlerin geçmesini sağlamak için sabit kodlu değerler kullanmayı teşvik edilir.
+- Bileşen testlerinde, uygulama detaylarını test etmekten kaçınmak ve bileşenin nasıl çalışması gerektiği konusunda daha iyi güven sağlamak için daha çok siyah kutuya eğilebiliriz.
+- Olay işleyicilerini yeniden düzenlemek için currying kullanabiliriz: `onClick={() => handleSelectHero(hero.id)}` vs `onClick={handleSelectHero(hero.id)}`.
+- Bileşenlerdeki bazı mantığı soyutlamak için özel kanca kullanabiliriz.

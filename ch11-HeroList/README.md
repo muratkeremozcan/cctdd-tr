@@ -27,7 +27,7 @@ export default function HeroList() {
 
 ## Bir liste öğesi
 
-React'te bir liste bileşeni oluştururken, önce tek bir öğeyle başlamak ve ardından listeye geçmek daha kolaydır. `div` ile başlayacağız. İstediğimiz şema şu şekildedir: 
+React'te bir liste bileşeni oluştururken, önce tek bir öğeyle başlamak ve ardından listeye geçmek daha kolaydır. `div` ile başlayacağız. İstediğimiz şema şu şekildedir:
 
 - div
   - `CardContent`
@@ -98,7 +98,7 @@ export default function HeroList() {
 }
 ```
 
-Kullanımdan `hero`nun ağdan aldığımız bir veri parçası olduğuna dair bir ipucu alırız. Şimdilik bir `hero` nesnesi oluşturabilir ve bunu hem teste hem de bileşene kopyalayabiliriz (Refaktör 2).
+Kullanımdan `hero`nun ağdan aldığımız bir veri parçası olduğuna dair bir ipucu alırız. Şimdilik bir `hero` nesnesi oluşturabilir ve bunu hem teste hem de bileşene kopyalayabiliriz (Düzenleme 2).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -315,7 +315,7 @@ export default function HeroList() {
 }
 ```
 
-Şimdi, `onClick` olaylarını işlevlere dönüştürmenin ve stiller eklemenin iyi bir zamanıdır (Refaktör 4).
+Şimdi, `onClick` olaylarını işlevlere dönüştürmenin ve stiller eklemenin iyi bir zamanıdır (Düzenleme 4).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -400,7 +400,7 @@ export default function HeroList() {
 }
 ```
 
-`HeroDetail` bileşeni geliştirilirken veri hakkında yaptığımız şu açıklamayı hatırlayın; *"Bileşende sert kodlanmış `hero` nesnesi yerine, verileri bir prop ile iletebiliriz. Bileşenlerimizi prop'larla veya onları saran şeyle değiştiririz ve şu anda prop daha kolay bir seçenek."* Bu yaklaşımla tutarlı kalabilir ve bileşene bir prop iletebiliriz; 2 `hero` nesnesinden oluşan bir dizi.
+`HeroDetail` bileşeni geliştirilirken veri hakkında yaptığımız şu açıklamayı hatırlayın; _"Bileşende sert kodlanmış `hero` nesnesi yerine, verileri bir prop ile iletebiliriz. Bileşenlerimizi prop'larla veya onları saran şeyle değiştiririz ve şu anda prop daha kolay bir seçenek."_ Bu yaklaşımla tutarlı kalabilir ve bileşene bir prop iletebiliriz; 2 `hero` nesnesinden oluşan bir dizi.
 
 Testi değiştirerek başlarız. Bir `hero` nesnesi yerine, 2 `hero` nesnesinden oluşan bir `heroes` dizisi vardır. `name` ve `description` için string değerlerini kontrol etmek için, `hero` yerine `heroes[0]`'a başvururuz. Test hala başarılı, ancak bileşende henüz `heroes` adlı bir prop olmadığı için TS hatası var (Kırmızı 5).
 
@@ -804,7 +804,7 @@ export default function HeroList({ heroes }: HeroListProps) {
 
 Listeyle uğraşmaya başlamadan önce, tek bir liste öğesi için test yazmaya karar verdik.
 
-Alt bileşen `CardContent`i render eden bir test yazdık ve testi geçmek için sert kodlanmış prop değerleri kullandık (Kırmızı 1, Yeşil 1, Kırmızı 2, Yeşil 2). Hem bileşende hem de testte durumu taklit etmek için sert kodlanmış veriler kullandık (Refaktör 2).
+Alt bileşen `CardContent`i render eden bir test yazdık ve testi geçmek için sert kodlanmış prop değerleri kullandık (Kırmızı 1, Yeşil 1, Kırmızı 2, Yeşil 2). Hem bileşende hem de testte durumu taklit etmek için sert kodlanmış veriler kullandık (Düzenleme 2).
 
 </br>
 
@@ -816,7 +816,7 @@ Eksik prop'ları eklemek için TS'nin avantajını kullandık (Yeşil 3).
 
 Delete (silme) ve select (seçme) kahraman etkinliklerinin ele alınması için testler ekledik, `console.log` üzerinde casusluk yaptık (Kırmızı 4).
 
-İlgili etkinlikleri console.log yapan fonksiyonlar ekledik ve tek öğeyi stillerle tamamladık (Yeşil 4, Refaktör 4).
+İlgili etkinlikleri console.log yapan fonksiyonlar ekledik ve tek öğeyi stillerle tamamladık (Yeşil 4, Düzenleme 4).
 
 </br>
 
@@ -828,7 +828,7 @@ Bileşene bir kahramanlar dizisini prop olarak geçmeye karar verdik ve TS hatas
 
 Testten sert kodlanmış `hero` nesnesini kaldırdık, bu da başarısızlığa neden oldu (Kırmızı 6), bunun yerine `heroes` dizisinin ilk indeksini `heroes[0]` ile belirttik (Yeşil 6).
 
-React'te listeleri render etme kalıbı hakkında düşündük; `map` kullanarak. Dizinin indeks referansını, her dizi öğesi için `hero` nesnesi olan map geri çağırma argümanına değiştirdik. Ayrıca, bileşen testinde daha büyük bir liste render etmek için Cypress fixture'ını kullanmaya başladık (Refaktör 6).
+React'te listeleri render etme kalıbı hakkında düşündük; `map` kullanarak. Dizinin indeks referansını, her dizi öğesi için `hero` nesnesi olan map geri çağırma argümanına değiştirdik. Ayrıca, bileşen testinde daha büyük bir liste render etmek için Cypress fixture'ını kullanmaya başladık (Düzenleme 6).
 
 </br>
 
@@ -843,6 +843,6 @@ React'in listelerde hangi öğelerin güncellendiğini belirlemek ve optimize et
 - Cypress' düzeltmeleri json olarak içe aktarılabilir ve testlerde veri yerine kullanılabilir.
 - TDD zihniyetinde, yeşil testlere sahip olduğumuzda, daha fazla test eklemeyi veya yeniden düzenlemeyi, ek kaynak kodu eklemeye tercih etmek isteriz.
 - Test etme her zaman maliyet ve güven arasındaki bir çağrıdır ve ne kadar test ettiğimiz değişir. Kararımızı belirleyebilecek bazı sorular şunlardır:
-  - *Test edilen kod ne sıklıkla değişir?*
-  - *Şimdi daha fazla inceleme yapan test kodunu yazmak yüksek miktarda çalışma mı?*
-  - *Bu ayrıntıyı test ederek ne kadar fazla güven elde ederiz?*
+  - _Test edilen kod ne sıklıkla değişir?_
+  - _Şimdi daha fazla inceleme yapan test kodunu yazmak yüksek miktarda çalışma mı?_
+  - _Bu ayrıntıyı test ederek ne kadar fazla güven elde ederiz?_

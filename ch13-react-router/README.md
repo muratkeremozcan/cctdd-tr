@@ -83,7 +83,7 @@ function App() {
 export default App;
 ```
 
-Özgün uygulamadan bazı css ekleyerek işlemeyi daha da düzgün hale getirebiliriz (Refaktör 2).
+Özgün uygulamadan bazı css ekleyerek işlemeyi daha da düzgün hale getirebiliriz (Düzenleme 2).
 
 ```tsx
 // src/App.tsx
@@ -561,7 +561,7 @@ Uygulama hizmete sunulduğunda ana bileşenlerin bazılarını oluşturup oluşt
 
 Testleri geçmek için ana bileşeni saran `BrowserRouter` ekledik (Yeşil 1, Yeşil 2).
 
-Stil ekledik (Refaktör 2).
+Stil ekledik (Düzenleme 2).
 
 </br>
 
@@ -569,7 +569,7 @@ Geçersiz bir rota için başarısız olan bir test ekledik ve `NotFound` bileş
 
 Rota kurulumunun temelini oluşturduk; `NotFound` öğesi olan Route bileşenini saran Routes bileşeni (Yeşil 3).
 
-Stil ekledik (Refaktör 3).
+Stil ekledik (Düzenleme 3).
 
 </br>
 
@@ -583,7 +583,7 @@ Uygulamanın başlangıç yönlendirmesini /heroes'tan (Kırmızı 5) kontrol et
 
 `Navigate` ile rotaların ayarını geliştirdik (Yeşil 5).
 
-Doğrudan /heroes'a yönlendirmeyi kontrol etmek için bir test ekledik ve rota geçmişini test etmek için başka bir test ekledik (Refaktör 5).
+Doğrudan /heroes'a yönlendirmeyi kontrol etmek için bir test ekledik ve rota geçmişini test etmek için başka bir test ekledik (Düzenleme 5).
 
 </br>
 
