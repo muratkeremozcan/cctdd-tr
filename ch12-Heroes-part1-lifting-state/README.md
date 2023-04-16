@@ -1,15 +1,15 @@
 # Heroes part1 - lifting state
 
-`Heroes` component utilizes the other hero components and is the most complex so far. Looking at the Angular version of the app, we can come up with a bullet list of the DOM elements.
+`Heroes` bileşeni, diğer kahraman bileşenlerini kullanır ve şimdiye kadarki en karmaşık olanıdır. Uygulamanın Angular versiyonuna bakarak, DOM öğelerinin bir madde listesi oluşturabiliriz.
 
-- `ListHeader` child component
+- `ListHeader` alt bileşeni
 - `div`
-  - A route that switches between `HeroList` and `HeroDetail`
-- `ModalYesNo` component (for delete operation)
+  - `HeroList` ve `HeroDetail` arasında geçiş yapan bir rota
+- `ModalYesNo` bileşeni (silme işlemi için)
 
 ![Heroes-initial](../img/Heroes-initial.png)
 
-Create a branch `feat/Heroes`. Create 2 files under `src/heroes/` folder; `Heroes.cy.tsx`, `Heroes.tsx`. As usual, start minimal with a component rendering; copy the below to the files and execute the test after opening the runner with `yarn cy:open-ct`.
+`feat/Heroes` adında bir dal oluşturun. `src/heroes/` klasörü altında `Heroes.cy.tsx`, `Heroes.tsx` adlı 2 dosya oluşturun. Her zamanki gibi, bileşenin işlemesini en aza indirgeyerek başlayın; dosyalara aşağıdakileri kopyalayın ve `yarn cy:open-ct` ile koşucuyu açtıktan sonra testi çalıştırın.
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -30,9 +30,9 @@ export default function Heroes() {
 }
 ```
 
-## `ListHeader` child component
+## `ListHeader` alt bileşeni
 
-We start with a test that checks for the `ListHeader` component (Red 1).
+Önce `ListHeader` bileşenini kontrol eden bir testle başlarız (Kırmızı 1).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -48,7 +48,7 @@ describe("Heroes", () => {
 });
 ```
 
-To make the test work, we need to include the child component in the render, and add the necessary attributes; `title`, `handleAdd`, `handleRefresh`. Any value will do for now (Red 1).
+Testin çalışması için, işlemede alt bileşeni eklemeli ve gerekli nitelikleri eklemeliyiz; `title`, `handleAdd`, `handleRefresh`. Şimdilik herhangi bir değer uygundur (Kırmızı 1).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -63,7 +63,7 @@ export default function Heroes() {
 }
 ```
 
-We still get a test error, and it is a familiar one about routing. It is because the child component `ListHeader` is using `react-router`. Recall from `ListHeader` and `HeaderBarBrand` components that any time we are using `react-router`, we have to wrap the mounted component in `BrowserRouter` in the component test (Green 1).
+Hala bir test hatası alıyoruz ve bu tanıdık bir yönlendirme hatası. Bu, alt bileşen `ListHeader`'ın `react-router`'ı kullanması nedeniyledir. `ListHeader` ve `HeaderBarBrand` bileşenlerinden hatırlayın ki, `react-router` kullandığımız herhangi bir zaman, bileşen testinde monte edilen bileşeni `BrowserRouter` içinde sarmalıyız (Yeşil 1).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -86,9 +86,9 @@ describe("Heroes", () => {
 
 ![Heroes-Green1](../img/Heroes-Green1.png)
 
-Click the icons and we get type errors. Recall that while testing `ListHeader` component in isolation, we used `cy.stub` for `handleAdd` and `handleRefresh`. Now the component is being used as a child, and React cannot use `cy.stub`. The parent / the consumer of the child has to implement this handler function.
+Simgelere tıkladığımızda tip hataları alırız. `ListHeader` bileşenini izole olarak test ederken, `handleAdd` ve `handleRefresh` için `cy.stub` kullandığımızı hatırlayın. Şimdi bileşen, bir alt bileşen olarak kullanılıyor ve React, `cy.stub` kullanamaz. Çocuğun tüketicisi / ebeveyni bu işleyici işlevi uygulamalıdır.
 
-Let's improve the tests with the two clicks that trigger the failures. For now it suffices to spy on console logs as we did in the tests `HeroDetail.cy.tsx` and `HeroList.cy.tsx` (Red 2).
+İki tıklamayla başarısız olan testleri geliştirelim. Şimdilik `HeroDetail.cy.tsx` ve `HeroList.cy.tsx` testlerinde yaptığımız gibi, konsol günlüklerini takip etmek yeterlidir (Kırmızı 2).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -117,7 +117,7 @@ describe("Heroes", () => {
 });
 ```
 
-To make the test pass, we need to add functions that `console.log` with the respective strings (Green 2).
+Testi geçmek için, ilgili dizeyle `console.log` yapan işlevleri eklememiz gerekir (Yeşil 2).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -136,7 +136,7 @@ export default function Heroes() {
 }
 ```
 
-We can refactor those into their own functions and that suffices for the `ListHeader` for now (Refactor 2).
+Şimdilik `ListHeader` için bunları kendi işlevlerine çıkarabiliriz (Düzenleme 2).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -158,13 +158,13 @@ export default function Heroes() {
 }
 ```
 
-![Heroes-Refactor2](../img/Heroes-Refactor2.png)
+![Heroes-Düzenleme2](../img/Heroes-Düzenleme2.png)
 
-When we render `Heroes`, at first `ListHeader` and the `HeroList` display. If we Edit a hero, the `HeroDetail` displays. If we Delete a hero, `ModalYesNo` is shown. We will first focus on the `HeroList`, then the modal. We will tackle `HeroDetail` after setting up routing in a later chapter.
+`Heroes` işlendiğinde, önce `ListHeader` ve `HeroList` görüntülenir. Bir kahramanı düzenlersek, `HeroDetail` görüntülenir. Bir kahramanı silersek, `ModalYesNo` gösterilir. İlk önce `HeroList`'e, sonra modale odaklanacağız. Daha sonraki bir bölümde yönlendirmeyi ayarladıktan sonra `HeroDetail` ile ilgileneceğiz.
 
-## `HeroList` child component
+## `HeroList` alt bileşeni
 
-We start simple with a test that checks for the `HeroList` render (Red 3).
+Önce, `HeroList` işlemenin kontrol edildiği basit bir testle başlarız (Kırmızı 3).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -203,9 +203,9 @@ describe("Heroes", () => {
 });
 ```
 
-We add the child `HeroList` to our component. It requires a heroes prop. One idea is to look at the component tests for children, see how they are used, and work off of that documentation when writing the tests for the parent component. We do not need to repeat any tests at the parent, but we can use the help to give an idea about how the child should be mounted. Take a look at `HeroList.cy.tsx`. We are importing a Cypress fixture and passing it as a prop. We can repeat a similar process, and delay the decisions about data and state to a later time until we have to make them (Green 3).
+Alt `HeroList` bileşenini bileşenimize ekliyoruz. Bir kahramanlar özelliği gerektirir. Bir fikir, alt bileşenler için bileşen testlerine bakmak, nasıl kullanıldıklarını görmek ve ebeveyn bileşenin testlerini yazarken bu belgelendirmeyi temel alarak çalışmaktır. Ebeveyn düzeyinde herhangi bir testi tekrarlamamıza gerek yoktur, ancak alt bileşenin nasıl monte edileceği konusunda bir fikir vermek için yardımı kullanabiliriz. `HeroList.cy.tsx`'ye bir göz atın. Cypress düzeneği içe aktarıyoruz ve bir özellik olarak iletiyoruz. Benzer bir süreç tekrar edebilir ve veri ve durumla ilgili kararları daha sonra yapmak zorunda kalana kadar erteleyebiliriz (Yeşil 3).
 
-If a component is importing a file from outside the source folder, the component will work in isolation but the greater app will not compile. Make a copy of `heroes.json` from `cypress/fixtures/` in `src/heroes` and update `Heroes` component to use this file instead. We will handle this gracefully later when working with network data.
+Bir bileşen, kaynak klasörünün dışındaki bir dosyayı içe aktarıyorsa, bileşen izole olarak çalışacaktır, ancak daha büyük uygulama derlenmeyecektir. `cypress/fixtures/` içindeki `heroes.json` dosyasının `src/heroes` içinde bir kopyasını oluşturun ve `Heroes` bileşenini bu dosyayı kullanacak şekilde güncelleyin. Ağ verileriyle çalışırken daha sonra bunu zarif bir şekilde ele alacağız.
 
 ```tsx
 // src/components/Heroes.tsx
@@ -236,11 +236,11 @@ export default function Heroes() {
 
 ![Heroes-Green3](../img/Heroes-Green3.png)
 
-## `ModalYesNo` child component
+## `ModalYesNo` alt bileşeni
 
-Once again we can look at the component tests for children, see how they are used, and work off of that documentation when writing the tests for the parent component. `ModalYesNo.cy.tsx` has props for a `message` string, `onYes` and `onNo` events. It also supports an internal state which allows the modal to be toggled.
+Bir kez daha çocuk bileşenlerin testlerine bakabilir, nasıl kullanıldıklarını görebilir ve ebeveyn bileşeni için testler yazarken bu belgelendirmeden yola çıkabiliriz. `ModalYesNo.cy.tsx`, `message` adlı bir string, `onYes` ve `onNo` olayları için özelliklere sahiptir. Ayrıca, modalın açılıp kapanmasına izin veren dahili bir durumu da destekler.
 
-Let's write a failing test. For now, we do not have a toggle for the modal, so we should only run the new modal test (Red 4).
+Hatalı bir test yazalım. Şimdilik modal için bir açma/kapama düğmemiz yok, bu nedenle sadece yeni modal testini çalıştırmalıyız (Kırmızı 4).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -289,7 +289,7 @@ describe("Heroes", () => {
 });
 ```
 
-To render the child component, we just have to add the props `message`, `onNo`, `onYes`. For now it is all right for them to be empty strings (Green 4).
+Çocuk bileşenini oluşturmak için, sadece `message`, `onNo`, `onYes` özelliklerini eklememiz yeterlidir. Şimdilik boş stringler olmaları sorun değil (Yeşil 4).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -327,9 +327,9 @@ export default function Heroes() {
 
 ![Heroes-Green4](../img/Heroes-Green4.png)
 
-Having run that test, we really want a way to close that modal and see our `Heroes` component. Let's write a failing test for this need (Red 5).
+Bu testi çalıştırdıktan sonra, gerçekten o modalı kapatıp `Heroes` bileşenimizi görmek istiyoruz. Bu ihtiyaç için başarısız bir test yazalım (Kırmızı 5).
 
-> From here onwards, for the sake of brevity, when a test is executed with `.only` we will only be showing the code for the relevant portion.
+> Buradan itibaren, kısaltma amacıyla, bir test `.only` ile çalıştırıldığında, sadece ilgili kısmın kodunu gösteriyor olacağız.
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -345,7 +345,7 @@ it.only("should display the modal", () => {
 });
 ```
 
-We get an error in the Cypress runner `func.apply is not a function`. Become familiar with this error, it means our event handler isn't doing anything. To resolve it, for now use a function that `console.log`s (Green 5).
+Cypress koşucusunda `func.apply is not a function` hatası alıyoruz. Bu hatayla tanışın, olay işleyicimizin bir şey yapmadığı anlamına gelir. Şimdilik bunu çözmek için `console.log` kullanan bir işlev kullanın (Yeşil 5).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -381,7 +381,7 @@ export default function Heroes() {
 }
 ```
 
-We can refactor that into its own function (Refactor 5).
+Kendi işlevine çevirebiliriz (Yeniden düzenleme 5).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -418,22 +418,22 @@ export default function Heroes() {
 }
 ```
 
-We covered the `useState` hook in the `HeroDetail` function. There were two key takeaways in that chapter. First was that we can simplify our UI state management into two categories:
+`HeroDetail` işlevinde `useState` kancasını ele aldık. O bölümde iki ana nokta vardı. İlk olarak, kullanıcı arayüzü durum yönetimimizi iki kategoriye basitleştirebiliriz:
 
-1. UI state: modal is open, item is highlighted, etc.
-2. Server data.
+1. Kullanıcı arayüzü durumu: modal açık, öğe vurgulanmış vb.
+2. Sunucu verileri.
 
-In the case of the modal, it is category 1; UI state.
+Modal durumunda, 1. kategori; kullanıcı arayüzü durumudur.
 
-The second key takeaway was that we prefer to manage state where it is most relevant. In this case whether the modal is open or closed is most relevant in the `Heroes` component, and `useState` hook is the simplest way to satisfy that.
+İkinci ana nokta, durumu en alakalı olduğu yerde yönetmeyi tercih etmemizdir. Bu durumda, modalın açık veya kapalı olması `Heroes` bileşeninde en alakalıdır ve `useState` kancası, bunu en basit şekilde karşılamak için kullanılır.
 
-We have 3 requirements about the modal. The flow goes as such:
+Modal hakkında 3 gereksinimimiz var. Akış şu şekildedir:
 
-- We would like the modal to be closed when `Heroes` is rendered
-- When we want to delete a hero, we want to display the modal.
-- We would like the modal to go away when clicking No in the modal
+- `Heroes` oluşturulduğunda modalın kapalı olmasını istiyoruz.
+- Bir kahramanı silmek istediğimizde, modalı göstermek istiyoruz.
+- Modalda Hayır'a tıkladığında modalın gitmesini istiyoruz.
 
-Let's write a failing test for the first step of the flow; when rendering the component the modal should be closed. We slightly modify the `it` block with comments (Red 6).
+İlk adımın başarısız bir testini yazalım; bileşen oluşturulduğunda modal kapalı olmalıdır. `it` blokunu yorumlarla biraz değiştiriyoruz (Kırmızı 6).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -456,7 +456,7 @@ it.only("should display the modal", () => {
 });
 ```
 
-To make the test pass, we can just use a `false` chain before the `ModalYesNo` component (Green 6).
+Testi geçmek için, `ModalYesNo` bileşeninden önce `false` zinciri kullanabiliriz (Yeşil 6).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -497,7 +497,7 @@ export default function Heroes() {
 }
 ```
 
-Let's continue writing the test. We need to click the button, and the modal should pop up (Red 7).
+Devam edelim ve testi yazalım. Düğmeye tıklamanız ve modalın açılması gerekiyor (Kırmızı 7).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -519,7 +519,7 @@ it.only("should display the modal", () => {
 });
 ```
 
-To make this state toggle work, we need to use `useState`. We do not like that hard-coded `false` and it can be used as the initial state of the hook. At this point in time, the test is still expected to fail.
+Bu durum geçişini çalıştırmak için `useState` kullanmamız gerekiyor. Sert kodlanmış `false` değerini sevmiyoruz ve kancanın başlangıç durumu olarak kullanılabilir. Bu noktada, testin hala başarısız olması bekleniyor.
 
 ```tsx
 // src/components/Heroes.tsx
@@ -562,21 +562,21 @@ export default function Heroes() {
 }
 ```
 
-## Lifting state from `HeroList` & `ModalYesNo` into `Heroes`
+## `HeroList` ve `ModalYesNo` bileşenlerinden `Heroes` bileşenine durumu taşıma
 
-`showModal` looks great in there, but we need to be able to `setShowModal` to true when clicking the `Delete` button. Take a look at the console, `handleDeleteHero` is called and this function lives in `HeroList` component. This is a hint that the two child components are sharing state.
+`showModal` orada harika görünüyor, ancak `Delete` düğmesine tıklandığında `setShowModal`'ı doğru olarak ayarlamamız gerekiyor. Konsola bakın, `handleDeleteHero` çağrılıyor ve bu işlev `HeroList` bileşeninde yaşıyor. Bu, iki alt bileşenin durumu paylaştığına dair bir ipucudur.
 
 ![Heroes-Red8](../img/Heroes-Red8.png)
 
-We will reference Kent C. Dodds' [Application State Management with React](https://kentcdodds.com/blog/application-state-management-with-react) and give you the gist of the article:
+Kent C. Dodds'un [React ile Uygulama Durum Yönetimi](https://kentcdodds.com/blog/application-state-management-with-react) başlıklı makalesine başvurarak, makalenin özünü şöyle özetleyebiliriz:
 
-- If components are sharing state, lift the state up to their closest common ancestor.
-- If the common ancestor is too deep and lifting state results in prop-drilling, use React's context api.
-- Beyond that, use state management libraries.
+- Bileşenler durumu paylaşıyorsa, durumu en yakın ortak ata bileşenine yükseltin.
+- Ortak ata bileşeni çok derin ve durumu yükseltmek özellik iletimi ile sonuçlanıyorsa, React'ın context API'sini kullanın.
+- Bunun ötesinde, durum yönetimi kütüphaneleri kullanın.
 
-In our case `Heroes` component hosts two children `HeroList` and `ModalYesNo`; lifting state up to the parent is the easiest choice.
+Bizim durumumuzda `Heroes` bileşeni, `HeroList` ve `ModalYesNo` adlı iki alt bileşeni barındırıyor; durumu ebeveyn bileşene yükseltmek en kolay seçenektir.
 
-`ModalYesNo` component is already relaying its `onYes` and `onNo` `onClick` handlers above. On the other hand, `HeroList` implements its own `handleDeleteHero` `onClick` handler. Instead we need to pass a prop `handleDeleteHero` to `HeroList` which is driven by `setShowModal` in `Heroes` component. Therefore we have to make a modification to `HeroList` component. We remove the self-implemented `handleDeleteHero` function, and instead pass it as a prop. We leave the prop type generic for the time being.
+`ModalYesNo` bileşeni zaten `onYes` ve `onNo` `onClick` işleyicilerini üstte iletiyor. Öte yandan, `HeroList` kendi `handleDeleteHero` `onClick` işleyicisini uygular. Bunun yerine, `HeroList` bileşenine `Heroes` bileşenindeki `setShowModal` tarafından yönlendirilen bir `handleDeleteHero` özelliği geçirmemiz gerekiyor. Bu nedenle, `HeroList` bileşeninde bir değişiklik yapmamız gerekiyor. Kendi uyguladığımız `handleDeleteHero` işlevini kaldırıyoruz ve bunun yerine bir özellik olarak geçiriyoruz. Şimdilik özellik türünü genel bırakıyoruz.
 
 ```tsx
 // src/components/HeroList.tsx
@@ -618,7 +618,7 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-We update the matching test to accept the new `handleDeleteHero` prop. It suffices to use `cy.stub` to ensure that it is called on click.
+Eşleşen testi, yeni `handleDeleteHero` özelliğini kabul etmek için güncelliyoruz. Üzerine tıklanması durumunda çağrıldığını sağlamak için `cy.stub` kullanmak yeterlidir.
 
 ```tsx
 // src/components/HeroList.cy.tsx
@@ -674,7 +674,7 @@ describe("HeroList", () => {
 });
 ```
 
-Back in the parent component `Heroes`, now we can pass a prop `handleDeleteHero`. The value of it needs to be a function that returns `setShowModal(<a boolean arg>)`. Why do all the click handlers have to be functions? Per the [React docs](https://reactjs.org/docs/handling-events.html) when using JSX you pass a function as the event handler, rather than a string. After the changes, the test passes. (Green 7).
+Ebeveyn bileşen `Heroes`'a dönersek, şimdi bir `handleDeleteHero` özelliği geçirebiliriz. Değerinin, `setShowModal(<boolean arg>)`'yi döndüren bir işlev olması gerekiyor. Tüm tıklama işleyicilerinin neden işlev olması gerekiyor? [React belgelerine](https://reactjs.org/docs/handling-events.html) göre, JSX kullanırken olay işleyici olarak bir işlevi geçirirsiniz, bir dize değil. Yaptığımız değişikliklerden sonra, test başarılı oldu (Yeşil 7).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -720,7 +720,7 @@ export default function Heroes() {
 }
 ```
 
-We can refactor `() => setShowModal(true)` into its own function. We can also remove the `.only` in the component test (Refactor 7).
+`() => setShowModal(true)`'yi kendi işlevine çıkarabiliriz. Ayrıca bileşen testindeki `.only`'i de kaldırabiliriz (Düzenleme 7).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -766,7 +766,7 @@ export default function Heroes() {
 }
 ```
 
-Time for the next failing test in the modal flow; when `button-no` is clicked the modal should go away (Red 8).
+Modal akışındaki bir sonraki başarısız teste zamanı geldi; `button-no`'ya tıklanıldığında modal kaybolmalıdır (Kırmızı 8).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -821,7 +821,7 @@ describe("Heroes", () => {
 });
 ```
 
-To make this work, we use `setShowModal(false)` in the already existing `handleCloseModal` function (Green 8).
+Bunu başarmak için, zaten var olan `handleCloseModal` işlevinde `setShowModal(false)` kullanırız (Yeşil 8).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -867,7 +867,7 @@ export default function Heroes() {
 }
 ```
 
-While we are here, we can cover the other branch of the modal flow; when clicking yes on the confirmation, we should close the modal and for now at least `console.log` something (Red 10).
+Buradayken, modal akışının diğer kolunu da kapsayabiliriz; onayda evet'e tıklandığında, modalı kapatmalıyız ve şimdilik en azından bir şeyi `console.log` yapmalıyız (Kırmızı 10).
 
 ```tsx
 // src/components/Heroes.cy.tsx
@@ -935,7 +935,7 @@ describe("Heroes", () => {
 });
 ```
 
-To pass this test, for now we just need function that toggles the modal off and console.logs the string "handleDeleteFromModal" (Green 9).
+Bu testi geçmek için, şimdilik sadece modalı kapatıp "handleDeleteFromModal" dizesini console.log yapan bir işleve ihtiyacımız var (Yeşil 9).
 
 ```tsx
 // src/components/Heroes.tsx
@@ -985,66 +985,66 @@ export default function Heroes() {
 }
 ```
 
-## `HeroDetail` component
+## `HeroDetail` bileşeni
 
-Continued after routing chapter.
+Yönlendirme bölümünden sonra devam ediyor.
 
-## Summary
+## Özet
 
-We added a test to render `ListHeader` child component (wrapped in `BrowserRouter`), and added to component with empty props to make the test pass (Red 1, Green 1).
-
-</br>
-
-We added tests checking for console.logs upon clicking he add and refresh buttons (Red 2).
-
-We used functions that console.log the function name to make the tests Pass (Green 2, Refactor 2).
+`ListHeader` alt bileşenini ( `BrowserRouter`'de sarılı) oluşturan bir test ekledik ve testin başarılı olması için boş özelliklere sahip bileşen ekledik (Kırmızı 1, Yeşil 1).
 
 </br>
 
-We added a failing test for another child `HeroList` and included the child component in the render (Red 3, Green 3). We used hard coded data for the time being.
+Konsol.log'ları kontrol eden testler ekledik, ekle ve yenile düğmelerine tıklayarak (Kırmızı 2).
+
+Testlerin başarılı olması için işlev adını konsol.log yapan işlevler kullandık (Yeşil 2, Düzenleme 2).
 
 </br>
 
-We added a failing test for rendering the modal (Red 4). We added mostly empty string props to make the test work (Green 4).
-
-We wrote another test to be able to close the modal and got an error `func.apply is not a function`, which means our event handler isn't doing anything. To solve it we used console.logging for the event handler functions and refactored them (Green 5, Refactor 5).
+Başka bir çocuk `HeroList` için başarısız bir test ekledik ve çocuk bileşeni çizime dahil ettik (Kırmızı 3, Yeşil 3). Şimdilik sabit veri kullandık.
 
 </br>
 
-We wrote a pseudo test for the modal flow; with the initial step that the modal should be closed (Red 6).
+Modalın görüntülenmesi için başarısız bir test ekledik (Kırmızı 4). Testin işlemesi için çoğunlukla boş dize özellikler ekledik (Yeşil 4).
 
-We hard coded a `false` with a blueprint for conditional rendering to make the test pass (Green 6).
-
-</br>
-
-We added a new test to the flow; to check that the modal gets opened on delete button click (Red 7).
-
-We realized that the children `HeroList` and `ModalYesNo` components share state, and lifted state up to our `Heroes` component which is their parent.
-
-`HeroList` then had a prop `handleDeleteHero`, and we set its value with `() => setShowModal(true)`, to show the modal when delete is clicked (Green 7).
-
-As before, we refactored the click handler to its own function (Refactor 7).
+Modalı kapatmayı sağlayan başka bir test yazdık ve `func.apply is not a function` hatası aldık, bu da olay işleyicimizin hiçbir şey yapmadığı anlamına geliyor. Bunu çözmek için olay işleyici işlevler için konsol.log kullandık ve onları yeniden düzenledik (Yeşil 5, Düzenleme 5).
 
 </br>
 
-We wrote the next test in the modal flow, when `button-no` is clicked the modal should go away (Red 8).
+Modal akışı için sahte bir test yazdık; ilk adımla modalın kapalı olması gerektiği (Kırmızı 6).
 
-All we needed was to instead use `setShowModal(false)` instead of the existing console.log in the `handleCloseModal` function (Green 8).
+Testin başarılı olması için koşullu oluşturma için bir şablon olan `false` kodunu kullandık (Yeşil 6).
 
 </br>
 
-We added a test for the other branch of the modal; the delete flow (Red 9).
+Akmaya yeni bir test ekledik; sil düğmesine tıkladığında modalın açılması gerektiğini kontrol etmek için (Kırmızı 7).
 
-We added a function that toggles the modal off and console.logs the string `handleDeleteFromModal` and used it on the `onYes` handler of the modal (Green 9).
+`HeroList` ve `ModalYesNo` çocuk bileşenlerinin durumu paylaştığını ve durumu, ebeveynleri olan `Heroes` bileşenine kaldırdığını fark ettik.
 
-## Takeaways
+`HeroList`'in ardından bir `handleDeleteHero` özelliği oldu ve değerini `() => setShowModal(true)` ile ayarladık, silme tıklanarak modali göstermek için (Yeşil 7).
 
-- As we repeatedly saw in the previous chapters, while designing the component, you can delay the decisions about network state and use hard coded data. For event handlers we can use functions that console.log. These will help when components that share state get used in other components. Note that per the [React docs](https://reactjs.org/docs/handling-events.html) when using JSX you pass a function as the event handler, rather than a string.
-- Look at the component tests for child components, see how they are used, and work off of that documentation when writing the tests for the parent component. We do not need to repeat any tests at the parent, but we can use the help to give an idea about how the child should be mounted.
-- In a Cypress component test, the error `func.apply is not a function` usually means the click handlers are not doing anything.
-- In React, all the click handlers have to be functions. Per the [React docs](https://reactjs.org/docs/handling-events.html) when using JSX you pass a function as the event handler, rather than a string.
-- When testing child components in isolation (ex: `ListHeader`), we can mock the click events with `cy.stub`. When the child component is being consumed by a parent, React obviously cannot mock anything. Therefore The parent / the consumer of the child has to implement the handler function and test it. Again, `console.log` is acceptable until more about the component is known.
-- From Kent C. Dodds:
-  - If components are sharing state, lift the state up to their closest common ancestor.
-  - If the common ancestor is too deep and lifting state results in prop-drilling, use React's context api.
-  - Beyond that, use state management libraries.
+Daha önce olduğu gibi, tıklama işleyiciyi kendi işlevine çıkardık (Düzenleme 7).
+
+</br>
+
+Modal akışındaki bir sonraki testi yazdık, `button-no`'ya tıklanıldığında modal kaybolmalıdır (Kırmızı 8).
+
+Tüm ihtiyacımız olan, mevcut konsol.log yerine `handleCloseModal` işlevinde `setShowModal(false)` kullanmaktı (Yeşil 8).
+
+</br>
+
+Modalın diğer dalı için; silme akışı için bir test ekledik (Kırmızı 9).
+
+Modalı kapatıp `handleDeleteFromModal` adlı dizeyi konsol.loglayan bir işlev ekledik ve bunu modalın `onYes` işleyicisinde kullandık (Yeşil 9).
+
+## Çıkarılacak Dersler
+
+- Önceki bölümlerde defalarca gördüğümüz gibi, bileşeni tasarlarken ağ durumuyla ilgili kararları erteleyebilir ve sabit kodlu veriler kullanabilirsiniz. Olay işleyiciler için konsol.log yapan işlevler kullanabiliriz. Bu, durumu paylaşan bileşenlerin diğer bileşenlerde kullanılması durumunda yardımcı olacaktır. [React belgeleri](https://reactjs.org/docs/handling-events.html)ne göre JSX kullanırken olay işleyici olarak bir işlevi string yerine kullanmalısınız.
+- Çocuk bileşenler için bileşen testlerine bakın, nasıl kullanıldıklarını görün ve ebeveyn bileşen için testler yazarken bu belgelerden faydalanın. Ebeveyn düzeyinde herhangi bir testi tekrarlamamıza gerek yoktur, ancak çocuğun nasıl monte edileceği hakkında fikir vermek için yardımcı olabilir.
+- Cypress bileşen testinde, `func.apply is not a function` hatası genellikle tıklama işleyicilerinin hiçbir şey yapmadığı anlamına gelir.
+- React'te, tüm tıklama işleyicileri işlev olmalıdır. [React belgeleri](https://reactjs.org/docs/handling-events.html)ne göre JSX kullanırken olay işleyici olarak bir işlevi string yerine kullanmalısınız.
+- Çocuk bileşenleri izole bir şekilde test ederken (ör: `ListHeader`), tıklama olaylarını `cy.stub` ile taklit edebiliriz. Çocuk bileşen bir ebeveyn tarafından kullanılıyorsa, React açıkçası hiçbir şey taklit edemez. Bu nedenle ebeveyn/çocuğun tüketicisi, işleyici işlevini uygulamalı ve test etmelidir. Yine de, bileşen hakkında daha fazla bilgi edinilene kadar `console.log` kabul edilebilir.
+- Kent C. Dodds'dan:
+  - Bileşenler durumu paylaşıyorsa, durumu en yakın ortak atalarına kaldırın.
+  - Ortak atanın derinliği çok fazlaysa ve durumu kaldırmak prop-drilling'e yol açıyorsa, React'in context api'sini kullanın.
+  - Bunun ötesinde, durum yönetimi kütüphaneleri kullanın.
