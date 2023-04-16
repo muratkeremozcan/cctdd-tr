@@ -2,13 +2,13 @@
 
 ### [`json-server`](https://github.com/typicode/json-server)
 
-We have been using a json file `src/heroes/heroes.json` in the `Heroes` component. Our app is not talking to a backend. It would be ideal to have a fake REST API instead, and `json-server` can enable that. Add the following packages to our app:
+Şimdiye kadar `Heroes` bileşeninde `src/heroes/heroes.json` adlı bir json dosyası kullanıyorduk. Uygulamamız bir arka uçla iletişim kurmuyor. Bunun yerine sahte bir REST API'ye sahip olmak ideal olacaktır ve `json-server` bunu sağlayabilir. Uygulamamıza aşağıdaki paketleri ekleyin:
 
 ```bash
 yarn add -D concurrently json-server
 ```
 
-Create a `db.json` file in the project root and copy the below content to it.
+Proje kökünde bir `db.json` dosyası oluşturun ve aşağıdaki içeriği içine kopyalayın.
 
 ```json
 {
@@ -69,7 +69,7 @@ Create a `db.json` file in the project root and copy the below content to it.
 }
 ```
 
-Add a script to `package.json` near to the `"start"` script. This will usr the `db.json` file and respond with that content at `localhost:4000`, with a 1 second simulated network delay.
+`package.json` yakınında bulunan `"start"` script'ine bir script ekleyin. Bu, `db.json` dosyasını kullanarak `localhost:4000` adresinde içeriği döndürecek ve 1 saniyelik simüle edilmiş ağ gecikmesi sağlayacaktır.
 
 ```json
 {
@@ -79,11 +79,11 @@ Add a script to `package.json` near to the `"start"` script. This will usr the `
 }
 ```
 
-`yarn start:api` and browse to http://localhost:4000/heroes or http://localhost:4000/villains. We should see some data.
+`yarn start:api` komutunu çalıştırın ve http://localhost:4000/heroes veya http://localhost:4000/villains adreslerine gidin. Bazı veriler görmelisiniz.
 
 ![json-server](../img/json-server.png)
 
-Update `package.json` scripts as below. The changes make it so that the UI server is always served together with the api server. This way the repo user can abstract away the backend needs while using the repo.
+Aşağıdaki gibi `package.json` script'lerini güncelleyin. Değişiklikler, UI sunucusunun her zaman API sunucusuyla birlikte sunulmasını sağlar. Bu sayede repo kullanıcısı, repoyu kullanırken arka uç ihtiyaçlarını soyutlamış olur.
 
 ```json
 "scripts": {
@@ -106,7 +106,7 @@ Update `package.json` scripts as below. The changes make it so that the UI serve
 },
 ```
 
-For CI, update `.github/workflows/main.yml` `cypress-e2e-test` section > Cypress GitHub action command > `start` property from `yarn start` to `yarn dev`. This will ensure that the start command not only starts the UI server, but also the backend.
+CI için, `.github/workflows/main.yml` dosyasındaki `cypress-e2e-test` bölümünü > Cypress GitHub eylem komutunu > `start` özelliğini `yarn start`'tan `yarn dev`'e güncelleyin. Bu, başlatma komutunun sadece UI sunucusunu başlatmakla kalmayıp, aynı zamanda arka ucu da başlatacağından emin olacaktır.
 
 ```yaml
 cypress-e2e-test:
@@ -131,11 +131,11 @@ cypress-e2e-test:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Backend-e2e
+### Arka Uç-e2e
 
-Cypress is a great tool as an API client to test any live backend; check out [CRUD API testing a deployed service with Cypress](https://dev.to/muratkeremozcan/crud-api-testing-a-deployed-service-with-cypress-using-cy-api-spok-cypress-data-session-cypress-each-4mlg). We can write backend e2e tests that ensure that the backend works properly. With `json-server` this is not needed, but we want to showcase a real life example and also we will use some of these api commands in the UI e2e CRUD tests to setup and clean up state. In the real world, most likely the backend would be in a separate repo and host its own Cypress api e2e tests. The common commands that would also be used in the front end would most likely be hosted in an internal Cypress test package; check out a guide about that [here](https://dev.to/muratkeremozcan/how-to-create-an-internal-test-plugins-for-your-team-in-ts-implement-custom-commands-and-use-other-cypress-plugins-in-them-5lp).
+Cypress, canlı bir arka uç testi için harika bir API istemcisi aracıdır; [Cypress ile Dağıtılmış Hizmette CRUD API Testi](https://dev.to/muratkeremozcan/crud-api-testing-a-deployed-service-with-cypress-using-cy-api-spok-cypress-data-session-cypress-each-4mlg) yazısına göz atın. Arka uç düzgün çalıştığından emin olmak için arka uç e2e testleri yazabiliriz. `json-server` ile bu gerekli değildir, ancak gerçek yaşam örneğini göstermek istiyoruz ve ayrıca bu API komutlarının bazılarını UI e2e CRUD testlerinde durumu ayarlamak ve temizlemek için kullanacağız. Gerçek dünyada, büyük olasılıkla arka uç ayrı bir depoda olacak ve kendi Cypress api e2e testlerine sahip olacaktır. Ön uçta da kullanılacak olan ortak komutlar büyük olasılıkla dahili bir Cypress test paketinde barındırılacaktır; bu konuda bir rehberi [burada](https://dev.to/muratkeremozcan/how-to-create-an-internal-test-plugins-for-your-team-in-ts-implement-custom-commands-and-use-other-cypress-plugins-in-them-5lp) bulabilirsiniz.
 
-We create a backend-e2e test to show case TDD with Cypress api testing. Create a file `cypress/e2e/backend/crud.cy.ts`, and request a simple `GET`.
+Cypress API testi ile TDD'yi göstermek için bir arka uç-e2e testi oluşturuyoruz. `cypress/e2e/backend/crud.cy.ts` adında bir dosya oluşturun ve basit bir `GET` isteği yapın.
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -153,11 +153,11 @@ describe("Backend e2e", () => {
 });
 ```
 
-Start the runner with `yarn cy:open-e2e` and execute the test. If we scrutinize the console, we can view the array of 6 heroes in the `body`.
+Arka uç e2e testlerini başlatmak için `yarn cy:open-e2e` komutunu kullanın ve testi çalıştırın. Konsolu incelediğimizde, `body` içinde 6 kahramanın dizisini görebiliriz.
 
 ![json-server-backend-e2e-initial](../img/json-server-backend-e2e-initial.png)
 
-We can test deeper and ensure that each entity has `id`, `name` and `description` properties.
+Her varlık için `id`, `name` ve `description` özelliklerine sahip olduğundan emin olmak için daha derinlemesine test edebiliriz.
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -181,7 +181,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-It would be more ideal to have the backend served on a `/api` route so that it is not confused by the front end, and it is more aligned with the convention. Modify the url with this change for a failing test (Red 1).
+Arka ucun `/api` rotasıyla sunulması daha ideal olurdu, böylece ön uçla karıştırılmaz ve daha uyumlu hale getirilir. Bu değişiklik için başarısız bir testle URL'yi değiştirin (Kırmızı 1).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -205,7 +205,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-To satisfy the change, we need 2 modifications. First, create a file `routes.json` at the project root:
+Değişikliği gerçekleştirmek için 2 değişiklik yapmamız gerekiyor. Önce, projenin kökünde `routes.json` adlı bir dosya oluşturun:
 
 ```json
 {
@@ -213,7 +213,7 @@ To satisfy the change, we need 2 modifications. First, create a file `routes.jso
 }
 ```
 
-Modify the `package.json` script by appending `--routes routes.json` so that this file is used.
+Bu dosyanın kullanılması için `package.json` betiğini `--routes routes.json` ekleyerek değiştirin.
 
 ```json
 "start:api": "json-server --watch db.json --port 4000 --delay 1000 --routes routes.json",
@@ -221,7 +221,7 @@ Modify the `package.json` script by appending `--routes routes.json` so that thi
 
 ![json-server-Green1](../img/json-server-Green1.png)
 
-We can have a similar test for `villains` with a slight refactor (Refactor 1).
+Benzer bir testi, `villains` için de hafif bir düzenlemeyle yapabiliriz (Düzenleme 1).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -257,7 +257,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-We can refactor that further to be DRYer.
+Daha kuru olacak şekilde bunu daha da yeniden düzenleyebiliriz.
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -291,7 +291,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-Let's write a new test, this time adding a hero and verifying that it got added.
+Yeni bir test yazalım, bu sefer bir kahraman ekleyip eklenip eklenmediğini doğrulayalım.
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -343,19 +343,19 @@ describe("Backend e2e", () => {
 });
 ```
 
-The test initially seems to work, alas rerunning it we get a 500 error, because the entity we created already exists (Red 2).
+Test başlangıçta çalışıyor gibi görünüyor, ancak yeniden çalıştırıldığında 500 hata alıyoruz, çünkü oluşturduğumuz varlık zaten mevcut (Kırmızı 2).
 
 ![json-server-Red2](../img/json-server-Red2.png)
 
-There are a few ways to handle this. We could randomize the entity, and or we could delete the entity at the end of the test. We will do those to demo best practices, however the sure proof way to deal with it is to reset the server state at the beginning of the test. We could additionally ensure that the test cleans up after itself, later.
+Bunu ele almanın birkaç yolu vardır. Varlığı rastgeleleştirebilir ve/veya testin sonunda varlığı silebiliriz. En iyi uygulamaları göstermek için bunları yapacağız, ancak bununla başa çıkmak için kesin yol, testin başında sunucu durumunu sıfırlamaktır. İlerleyen zamanlarda testin kendi kendini temizlemesini sağlayabiliriz.
 
-Install [json-server-reset](https://github.com/bahmutov/json-server-reset) with `yarn add -D json-server-reset`. Modify the `package.json` by appending the middleware, which enables a `/reset` route for our api. Any time a `POST` request is made to the `reset` route with a payload, the `db.json` file resets to that payload.
+[json-server-reset](https://github.com/bahmutov/json-server-reset) uygulamasını `yarn add -D json-server-reset` ile yükleyin. `package.json` dosyasını düzenleyerek, api için bir `/reset` rotası sağlayan middleware'i ekleyin. Herhangi bir yük ile `reset` rotasına `POST` isteği yapıldığında, `db.json` dosyası o yüke sıfırlanır.
 
 ```json
 "start:api": "json-server --watch db.json --port 4000 --delay 1000 --routes routes.json --middlewares ./node_modules/json-server-reset"
 ```
 
-Make sure to remove the additional entity added to db.json in our initial test, and reset the db to its original state. Remove:
+İlk testte eklenen ek varlığı db.json dosyasından kaldırın ve db'yi orijinal durumuna sıfırlayın. Kaldırın:
 
 ```json
 {
@@ -365,7 +365,7 @@ Make sure to remove the additional entity added to db.json in our initial test, 
 }
 ```
 
-Now all we need is a payload, however if we import `db.json` to our test and also use it to reset itself, reset call will keep repeating infinitely. Make a copy of `db.json` to `cypress/fixtures/db.json`, so that we can import from there and also fully be able to stub our network later. We can modify our script to reset the data before each test as shown below (Green 2).
+Şimdi ihtiyacımız olan tek şey bir yüktür, ancak `db.json` dosyasını testimize dahil edip aynı zamanda kendisini sıfırlamak için kullanırsak, sıfırlama çağrısı sonsuz bir şekilde tekrarlanacaktır. `db.json` dosyasının bir kopyasını `cypress/fixtures/db.json` şeklinde oluşturun, böylece oradan içe aktarabilir ve ağımızı tamamen taklit edebiliriz. Aşağıda gösterildiği gibi, verileri her testten önce sıfırlamak için komut dosyamızı değiştirebiliriz (Yeşil 2).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -424,7 +424,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-We can now add the rest of the test to update and delete the hero. Note that we are able use the `id` property in a route to get, update or delete that entity directly. Since we have a passing test, we keep adding new tests until we run into a failure. We are effectively testing `json-server`, therefore failures are not likely. This is the common scenario when applying a TDD-like approach after the development is done, therefore the true value of TDD is realized during development. Let's enhance the test with an update and delete (Refactor 2).
+Şimdi kahramanı güncellemek ve silmek için testin geri kalanını ekleyebiliriz. Bir rotada `id` özelliğini kullanarak doğrudan o varlığı almak, güncellemek veya silmek için kullanabileceğimize dikkat edin. Başarılı bir testimiz olduğu için, başarısız olana kadar yeni testler eklemeye devam ediyoruz. `json-server`ı test ediyoruz, bu yüzden başarısızlıklar olası değildir. Bu, geliştirme tamamlandıktan sonra TDD benzeri bir yaklaşım uygulandığında yaygın bir senaryodur, bu nedenle TDD'nin gerçek değeri geliştirme sırasında anlaşılır. Testi güncelleme ve silme ile geliştirelim (Düzenleme 2).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -504,22 +504,22 @@ describe("Backend e2e", () => {
 });
 ```
 
-The test taking responsibility for the db state is a best practice. Here we have create update delete all under one block, but another approach could be like the below. The duplicated sub steps are highlighted in **bold**.
+Testin, veritabanı durumundan sorumlu olması en iyi uygulamadır. Burada tek bir blok altında oluşturma, güncelleme ve silme işlemlerini yapıyoruz, ancak başka bir yaklaşım aşağıdaki gibi olabilir. Çoğaltılan alt adımlar **kalın** ile vurgulanmıştır.
 
-- Creation
-  - **UI create**
-  - **API delete**
-- Update
-  - **API create**
-  - UI update
-  - **API delete**
-- Delete
-  - **API create**
-  - **UI delete**
+- Oluşturma
+  - **UI oluştur**
+  - **API sil**
+- Güncelleme
+  - **API oluştur**
+  - UI güncelle
+  - **API sil**
+- Silme
+  - **API oluştur**
+  - **UI sil**
 
-As you can see, covering the update scenario satisfies it all, otherwise there is duplication between the tests.
+Gördüğünüz gibi, güncelleme senaryosunu kapsamak her şeyi tatmin eder, aksi takdirde testler arasında çoğaltma vardır.
 
-After the final delete, we should ensure that the entity is removed from the database. Add a final get to check for this (Red 3).
+Son silme işleminden sonra, varlığın veritabanından kaldırıldığından emin olmalıyız. Bunu kontrol etmek için son bir get işlemi ekleyin (Kırmızı 3).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -600,14 +600,14 @@ describe("Backend e2e", () => {
 });
 ```
 
-We will get a failure about the 404 status because Cypress retries commands (for 4 seconds) until it succeeds. If we have a check for a non-200 code, we should allow the api calls to fail.
+Cypress, başarılı olana kadar komutları yeniden dener (4 saniye) olduğu için 404 durumu hakkında bir hata alacağız. 200 dışındaki kodlar için kontrolümüz varsa, api çağrılarının başarısız olmasına izin vermelidir.
 
-[cy.request](https://docs.cypress.io/api/commands/request) has two properties we love to control:
+[cy.request](https://docs.cypress.io/api/commands/request) kontrol etmeyi sevdiğimiz iki özelliğe sahiptir:
 
-- `retryOnStatusCodeFailure`: Whether Cypress should automatically retry status code errors under the hood. Cypress will retry a request up to 4 times if this is set to true.
-- `failOnStatusCode` : Whether to fail on response codes other than `2xx` and `3xx`
+- `retryOnStatusCodeFailure`: Cypress'in, hata kodlarını otomatik olarak yeniden denemesi gerekip gerekmediği. Eğer bu true olarak ayarlanırsa, Cypress bir isteği en fazla 4 kez yeniden dener.
+- `failOnStatusCode`: `2xx` ve `3xx` dışındaki yanıt kodlarına göre başarısız olup olmamak
 
-We can control those two together in an argument flag `allowedToFail` with default value of `false`. When we expect to have non-200 status codes, we can set that to true. Here is the api enhancement (Green 3).
+Bu ikisini, varsayılan değeri `false` olan `allowedToFail` adlı bir argüman bayrağı ile birlikte kontrol edebiliriz. 200 dışındaki durum kodlarını beklediğimizde, bunu true olarak ayarlayabiliriz (Yeşil 3).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -690,9 +690,9 @@ describe("Backend e2e", () => {
 });
 ```
 
-We can refactor the api to be better readable and extendible by putting the options in an object. This way, if there are multiple options, their order does not matter. If no options are passed in, it defaults to an empty object. This refactor also allows us to add new options in the future, and the api user can pick and choose which ones to utilize.
+API'yi daha okunabilir ve genişletilebilir hale getirmek için seçenekleri bir nesneye koyarak yeniden düzenleyebiliriz. Bu şekilde, birden fazla seçenek varsa, sıraları önemli değildir. Hiçbir seçenek iletilmezse, varsayılan olarak boş bir nesneye dönüşür. Bu yeniden düzenleme, gelecekte yeni seçenekler eklememize ve API kullanıcısının hangilerini kullanmak istediğini seçmesine olanak tanır.
 
-We can also improve the type by casting the `cy.request` response, indicating the type of the value we will get.
+Ayrıca, `cy.request` yanıtını dökerek türü iyileştirebiliriz ve alacağımız değerin türünü belirtiriz.
 
 ```typescript
 const getRoute = (
@@ -710,7 +710,7 @@ const getRoute = (
   });
 ```
 
-Here is the refactored test (Refactor 3).
+İşte yeniden yapılandırılmış test (Düzenleme 3).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -798,7 +798,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-That is a better readable api, but there is some duplication between the CRUD functions. Consider the below function that can do any crud operation, with type safety. `method` and `route` are required. `body` and `allowedToFail` flag are optional, if they are not passed in then `body` is empty but `allowedToFail` still is `false`. If the body is passed in and the method is `POST` or `PUT`, the payload will be taken, otherwise undefined for `GET` and `DELETE`.
+Daha iyi okunabilir bir API olmasına rağmen, CRUD işlevleri arasında biraz yineleme vardır. Aşağıdaki işlevi düşünün; tip güvenliğiyle herhangi bir CRUD işlemini gerçekleştirebilir. `method` ve `route` gerekli olan parametrelerdir. `body` ve `allowedToFail` bayrağı isteğe bağlıdır; eğer geçirilmezlerse, `body` boş olacak ama `allowedToFail` yine de `false` olacaktır. Eğer `body` geçirilir ve `method` `POST` veya `PUT` ise, yük alınacaktır; aksi takdirde, `GET` ve `DELETE` için tanımsızdır.
 
 ```typescript
 const crud = (
@@ -821,7 +821,7 @@ const crud = (
   });
 ```
 
-Here is the refactor using the above function (Refactor 4):
+İşte yukarıdaki fonksiyonu kullanarak yapılan yeniden düzenleme (Düzenleme 4):
 
 ```typescript
 import data from "../../fixtures/db.json";
@@ -893,11 +893,11 @@ describe("Backend e2e", () => {
 });
 ```
 
-When we have ui e2e tests, we will want to use this command for setup and teardown. We can move it to a utility file, and import from there to each test that needs it. Usually the rule of the thumb is to use a utility file, and import the function from there if there are 2-3 imports. Anything beyond that is more suited from a Cypress command. Let's create a command to showcase how that can be achieved.
+UI e2e testlerimiz olduğunda, bu komutu kurulum ve sökme için kullanmak isteyeceğiz. Bunu bir yardımcı dosyaya taşıyabilir ve onu ihtiyacı olan her testten içe aktarabiliriz. Genel bir kural olarak, 2-3 içe aktarma olduğunda yardımcı bir dosyayı kullanmak ve oradan fonksiyonu içe aktarmak uygundur. Bundan daha fazlası, Cypress komutundan alınması daha uygundur. Bunu nasıl başarılacağını göstermek için bir komut oluşturalım.
 
-We kept adding tests, and got green repeatedly. Now we can keep refactoring until we are happy with the result.
+Testler eklemeye devam ettik ve tekrar tekrar yeşil ışık aldık. Şimdi sonuçtan memnun kalana kadar yeniden düzenlemeye devam edebiliriz.
 
-Add the command `crud` and `resetData` to Cypress commands (Refactor 4).
+`crud` ve `resetData` komutlarını Cypress komutlarına ekleyin (Düzenleme 4).
 
 ```typescript
 // cypress/support/commands.ts
@@ -941,7 +941,7 @@ Cypress.Commands.add("resetData", () =>
 );
 ```
 
-Add the type definition of the command to `./cypress.d.ts`.
+Komutun tip tanımını `./cypress.d.ts` dosyasına ekleyin.
 
 ````typescript
 // cypress.d.ts
@@ -1021,7 +1021,7 @@ declare global {
 }
 ````
 
-Use the commands in the spec file. We will do a final touch up here to use [`faker`](https://fakerjs.dev/api/) for the data we are working with. `yarn add -D @faker-js/faker` (Refactor 4).
+Komutları spec dosyasında kullanın. Burada çalıştığımız veriler için [`faker`](https://fakerjs.dev/api/) kullanarak son bir dokunuş yapacağız. `yarn add -D @faker-js/faker` (Düzenleme 4).
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -1079,42 +1079,42 @@ describe('Backend e2e', () => {
   })
 ```
 
-The final code may look sophisticated, but it took many cycles of getting the tests to work and refactoring to get there.
+Son kod karmaşık görünebilir, ancak oraya ulaşmak için testlerin çalışmasını sağlama ve yeniden düzenleme döngülerinden birçok kez geçti.
 
-### Summary
+### Özet
 
-We faked a backed server for our application to talk to using `json-server`.
+Uygulamamızın konuşabileceği sahte bir sunucu oluşturduk; `json-server` kullanarak bunu gerçekleştirdik.
 
-This required to seed the database with a `db.json` file, also to start the api server when our app starts.
+Bu işlem, `db.json` dosyasıyla veritabanını seedleme ve uygulamamız başlatıldığında api sunucusunu başlatma gerektirdi.
 
-`package.json` scripts and the CI had to be modified.
+`package.json` komutları ve CI değiştirilmeliydi.
 
-We started with a `GET` test to verify the seeded data. We modified the backend to use a unique prefix `api`, and verified heroes and villains (Red 1, Green 1, Refactor 1)
-
-</br>
-
-We created a new test to add a hero. But because the test leaves state behind, rerunning it caused issues (Red 2).
-
-We used `json-server-reset` to reset the db to its original form before each test (Green 2).
-
-We enhanced the test with update and delete (Refactor 2)
+Seedlenen verileri doğrulamak için bir `GET` testiyle başladık. Sunucuyu benzersiz bir önek `api` kullanacak şekilde değiştirdik ve kahramanları ve kötü adamları doğruladık (Kırmızı 1, Yeşil 1, Düzenleme 1).
 
 </br>
 
-We added a test to ensure that the deleted entity is removed from the DB (Red 3).
+Yeni bir kahraman eklemek için yeni bir test oluşturduk. Ancak testin arkasında durum bırakması nedeniyle, testi yeniden çalıştırmak sorunlara neden oldu (Kırmızı 2).
 
-To verify non-200 status codes, we improved our test api (Green 3).
+Her testten önce veritabanını orijinal haline döndürmek için `json-server-reset` kullandık (Yeşil 2).
 
-We further improved the api to be better readable and extendable using an object for the optional `allowedToFail` (Refactor 3).
+Testi güncelleme ve silme ile geliştirdik (Düzenleme 2).
 
-We refactored the CRUD commands into a single functions (Refactor 4).
+</br>
 
-We reached a state where we kept adding tests, and got green repeatedly.
+Silinen öğenin veritabanından kaldırıldığından emin olmak için yeni bir test ekledik (Kırmızı 3).
 
-After that point we kept refactoring until we were happy with the result, using Cypress commands, faker, better types so on and so forth.
+200 dışındaki durum kodlarını doğrulamak için test api'sini geliştirdik (Yeşil 3).
 
-### Takeaways
+İsteğe bağlı `allowedToFail` için bir nesne kullanarak api'yi daha iyi okunabilir ve genişletilebilir hale getirdik (Düzenleme 3).
 
-The true value of TDD is realized during development. It can be applied after so, however the RedGreenRefactor cycles become more like GreenRefactor. The incremental, small steps moving forward towards more comprehensive tests and refactored code are still the same.
+CRUD komutlarını tek bir işleve taşıdık (Düzenleme 4).
 
-With Cypress the rule of the thumb is to use a utility file, and import the functions from there if there are 2-3 references / imports. Anything beyond that is more suited from a Cypress command where the function will be available in any spec without having to import. We opted to use a command to demo the more sophisticated approach that readers may not be familiar with.
+Test eklemeye devam ettik ve tekrar tekrar yeşil ışık aldık.
+
+O noktadan sonra, Cypress komutları, sahte veriler, daha iyi tipler vb. kullanarak sonuçtan memnun kalana kadar yeniden yapılandırmaya devam ettik.
+
+###  Çıkarılacak Dersler
+
+TDD'nin gerçek değeri geliştirme sırasında anlaşılır. Geliştirme sonrasında da uygulanabilir, ancak KırmızıYeşilRefaktor döngüleri daha çok YeşilRefaktor gibi olur. Kapsamlı testlere ve refaktör edilmiş koda doğru ilerleyen küçük, artan adımlar yine aynıdır.
+
+Cypress ile başparmak kuralı, 2-3 referans / içe aktarma olduğunda yardımcı bir dosya kullanmaktır ve işlevleri oradan içe aktarmaktır. Bunun ötesinde, içe aktarma yapmadan her spec'te kullanılabilen bir Cypress komutu ile daha uygun hale gelir. Okuyucuların aşina olmayabileceği daha sofistike bir yaklaşımı göstermek için bir komut kullanmayı tercih ettik.
