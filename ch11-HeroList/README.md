@@ -1,10 +1,10 @@
 # HeroList
 
-`HeroList` is the second of our more complex components, parent components. In the Angular version of the app, we see a list of heroes. Each item in the list is a `div` that wraps our `CardContent` component and two `ButtonFooter` components for editing or deleting the list item.
+`HeroList`, daha karmaşık bileşenlerimizin ikincisi olan üst bileşenlerdir. Uygulamanın Angular versiyonunda, kahramanların bir listesini görüyoruz. Listenin her öğesi, `CardContent` bileşenimizi ve liste öğesini düzenlemek veya silmek için iki `ButtonFooter` bileşenini saran bir `div`dir.
 
 ![HeroList-initial](../img/HeroList-initial.png)
 
-Create a branch `feat/HeroList`. Create 2 files under `src/heroes/` folder; `HeroList.cy.tsx`, `HeroList.tsx`. As usual, start minimal with a component rendering; copy the below to the files and execute the test after opening the runner with `yarn cy:open-ct`.
+`feat/HeroList` adlı bir dal oluşturun. `src/heroes/` klasörü altında 2 dosya oluşturun; `HeroList.cy.tsx`, `HeroList.tsx`. Her zamanki gibi, bileşen işlemesine minimal başlayarak aşağıdakileri dosyalara kopyalayın ve `yarn cy:open-ct` ile koşucuyu açtıktan sonra testi çalıştırın.
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -25,16 +25,16 @@ export default function HeroList() {
 }
 ```
 
-## One list item
+## Bir liste öğesi
 
-When creating a list component in React, it is easier to start with one item at first, and then build up to the list. We will start with the `div`. Here is the outline we wish for:
+React'te bir liste bileşeni oluştururken, önce tek bir öğeyle başlamak ve ardından listeye geçmek daha kolaydır. `div` ile başlayacağız. İstediğimiz şema şu şekildedir: 
 
 - div
   - `CardContent`
   - `footer`
     - 2 x`ButtonFooter`
 
-We start with a test for `CardContent` render (Red 1).
+Önce `CardContent` işlemini test ederek başlarız (Kırmızı 1).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -50,7 +50,7 @@ describe("HeroList", () => {
 });
 ```
 
-After adding the child component, the test passes but we get a compiler warning about missing props name and description from `CardContent`. For now we can add the props with empty strings.
+`CardContent` çocuk bileşeni ekledikten sonra test geçer, ancak `CardContent`ten eksik olan ad ve açıklama özellikleri hakkında bir derleyici uyarısı alırız. Şimdilik boş dize ile özellikleri ekleyebiliriz.
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -65,7 +65,7 @@ export default function HeroList() {
 }
 ```
 
-Now we can add a failing test checking for the prop values (Red 2).
+Şimdi özellik değerleri için başarısız bir test ekleyebiliriz (Kırmızı 2).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -83,7 +83,7 @@ describe("HeroList", () => {
 });
 ```
 
-And we can add the hard-coded prop values to the component to make the test pass (Green 2).
+Ve testi geçmek için bileşene sabit kodlu özellik değerlerini ekleyebiliriz (Yeşil 2).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -98,7 +98,7 @@ export default function HeroList() {
 }
 ```
 
-We get a hint from the usage that `hero` is a piece of data that we get from the network. For now we can create a `hero` object and copy it to both the test and the component (Refactor 2).
+Kullanımdan `hero`nun ağdan aldığımız bir veri parçası olduğuna dair bir ipucu alırız. Şimdilik bir `hero` nesnesi oluşturabilir ve bunu hem teste hem de bileşene kopyalayabiliriz (Refaktör 2).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -143,7 +143,7 @@ export default function HeroList() {
 
 ![HeroList-Refactor2](../img/HeroList-Refactor2.png)
 
-We can create a new test that checks for the render of `cancel` and `edit` buttons, which are variants of the `ButtonFooter` component. Checking for the `footer` and making sure that the buttons are inside it is optional; we could just check for the components instead. Testing is always a call between cost and confidence, and how much we test depends. In this case "Will the `footer` tag ever change," "Is it a high amount of work to use the `within` api?" "How much more confidence do we get by testing this detail" are some of the questions that can determine our decision (Red 3).
+`cancel` ve `edit` düğmelerinin işlemini kontrol etmek için `ButtonFooter` bileşeninin çeşitlerinden olan yeni bir test oluşturabiliriz. `footer`ı kontrol etmek ve düğmelerin içinde olduğundan emin olmak isteğe bağlıdır; bunun yerine bileşenleri kontrol edebiliriz. Test maliyeti ve güven arasında bir çağrıdır ve ne kadar test ettiğimize bağlıdır. Bu durumda "footer etiketi hiç değişecek mi?", "within api kullanmak yüksek miktarda iş mi?", "Bu ayrıntıyı test etmekle ne kadar daha fazla güven alırız?" gibi sorular kararımızı belirleyebilir (Kırmızı 3).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -174,7 +174,7 @@ describe("HeroList", () => {
 });
 ```
 
-As we add the `ButtonFooter` child to the component, we get a compiler warning about missing props, as well as a failing test (Red3).
+`ButtonFooter` çocuğunu bileşene ekledikçe, eksik prop'lar hakkında bir derleyici uyarısı alırız ve başarısız bir test (Kırmızı3) elde ederiz.
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -200,7 +200,7 @@ export default function HeroList() {
 }
 ```
 
-We can take advantage of the `ButtonFooter` types to add the missing props to pass the test. For now we can leave the `onClick` values empty (Green 3).
+Eksik prop'ları ekleyerek testi geçmek için `ButtonFooter` türlerinden yararlanabiliriz. Şimdilik `onClick` değerlerini boş bırakabiliriz (Yeşil 3).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -230,7 +230,7 @@ export default function HeroList() {
 
 ![HeroList-Green3](../img/HeroList-Green3.png)
 
-**In the TDD mindset, when we have green tests, we want to prefer adding more tests or refactoring versus adding additional source code**. Let's write a failing test for handling the delete and select hero events. Similar to the test `heroes/HeroDetail.cy.tsx` for now we can spy on a `console.log` to ensure that something happens when the button is clicked. We can use the `beforeEach` hook and a `context` block like we did so in the previous chapters (Red 4).
+**TDD zihniyetinde, yeşil testlerimiz olduğunda, ek kaynak kod eklemektense daha fazla test eklemeyi veya yeniden düzenlemeyi tercih ederiz**. Silme ve kahramanı seçme olaylarını ele alan başarısız bir test yazalım. Şimdilik `console.log`'u izlemek için benzer `heroes/HeroDetail.cy.tsx` testi gibi bir şey olduğundan emin olalım. Önceki bölümlerde yaptığımız gibi `beforeEach` kancası ve `context` bloğunu kullanabiliriz (Kırmızı 4).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -279,7 +279,7 @@ describe("HeroList", () => {
 });
 ```
 
-All we need to make the test pass is fill in functions that return console.logs with the respective arguments `handleDeleteHero` & `handleSelectHero` (Green 4).
+Şu anda tüm testlerin geçmesi için yapmamız gereken, sırasıyla `handleDeleteHero` ve `handleSelectHero` argümanlarıyla dönen console.log'lar içeren işlevler doldurmaktır (Yeşil 4).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -315,7 +315,7 @@ export default function HeroList() {
 }
 ```
 
-Now is a good time to refactor the `onClick` events into functions and add styles (Refactor 4).
+Şimdi, `onClick` olaylarını işlevlere dönüştürmenin ve stiller eklemenin iyi bir zamanıdır (Refaktör 4).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -354,9 +354,9 @@ export default function HeroList() {
 }
 ```
 
-## Creating the list
+## Listeyi oluşturma
 
-Wrap the top `div` in a `ul` and `li`. The component still renders. What we need is a list / array of data that we can map over.
+Üst `div`'i `ul` ve `li` içine alın. Bileşen hala oluşturuluyor. İhtiyacımız olan şey, üzerinde eşleme yapabileceğimiz veri listesi / dizisi.
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -400,9 +400,9 @@ export default function HeroList() {
 }
 ```
 
-Remember the statement we made about data while developing the `HeroDetail` component; _"Instead of the hard coded `hero` object in the component, we can pass in data with a prop. We either manipulate our components via props or what wraps them, and a prop is the easier choice at the moment."_ We can stay consistent with that approach and pass a prop to the component; an array of 2 `hero` objects.
+`HeroDetail` bileşeni geliştirilirken veri hakkında yaptığımız şu açıklamayı hatırlayın; *"Bileşende sert kodlanmış `hero` nesnesi yerine, verileri bir prop ile iletebiliriz. Bileşenlerimizi prop'larla veya onları saran şeyle değiştiririz ve şu anda prop daha kolay bir seçenek."* Bu yaklaşımla tutarlı kalabilir ve bileşene bir prop iletebiliriz; 2 `hero` nesnesinden oluşan bir dizi.
 
-We start by modifying the test. Instead of one `hero` object, we have a `heroes` array of 2 `hero` objects. To check the string values for `name` and `description`, we refer to `heroes[0]` instead of `hero`. The test still passes but have a TS error because the prop `heroes` does not exist yet in the component (Red 5).
+Testi değiştirerek başlarız. Bir `hero` nesnesi yerine, 2 `hero` nesnesinden oluşan bir `heroes` dizisi vardır. `name` ve `description` için string değerlerini kontrol etmek için, `hero` yerine `heroes[0]`'a başvururuz. Test hala başarılı, ancak bileşende henüz `heroes` adlı bir prop olmadığı için TS hatası var (Kırmızı 5).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -458,7 +458,7 @@ describe("HeroList", () => {
 });
 ```
 
-We pass the `heroes` array as a prop, and our prop type has to be an array of heroes (Green 5).
+`heroes` dizisini bir prop olarak iletiyoruz ve prop türümüzün kahramanlar dizisi olması gerekiyor (Yeşil 5).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -506,9 +506,9 @@ export default function HeroList({ heroes }: HeroListProps) {
 }
 ```
 
-We have addressed the compiler error, but we are still using the hard coded `hero` object in the component and not using the data passed to the component with the `heroes` prop. Removing the `hero` object fails the test and gives compiler errors for the usage of `hero.name` and `hero.description` (Red 6).
+Derleyici hatasını ele aldık, ancak bileşende hala sabit kodlu `hero` nesnesini kullanıyoruz ve `heroes` özelliği ile bileşene geçirilen veriyi kullanmıyoruz. `hero` nesnesini kaldırmak, testi başarısız kılar ve `hero.name` ve `hero.description` kullanımı için derleyici hataları verir (Kırmızı 6).
 
-To address the failures temporarily, we use `heroes[0]` instead of the `hero` reference (Green 6).
+Başarısızlıkları geçici olarak ele almak için, `hero` referansı yerine `heroes[0]` kullanırız (Yeşil 6).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -552,9 +552,9 @@ export default function HeroList({ heroes }: HeroListProps) {
 }
 ```
 
-This begs the question; how do we display multiple list items? Do we have to copy paste the entire `li` and reference `heroes[1]` in it? This works (try it out) but we all know that is not good because it is not DRY and it does not scale.
+Bu, şu soruyu sormamıza neden olur; birden fazla liste öğesini nasıl görüntüleriz? Tüm `li`yi kopyalayıp `heroes[1]` içinde referanslayarak mı yaparız? Bu işe yarar (deneyin) ama bunun iyi olmadığını biliyoruz çünkü DRY değil ve ölçeklenmiyor.
 
-What we need is to render a list in a smarter way. In React, similar to JS, we do this by mapping over the array / the data. The only difference is the need to use JSX notation to wrap the `li` with syntax. Think of these `{` `}` like a template literal `${ }` without the dollar sign. Now instead of referencing array indexes, we can reference what the map yields; a single `hero` that maps to each index of the array. If `map` is confusing, think of it like a better version of `forEach` that returns and does not mutate, but creates a new array (Refactor 6).
+Daha akıllı bir şekilde bir listeyi işlememiz gerekiyor. React'te, JS'ye benzer şekilde, bunu diziyi / verileri eşlemek suretiyle yapıyoruz. Tek fark, `li`yi sözdizimiyle sarmak için JSX gösterimini kullanma ihtiyacıdır. Bu `{` `}` karakterlerini dolar işareti olmayan bir şablon dizesi `${ }` gibi düşünün. Şimdi dizi indekslerini değil, haritanın ürettiği tek `hero`yu referans alabiliriz; dizinin her indeksine eşleşen. `map` kafa karıştırıcıysa, döndüren ve dizi oluşturmayan, ancak yeni bir dizi oluşturan `forEach`in daha iyi bir sürümü gibi düşünün (Düzenleme 6).
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -596,7 +596,7 @@ export default function HeroList({ heroes }: HeroListProps) {
 }
 ```
 
-That was a good refactor, the render is looking good but the test is failing for `Delete` and `Edit` clicks because now there are multiples of them we can make a quick tweak to use the `first()` instance on the list when clicking. We can also move the data out to a Cypress fixture, a json file under `./cypress/fixtures`. Create the file `./cypress/fixtures/heroes.json` and paste the below content to it.
+İyi bir yeniden düzenleme oldu, render iyi görünüyor, ancak `Delete` ve `Edit` tıklamaları için test başarısız oluyor çünkü şimdi onların birden fazlası var ve tıklarken listenin `first()` örneğini kullanarak hızlı bir ayar yapabiliriz. Verileri de Cypress düzeneği olan bir json dosyasına, `./cypress/fixtures` altına taşıyabiliriz. `./cypress/fixtures/heroes.json` dosyasını oluşturun ve aşağıdaki içeriği yapıştırın.
 
 ```json
 [
@@ -633,7 +633,7 @@ That was a good refactor, the render is looking good but the test is failing for
 ]
 ```
 
-We can refactor the test to use this data instead (Refactor 6).
+Testi bu verileri kullanacak şekilde yeniden düzenleyebiliriz (Düzenleme 6).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -679,7 +679,7 @@ describe("HeroList", () => {
 
 ![HeroList-Refactor5](../img/HeroList-Refactor6.png)
 
-Let's add a new test that verifies that the length of the list is as long as the length of the data (Red 7)
+Veri uzunluğu kadar listenin uzunluğu olduğunu doğrulayan yeni bir test ekleyelim (Kırmızı 7)
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -725,9 +725,9 @@ describe("HeroList", () => {
 });
 ```
 
-While adding the `data-cy` attribute to the component, we will also cover an important topic about the `key` attribute.
+`data-cy` özelliğini bileşene eklerken, `key` özelliği hakkında önemli bir konuyu da ele alacağız.
 
-JS' `map` takes a second argument `index`. We can utilize this with a template literal and be able to use `data-cy` selectors on `nth` item in the list like so :
+JS'in `map` fonksiyonu ikinci bir argüman olan `index` alır. Bunu şablon dizesiyle kullanarak ve `data-cy` seçicileri ile liste üzerindeki n. öğeye erişebiliriz:
 
 ```tsx
 // component
@@ -741,7 +741,7 @@ JS' `map` takes a second argument `index`. We can utilize this with a template l
 cy.getByCy(`hero-list-item-2`);
 ```
 
-When React is (re)rendering a list, the `key` attribute is used to determine which list items have changed. Per the [docs](https://reactjs.org/docs/lists-and-keys.html#keys) the recommended way is to use a unique value for the key as opposed to the index, because using the index can negatively impact performance.
+React bir listeyi (yeniden) render ederken, `key` özelliği hangi liste öğelerinin değiştiğini belirlemek için kullanılır. [Dokümantasyon](https://reactjs.org/docs/lists-and-keys.html#keys)da belirtildiği üzere, key olarak index yerine benzersiz bir değer kullanılması önerilir, çünkü index kullanmak performansı olumsuz etkileyebilir.
 
 ```tsx
 // not preferred
@@ -757,7 +757,7 @@ When React is (re)rendering a list, the `key` attribute is used to determine whi
 }
 ```
 
-We will modify the component with a `data-cy` attribute to pass the test, and add a `key` attribute with a value that will always be unique (Green 7).
+Testin geçmesi için bileşeni `data-cy` özelliğiyle değiştireceğiz ve her zaman benzersiz olacak bir değere sahip bir `key` özelliği ekleyeceğiz (Yeşil 7).
 
 ```tsx
 import CardContent from "components/CardContent";
@@ -798,51 +798,51 @@ export default function HeroList({ heroes }: HeroListProps) {
 }
 ```
 
-## Summary
+## Özet
 
-### One list item
+### Tek liste öğesi
 
-Before tackling the list we decided to write test for a single list item.
+Listeyle uğraşmaya başlamadan önce, tek bir liste öğesi için test yazmaya karar verdik.
 
-We wrote a test that renders the child component `CardContent`, and used hard-coded prop values to pass the test (Red 1, Green 1, Red 2, Green 2). We used a hard-coded data both in the component and the test to imitate state (Refactor 2)
-
-</br>
-
-We added a test for rendering the other child component `ButtonFooter` (Red 3).
-
-We took advantage of TS to add the missing props (Green 3).
+Alt bileşen `CardContent`i render eden bir test yazdık ve testi geçmek için sert kodlanmış prop değerleri kullandık (Kırmızı 1, Yeşil 1, Kırmızı 2, Yeşil 2). Hem bileşende hem de testte durumu taklit etmek için sert kodlanmış veriler kullandık (Refaktör 2).
 
 </br>
 
-We added tests for handling the delete and select hero events, spying on `console.log` (Red 4).
+Diğer alt bileşen `ButtonFooter`ın render edilmesi için bir test ekledik (Kırmızı 3).
 
-We added functions that console.log the respective events, and we completed the single item with styles (Green 4, Refactor 4).
-
-</br>
-
-### The list
-
-We decided to pass an array of heroes to the component as a prop and saw TS error (Red 5). We used the `Hero[]` type in `HeroListProps` to resolve the TS error (Green 5).
+Eksik prop'ları eklemek için TS'nin avantajını kullandık (Yeşil 3).
 
 </br>
 
-We removed the hard-coded `hero` object from the test, which caused a failure (Red 6), instead we referenced the first index of the `heroes` array with `heroes[0]` (Green 6).
+Delete (silme) ve select (seçme) kahraman etkinliklerinin ele alınması için testler ekledik, `console.log` üzerinde casusluk yaptık (Kırmızı 4).
 
-We contemplated about the pattern to render lists in React; using `map`. We modified the array index reference instead to the map callback argument, which is the `hero` object for each array item. We also began to use a Cypress fixture to render a larger list in the component test (Refactor 6).
+İlgili etkinlikleri console.log yapan fonksiyonlar ekledik ve tek öğeyi stillerle tamamladık (Yeşil 4, Refaktör 4).
 
 </br>
 
-We added a test that verifies the length of the entire list (Red 7).
+### Liste
 
-We contemplated about the `key` attribute in lists, which is used by React to determine and optimize render updates. We modified the component with this knowledge (Green 7).
+Bileşene bir kahramanlar dizisini prop olarak geçmeye karar verdik ve TS hatası gördük (Kırmızı 5). TS hatasını çözmek için `HeroListProps` içinde `Hero[]` tipini kullandık (Yeşil 5).
 
-## Takeaways
+</br>
 
-- When creating a list component in React, it is easier to start with one item at first, and then build up to the list.
-- When rendering lists in React and mapping over the data, the recommended value for the key attribute is supposed to be unique, such as `hero.id` as opposed to the index of the mapped array. The index however is useful in a `data-cy` attribute to refer to the nth item to select
-- Cypress' fixtures can be imported as json and used in place of data in tests.
-- In the TDD mindset, when we have green tests, we want to prefer adding more tests or refactoring versus adding additional source code
-- Testing is always a call between cost and confidence, and how much we test depends. Some of the questions that can determine our decision are:
-  - _How often will the code under test change?_
-  - _Is it a high amount of work to write the more scrutinizing test code now?_
-  - _How much more confidence do we get by testing this detail?_
+Testten sert kodlanmış `hero` nesnesini kaldırdık, bu da başarısızlığa neden oldu (Kırmızı 6), bunun yerine `heroes` dizisinin ilk indeksini `heroes[0]` ile belirttik (Yeşil 6).
+
+React'te listeleri render etme kalıbı hakkında düşündük; `map` kullanarak. Dizinin indeks referansını, her dizi öğesi için `hero` nesnesi olan map geri çağırma argümanına değiştirdik. Ayrıca, bileşen testinde daha büyük bir liste render etmek için Cypress fixture'ını kullanmaya başladık (Refaktör 6).
+
+</br>
+
+Tüm listenin uzunluğunu doğrulayan bir test ekledik (Kırmızı 7).
+
+React'in listelerde hangi öğelerin güncellendiğini belirlemek ve optimize etmek için kullandığı `key` özelliği hakkında düşündük. Bileşeni bu bilgiyle değiştirdik (Yeşil 7).
+
+## Çıkarımlar
+
+- React'te bir liste bileşeni oluştururken, önce tek bir öğeyle başlamak ve ardından listeye geçmek daha kolaydır.
+- React'te listeleri render ederken ve veriler üzerinde haritalama yaparken, key özelliği için önerilen değer benzersiz olmalıdır, örneğin haritalanan dizinin indeksi yerine `hero.id` gibi. Ancak indeks, nth öğeyi seçmek için `data-cy` özelliğinde başvurulacak öğeye yararlıdır.
+- Cypress' düzeltmeleri json olarak içe aktarılabilir ve testlerde veri yerine kullanılabilir.
+- TDD zihniyetinde, yeşil testlere sahip olduğumuzda, daha fazla test eklemeyi veya yeniden düzenlemeyi, ek kaynak kodu eklemeye tercih etmek isteriz.
+- Test etme her zaman maliyet ve güven arasındaki bir çağrıdır ve ne kadar test ettiğimiz değişir. Kararımızı belirleyebilecek bazı sorular şunlardır:
+  - *Test edilen kod ne sıklıkla değişir?*
+  - *Şimdi daha fazla inceleme yapan test kodunu yazmak yüksek miktarda çalışma mı?*
+  - *Bu ayrıntıyı test ederek ne kadar fazla güven elde ederiz?*
