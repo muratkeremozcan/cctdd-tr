@@ -1,14 +1,14 @@
 # Heroes part 3 - useEffect and HTTP
 
-## HTTP requests
+## HTTP istekleri
 
-Until now we have been importing a json file at `src/heroes/Heroes.tsx`, recall `import heroes from './heroes.json'`. Now that we have a backend server, we can get the data from the network.
+Şimdiye kadar `src/heroes/Heroes.tsx` dosyasında bir json dosyasını içe aktarıyorduk, hatırlayın `import heroes from './heroes.json'`. Şimdi bir arka uç sunucumuz olduğuna göre, verileri ağdan alabiliriz.
 
-From Kent C. Dodds' Epic React:
+Kent C. Dodds'ın Epic React'inden:
 
-_"HTTP requests are another common side-effect that we need to do in applications. This is no different from the side-effects we need to apply to a rendered DOM or when interacting with browser APIs like localStorage. In all these cases, we do that within a `useEffect` hook callback. This hook allows us to ensure that whenever certain changes take place, we apply the side-effects based on those changes."_
+_"HTTP istekleri, uygulamalarda yapmamız gereken diğer yaygın yan etkilerdir. Bu, oluşturulan DOM'a uyguladığımız yan etkilerle ya da localStorage gibi tarayıcı API'leriyle etkileşim kurarken olduğu gibi farklı değildir. Tüm bu durumlarda, bunları bir `useEffect` kancası geri çağırma işlevi içinde yaparız. Bu kancı, belirli değişiklikler meydana geldiğinde, bu değişikliklere dayalı olarak yan etkileri uygularız."_
 
-As we load the `HeroList`, we need our application to make a `GET` request to the backend. Let's write a failing e2e test for it (Red 1). For now we can name the file anything. We load the `HeroList` but at the moment there are not `GET` requests to the server.
+`HeroList`i yüklerken, uygulamamızın arka uca bir `GET` isteği yapması gerekmektedir. Bunun için başarısız bir e2e testi yazalım (Kırmızı 1). Şimdilik dosyaya istediğimiz ismi verebiliriz. `HeroList`i yüklüyoruz, ancak şu anda sunucuya yapılan `GET` istekleri yok.
 
 ```typescript
 // cypress/e2e/network.cy.ts
@@ -25,7 +25,7 @@ describe("network requests", () => {
 
 ![HeroesPart3-httpRed1](../img/HeroesPart3-httpRed1.png)
 
-We will opt to use `axios` instead of the built in `fetch` api. `yarn add axios`. Use `axios.get` in a `useEffect` hook to make a `GET` request to our server (Green 1). `useEffect` takes a clean up function that can help us know if the component unmounted.
+`axios` kullanarak yerleşik `fetch` API'si yerine başka bir seçenek kullanacağız. `yarn add axios`. Bir `useEffect` kancasında `axios.get` kullanarak sunucumuza bir `GET` isteği yapın (Yeşil 1). `useEffect`, bileşenin bağını kaldıran bir temizleme işlevi alır.
 
 ```typescript
 // src/heroes/Heroes.tsx
@@ -105,20 +105,20 @@ export default function Heroes() {
 }
 ```
 
-The test passes, but looking at the console we see that the component gets mounted, unmounted, and mounted again. Meanwhile, there are 2 calls to the api. The first does not have anything in the response body, the second gets the heroes. We will drop a side note here regarding the`useEffect` dependency array and revisit the topic later.
+Test başarılı olur, ancak konsola baktığımızda bileşenin bağlandığını, bağının kaldırıldığını ve tekrar bağlandığını görürüz. Bu arada, API'ye 2 çağrı yapılır. İlk çağrıda yanıt gövdesinde hiçbir şey yoktur, ikincisi ise kahramanları alır. Burada `useEffect` bağımlılık dizisi ile ilgili bir yan not düşelim ve konuya daha sonra geri dönelim.
 
-- `useEffect(fn, [a, b, c])` -> run the effect when a, or b, or c change
-- `useEffect(fn, [a])` -> run the effect when a changes
-- `useEffect(fn, [])` -> run the effect when... nothing changes, that's why it runs just once
-- `useEffect(fn)` -> run the effect at every render
+- `useEffect(fn, [a, b, c])` -> a, b veya c değiştiğinde etkiyi çalıştır
+- `useEffect(fn, [a])` -> a değiştiğinde etkiyi çalıştır
+- `useEffect(fn, [])` -> etkiyi çalıştır... hiçbir şey değişmediğinde, bu yüzden sadece bir kez çalışır
+- `useEffect(fn)` -> her render'da etkiyi çalıştır
 
 ![HeroesPart3-green1](../img/HeroesPart3-green1.png)
 
-## Removing the hard-coded json data
+## Sabit kodlanmış json verilerini kaldırma
 
-We have been importing the `heroes` data from `db.json` file. Time to get that from the network. Disabling the import , we get type errors in the component because the variable does not exist anymore, the test also fails because there are no heroes in the list (Red 2)
+`heroes` verilerini `db.json` dosyasından içe aktarıyoruz. Şimdi bunları ağdan almanın zamanı. İçe aktarmayı devre dışı bıraktığımızda, değişken artık mevcut olmadığı için bileşende tür hataları alırız, ayrıca listede hiç kahraman olmadığı için test başarısız olur (Kırmızı 2).
 
-We are getting some data with useEffect, but we have to store that data in a state variable in the component. We will utilize `useState` as in `const [heroes, setHeroes] = useState([])` and set the heroes with what we get from the network.
+useEffect ile bazı veriler alıyoruz, ancak bu verileri bileşendeki bir state değişkeninde saklamamız gerekiyor. `const [heroes, setHeroes] = useState([])` şeklinde `useState` kullanacağız ve ağdan aldığımız kahramanları ayarlayacağız.
 
 ```typescript
 // src/heroes/Heroes.tsx
@@ -201,7 +201,7 @@ export default function Heroes() {
 }
 ```
 
-That will work, but if we leave the test open we will see that we are making repeated `GET` requests to the server, and the component keeps mounting. We can use an empty `useEffect` dependency array to have the effect occur once when the component is rendered. For brevity, here is the changed code (Green 2):
+Bu işe yarayacaktır, ancak testi açık bırakırsak, sunucuya tekrarlanan `GET` istekleri yapıldığını ve bileşenin sürekli bağlandığını göreceğiz. Bileşenin render edildiğinde etkinin sadece bir kez gerçekleşmesi için boş bir `useEffect` bağımlılık dizisi kullanabiliriz. Kısaltmak adına, işte değiştirilen kod (Yeşil 2):
 
 ```typescript
 useEffect(() => {
@@ -215,7 +215,7 @@ useEffect(() => {
 }, []); // empty array to have the effect occur only once
 ```
 
-We can do a little bit more of a refactor adding support for `axios` error messages, and wrapping the expensive `axios.get` in a `useCallBack`. Why `useCallback`? In short, custom functions get defined on every render and can be costly especially if the network state is the same. `useCallback` lets us memoize such expensive operations, by preventing the redefinition or recalculation of values. The signature is `useCallBack(updaterFn, [dependencies])` (Refactor 2).
+Biraz daha fazla düzenleme yaparak `axios` hata mesajlarına destek ekleyebilir ve maliyetli `axios.get` işlemini `useCallBack` içinde sarabiliriz. Neden `useCallback`? Kısacası, özel fonksiyonlar her render işlemi sırasında tanımlanır ve özellikle ağ durumu aynı olduğunda maliyetli olabilir. `useCallback`, değerlerin yeniden tanımlanmasını veya yeniden hesaplanmasını önleyerek böyle maliyetli işlemleri hafızaya almayı sağlar. İmza şu şekildedir: `useCallBack(updaterFn, [dependencies])` (Düzenleme 2).
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -312,13 +312,13 @@ export default function Heroes() {
 }
 ```
 
-## Updating the component tests with network awareness
+## Bileşen testlerini ağ farkındalığı ile güncelleme
 
-We used the e2e test to to drive the design of http requests in the `Heroes` component. Now that we are utilizing `useEffect`, the component will be making an `axios` request. We can see the network call take place and fail when running the component test `Heroes.cy.tsx`.
+`Heroes` bileşeninin tasarımını e2e test ile yönlendirdik. Artık `useEffect` kullanarak bileşen bir `axios` isteği yapacak. Bileşen testi `Heroes.cy.tsx` çalıştırılırken ağ çağrısının gerçekleştiğini ve başarısız olduğunu görebiliriz.
 
 ![HeroesPart3-HeroesCT-failure](../img/HeroesPart3-HeroesCT-failure.png)
 
-We need to be stubbing the network with some data, so that the component can render it. Add a `cy.intercept` using a fixture file for the network data to `src/heroes/Heroes.cy.tsx` and `src/App.cy,tsx` files, which both use the `Heroes` component. The intercept will ensure that all `GET` requests to `http://localhost:4000/api/heroes` will respond with the stubbed data from `heroes.json` file in Cypress fixtures.
+Bileşenin bunu render edebilmesi için ağı bazı verilerle taklit etmemiz gerekiyor. Cypress fixtures'daki `heroes.json` dosyasından taklit verilerle yanıt verecek şekilde `src/heroes/Heroes.cy.tsx` ve `src/App.cy,tsx` dosyalarına bir `cy.intercept` ekleyin. Intercept, `http://localhost:4000/api/heroes` adresine yapılan tüm `GET` isteklerinin Cypress fixtures'daki `heroes.json` dosyasından gelen taklit verilerle yanıtlanmasını sağlayacaktır.
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -404,11 +404,11 @@ describe("ct sanity", () => {
 });
 ```
 
-We also have to update the RTL unit test `src/App.test.tsx` which mirrors `App.cy.tsx`. Note that running the unit test it does not fail but the error will be a merge blocker. We only know what the problem is because either we have seen this before, or because we saw the network call happen on component mount in the component test runner using the real browser. **Component testing with Cypress, using the real browser, can help diagnose issues in the app that may be harder to do using Jest / RTL.**
+Ayrıca, `App.cy.tsx`'i yansıtan RTL birim testi `src/App.test.tsx`'i de güncellememiz gerekiyor. Birim testini çalıştırırken başarısız olmaz, ancak hata birleştirme engelleyicisi olacaktır. Sorunun ne olduğunu sadece daha önce gördüğümüz için veya bileşen test çalıştırıcısında gerçek tarayıcıyı kullanarak bileşenin ağ çağrısının gerçekleştiğini gördüğümüz için biliyoruz. **Cypress ile bileşen testi, gerçek tarayıcıyı kullanarak Jest / RTL kullanarak yapılması daha zor olan uygulamadaki sorunları teşhis etmeye yardımcı olabilir.**
 
 ![HeroesPart3-RTL-fail](../img/HeroesPart3-RTL-fail.png)
 
-In RTL, the equivalent of `cy.intercept` is [`msw`](https://mswjs.io/). Install with `yarn add -D msw`. Modify the file as such:
+RTL'de `cy.intercept`'in eşdeğeri [`msw`](https://mswjs.io/) 'dir. `yarn add -D msw` ile yükleyin. Dosyayı şu şekilde değiştirin:
 
 ```tsx
 // src/App.test.tsx
@@ -452,7 +452,7 @@ test("renders tour of heroes", async () => {
 });
 ```
 
-Finally, in all the e2e tests, now we have to wait for the network data after visiting the url. To ensure that the page is stable and has loaded the network data, in `create-hero.cy.tsx`, `edit-hero.cy.tsx` `network.cy.tsx` files, wrap all instances of `cy.visit` with an intercept and wait:
+Sonunda, tüm e2e testlerinde, URL'yi ziyaret ettikten sonra ağ verilerini beklememiz gerekiyor. Sayfanın stabil olduğundan ve ağ verilerini yüklediğinden emin olmak için, `create-hero.cy.tsx`, `edit-hero.cy.tsx` ve `network.cy.tsx` dosyalarında, `cy.visit` örneklerini bir kesme ve bekleme ile sarın:
 
 ```typescript
 cy.intercept("GET", "http://localhost:4000/api/heroes").as("getHeroes");
@@ -460,9 +460,9 @@ cy.visit("/");
 cy.wait("@getHeroes");
 ```
 
-## Testing the flows: alternate hero add
+## Akışları test etme: alternatif kahraman ekleme
 
-Using the `ListHeader` component's `+` button, we can add a hero from any screen. Our existing e2e test gets to `HeroDetails` by either navigating from hero list, or direct navigating to the url. Alas, we can also get to `HeroDetails` from edit hero, which is another render of `HeroDetais` with the hero data. This flow is interesting because the rendered Id field, and the data in the name and description fields need to clear upon clicking the `+` button. Let's write a test for it (Red 3).
+`ListHeader` bileşeninin `+` düğmesini kullanarak, herhangi bir ekrandan bir kahraman ekleyebiliriz. Mevcut e2e testimiz, kahraman listesinden veya doğrudan URL'ye yönlendirerek `HeroDetails`'e ulaşır. Ne yazık ki, kahramanı düzenleme yoluyla da `HeroDetails`'e ulaşabiliriz, bu da kahraman verileri ile `HeroDetais`'in başka bir oluşturmasıdır. `+` düğmesine tıkladığında görüntülenen Kimlik alanının ve ad ve açıklama alanlarındaki verilerin temizlenmesi gereken bu akış ilginçtir. Bunu test etmek için bir test yazalım (Kırmızı 3).
 
 ```typescript
 // cypress/e2e/edit-hero.cy.ts
@@ -524,11 +524,11 @@ describe("Edit hero", () => {
 });
 ```
 
-The test fails. The conditional rendering is working, but the state of the `InputDetail` component (child of `HeroDetail`) carries over.
+Test başarısız olur. Koşullu işleme çalışıyor, ancak `InputDetail` bileşeninin ( `HeroDetail`'in alt bileşeni) durumu devredilir.
 
 ![Heroes3-part3-Red3](../img/Heroes3-part3-Red3.png)
 
-Instead of taking the value and just displaying it, we need to make `InputDetail` aware of state. We can accomplish this by managing state where its most relevant, the component itself, and by utilizing a combination of `useState` and `useEffect`. We come up with a variable `shownValue` and a setter for it. As the component mounts, we utilize `useEffect` to set the value. We also specify a dependency array for the value (Green 3).
+Değeri alıp sadece görüntülemek yerine, `InputDetail`'i durumun farkında kılmalıyız. Bunu, durumu en alakalı olduğu yerde, bileşenin kendisinde yöneterek ve `useState` ve `useEffect` kombinasyonunu kullanarak başarabiliriz. `shownValue` adında bir değişken ve onun için bir ayarlayıcı bulunur. Bileşen bağlandığında, `useEffect`'i değeri ayarlamak için kullanırız. Ayrıca, değer için bir bağımlılık dizisi belirtiriz (Yeşil 3).
 
 ```tsx
 // src/components/InputDetail.tsx
@@ -574,7 +574,7 @@ export default function InputDetail({
 }
 ```
 
-Similar to routing, when our concerns about the app are higher level as in state management and flows, e2e tests are effective at catching defects that we might not be able to test with component tests. The e2e test now works, and the component test serves as a regression assurance. The `onChange` now gets called twice vs thrice, and that is the only update.
+Benzer şekilde yönlendirmeye, uygulamadaki endişelerimiz daha üst düzey olduğunda, yani durum yönetimi ve akışlar söz konusu olduğunda, e2e testler, bileşen testleriyle test edemeyeceğimiz hataları yakalamada etkili olabilir. E2e test şimdi çalışıyor ve bileşen testi geriye dönük güvence sağlar. `onChange` şimdi iki kez vs üç kez çağrılır ve bu güncellemenin tek farkıdır.
 
 ```tsx
 // src/components/InputDetail.cy.tsx
@@ -621,11 +621,11 @@ describe("InputDetail", () => {
 });
 ```
 
-## Refactoring
+## Yeniden Düzenleme
 
-### Environment variables
+### Ortam değişkenleri
 
-It is time to refactor all the references to `http://localhost:4000/api` with an environment variable. Create React App (CRA) comes with a `dotenv` package already installed. The only requirement is that variable names start with `REACT_APP_`. We can create an `.env` file right away with the api url.
+Tüm `http://localhost:4000/api` referanslarını ortam değişkeniyle yeniden düzenleme zamanı geldi. Create React App (CRA), `dotenv` paketiyle zaten kurulmuş durumda. Tek gereksinim, değişken adlarının `REACT_APP_` ile başlamasıdır. Hemen API URL'si ile bir `.env` dosyası oluşturabiliriz.
 
 ```
 REACT_APP_API_URL=http://localhost:4000/api
@@ -651,7 +651,7 @@ const handlers = [
 ];
 ```
 
-The equivalent of `.env` is an `env` property in `./cypress.config.js` . It can be specific to `e2e`, `component` or both depending where the property is placed.
+`.env` dosyasının eşdeğeri, `./cypress.config.js` dosyasındaki `env` özelliğidir. Bu özellik, `e2e`, `component` veya her ikisine özgü olabilir ve özelliğin yerleştirildiği yere bağlıdır.
 
 ```tsx
 // cypress.config.js
@@ -693,7 +693,7 @@ module.exports = defineConfig({
 });
 ```
 
-Similarly, replace instances of the string `http://localhost:4000/api` in the component and e2e tests with a template literal `${Cypress.env('API_URL')}`. The files that need changes are:
+Bileşen ve e2e testlerindeki `http://localhost:4000/api` dizesi örneklerini, `${Cypress.env('API_URL')}` şablon dizesiyle değiştirin. Değişiklik yapılması gereken dosyalar şunlardır:
 
 - _cypress/e2e/create-hero.cy.ts_
 - _cypress/e2e/edit-hero.cy.ts_
@@ -703,9 +703,9 @@ Similarly, replace instances of the string `http://localhost:4000/api` in the co
 - _src/components/InputDetail.cy.tsx_
 - _src/heroes/Heroes.cy.tsx_
 
-### Custom hook `useAxios`
+### Özel kanca `useAxios`
 
-We can extract 20-30 lines of http logic into its own hook, and then use the hook in the `Heroes` component. Our hook accepts a route as the argument, returns an object of data, status & error. It also handles the concerns with `useEffect` cleanup. We will cover the details in the comments, and in the upcoming chapters promise to use a better solution.
+HTTP mantığının 20-30 satırını kendi kanca içine çıkarabilir ve ardından `Heroes` bileşeninde bu kanca kullanabiliriz. Kancamız argüman olarak bir rota kabul eder, veri, durum ve hata nesnesini döndürür. Ayrıca `useEffect` temizleme ile ilgili kaygıları ele alır. Detayları yorumlarda ve gelecek bölümlerde daha iyi bir çözüm kullanarak ele alacağız.
 
 ```typescript
 // src/hooks/useAxios.ts
@@ -768,7 +768,7 @@ export default function useAxios(url: string) {
 }
 ```
 
-At `Heroes` component, we do not need to utilize `useState` because now we get the data from `useAxios`. We just have to rename and initialize `data` variable into `heroes` .
+`Heroes` bileşeninde artık `useState` kullanmamıza gerek yok çünkü verileri `useAxios` ile alıyoruz. Sadece `data` değişkenini yeniden adlandırıp `heroes` olarak başlatmalıyız.
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -839,53 +839,53 @@ export default function Heroes() {
 }
 ```
 
-## Summary
+## Özet
 
-We wrote a failing e2e test spying on an expected http GET call to `/heroes` route as the application loads (Red 1).
+Başarısız bir e2e testi yazdık, uygulama yüklenirken beklenen bir http GET çağrısına `/heroes` yolunda casusluk yaptık (Kırmızı 1).
 
-We added a `useEffect` that gets the data with an `axios.get` call targeting the `/heroes` route (Green 1).
-
-</br>
-
-We removed the json file import to get the data, utilized `useState`, while setting the hero array within the `useEffect` (Red 2, Green 2).
+Verileri `/heroes` rotasına yönelik bir `axios.get` çağrısı yaparak alan `useEffect` ekledik (Yeşil 1).
 
 </br>
 
-Refactors:
-
-We used an empty array to have the http GET effect occur only once. We showcased `useCallback` to wrap expensive functions.
-
-We updated the component tests and the unit test to be network aware and stub the network with `cy.intercept` for Cypress and `msw` for RTL.
-
-We updated the e2e tests to wait for the network so that ui assertions can begin after the DOM settles.
+Verileri almak için json dosyası içe aktarmasını kaldırdık, `useState` kullandık ve veri dizisini `useEffect` içinde ayarladık (Kırmızı 2, Yeşil 2).
 
 </br>
 
-We added a new e2e test to cover an alternate hero add flow; navigating to add hero from edit hero (Red 3).
+Yeniden düzenlemeler:
 
-To address the failure, we managed the state where it is most relevant; `InputDetail` component. We only used `useState` and `useEffect`. (Green 3)
+Http GET etkisinin sadece bir kez gerçekleşmesi için boş bir dizi kullandık. Pahalı işlevleri sarmak için `useCallback` gösterdik.
 
-</br>
+Bileşen testlerini ve ağa bağlı birim testini güncelledik, Cypress için `cy.intercept` ve RTL için `msw` ile ağı örnekledik.
 
-Refactors:
-
-We refactored the hard coded api route to an environment variable.
-
-We used a hook `useAxios` to yield the data at the component in an abstracted way.
+DOM yerleştikten sonra kullanıcı arayüzü iddialarının başlayabilmesi için e2e testlerini ağı beklemeye güncelledik.
 
 </br>
 
-## Takeaways
+Alternatif bir kahraman ekleme akışını kapsayan yeni bir e2e testi ekledik; kahramanı düzenlemekten kahraman ekleme yoluna geçiş (Kırmızı 3).
 
-- From Kent Dodds: _"HTTP requests are another common side-effect that we need to do in applications. This is no different from the side-effects we need to apply to a rendered DOM or when interacting with browser APIs like localStorage. In all these cases, we do that within a `useEffect` hook callback. This hook allows us to ensure that whenever certain changes take place, we apply the side-effects based on those changes."_
-- We can use the built in `fetch` api or `axios` to make http calls from the application to the backend.
-- `useEffect` dependency array:
-  - `useEffect(fn, [a, b, c])` -> run the effect when a, or b, or c change
-  - `useEffect(fn, [a])` -> run the effect when a changes
-  - `useEffect(fn, [])` -> run the effect when... nothing changes, that's why it runs just once
-  - `useEffect(fn)` -> run the effect at every render
-- Wrap expensive functions in `useCallback` to memoize repeated calls.
-- We can manage most http state with `useState` & `useEffect`, however the implementation can grow as the app scales.
-- Component testing with Cypress, using the real browser, can help diagnose issues in the app that may be harder to do using Jest/RTL.
-- If component tests are making network calls, we can stub the network with the [`cy.intercept`](https://docs.cypress.io/api/commands/intercept) api. The contrast to `cy.intercept` is [`msw`](https://mswjs.io/docs/) for Jest/RTL .
-- Similar to routing, when our concerns about the app are higher level as in state management and flows, e2e tests are effective at catching edge cases that we might not be able to cover with component tests.
+Başarısızlığı ele almak için durumu en alakalı olduğu yerde yönettik; `InputDetail` bileşeni. Sadece `useState` ve `useEffect` kullandık (Yeşil 3).
+
+</br>
+
+Yeniden düzenlemeler:
+
+Sabit kodlanmış api yolunu bir ortam değişkenine çevirdik.
+
+Bir `useAxios` kancası kullanarak verileri bileşende soyut bir şekilde sunuyoruz.
+
+</br>
+
+## Önemli Noktalar
+
+- Kent Dodds'tan: _"HTTP istekleri, uygulamalarda yapmamız gereken başka yaygın yan etkilerdir. Bu, işlenmiş DOM'a uygulamalar yapmamız gereken yan etkilerle ya da localStorage gibi tarayıcı API'leriyle etkileşimde bulunmamız gereken yan etkilerden farklı değildir. Tüm bu durumlarda, bunları bir `useEffect` kancası geri çağırma içinde yaparız. Bu kancanın yardımıyla, belirli değişiklikler meydana geldiğinde, bu değişikliklere dayalı yan etkileri uygularız."_
+- Uygulamadan backend'e http çağrıları yapmak için yerleşik `fetch` API'sini veya `axios` kullanabiliriz.
+- `useEffect` bağımlılık dizisi:
+  - `useEffect(fn, [a, b, c])` -> a, b veya c değiştiğinde etkiyi çalıştır
+  - `useEffect(fn, [a])` -> a değiştiğinde etkiyi çalıştır
+  - `useEffect(fn, [])` -> etkiyi çalıştır... hiçbir şey değişmediğinde, bu yüzden sadece bir kez çalışır
+  - `useEffect(fn)` -> her render işlemde etkiyi çalıştır
+- Tekrarlanan çağrıları hafızada tutmak için pahalı işlevleri `useCallback` ile sarın.
+- `useState` ve `useEffect` ile çoğu http durumunu yönetebiliriz, ancak uygulama ölçeklendikçe uygulama büyüyebilir.
+- Cypress ile bileşen testi yaparak, gerçek tarayıcıyı kullanarak, Jest/RTL kullanarak yapmaktan daha zor olabilecek uygulama sorunlarını teşhis etmeye yardımcı olabilir.
+- Bileşen testleri ağ çağrıları yapıyorsa, [`cy.intercept`](https://docs.cypress.io/api/commands/intercept) API'si ile ağı örnekleyebiliriz. Jest/RTL için `cy.intercept`'in zıttı [`msw`](https://mswjs.io/docs/) 'dir.
+- Yönlendirmeye benzer şekilde, uygulamayla ilgili endişelerimiz durum yönetimi ve akışlar gibi daha yüksek düzeyde olduğunda, bileşen testleriyle kapsayamayabileceğimiz kenar durumlarını yakalamak için e2e testleri etkilidir.
