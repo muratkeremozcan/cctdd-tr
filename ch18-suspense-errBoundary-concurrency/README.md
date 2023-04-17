@@ -1,6 +1,6 @@
-# Suspense, ErrorBoundary, Concurrency
+# Suspense, ErrorBoundary, Eşzamanlılık
 
-In order to make better sense out of the new features, we start by adding 3 components - ErrorComp, PageSpinner, Spinner - and a new search filter feature for `HeroList`. We will need the components for Suspense and ErrorBoundary use cases.
+Yeni özelliklerden daha iyi anlamak için, 3 bileşen - ErrorComp, PageSpinner, Spinner - ve `HeroList` için yeni bir arama filtresi özelliği ekliyoruz. Suspense ve ErrorBoundary kullanım durumları için bileşenlere ihtiyacımız olacak.
 
 ```typescript
 // src/components/ErrorComp.cy.tsx
@@ -123,9 +123,9 @@ export default function PageSpinner() {
 }
 ```
 
-## Search-filter for `HeroList`
+## `HeroList` için Arama-filtre
 
-We want a new feature for `HeroList` which will search and filter the heroes by their names or descriptions, so that later we can have a use case for the new React 18 hooks `useTransition` and `useDeferredValue`. Let's add a new test for it to `HeroList.cy.tsx`. When we type a hero name or description to search, we should only get that hero in the list. We can also move the mount to a `beforeEach` test hook since it is the same to all tests in this file (Red 1).
+`HeroList` için kahramanların isimlerine veya açıklamalarına göre arama ve filtreleme yapabilecek yeni bir özellik istiyoruz, böylece daha sonra yeni React 18 kancaları `useTransition` ve `useDeferredValue` için bir kullanım durumu elde edebiliriz. Bunun için `HeroList.cy.tsx` dosyasına yeni bir test ekleyelim. Bir kahramanın adını veya açıklamasını aramak için yazdığımızda, listede sadece o kahramanı almalıyız. Tüm testler için aynı olan dağıtımı `beforeEach` test kancasına da taşıyabiliriz (Kırmızı 1).
 
 ```typescript
 // src/heroes/HeroList.cy.tsx
@@ -186,11 +186,11 @@ describe("HeroList", () => {
 });
 ```
 
-When typing into the search field, we want to filter the heroes data to see if a name or description exists in the list. We already get the `heroes` data as a prop, which we can manage as state with `useState`:
+Arama alanına yazarken, kahraman verilerini isim veya açıklama listesinde mevcut olanlara göre filtrelemek istiyoruz. `heroes` verisini zaten bir özellik olarak alırız, bunu `useState` ile yönetebiliriz:
 
 `const [filteredList, setFilteredList] = useState(heroes)`
 
-Now we have to set that state with the filtering logic. Here are two functions that help us do that:
+Şimdi bu durumu filtreleme mantığıyla ayarlamamız gerekiyor. İşte bize bunu yapmada yardımcı olan iki işlev:
 
 ```typescript
 type HeroProperty = Hero["name"] | Hero["description"] | Hero["id"];
@@ -217,7 +217,7 @@ const handleSearch =
   };
 ```
 
-Instead of rendering the list by `heroes.map`, we use `filteredHeroes`, which will get set by the `handleSearch` upon a change event.
+`heroes.map` ile listeyi işlemek yerine, `filteredHeroes` kullanırız; bu, bir değişiklik olayında `handleSearch` tarafından ayarlanır.
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -301,9 +301,9 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-We added a feature to a component that get used in other components. When adding major features, it is important to execute the CT as well as e2e test suites entirely to ensure there are no regressions; `yarn cy:run-ct`, `yarn cy:run-e2e`. In theory, nothing should go wrong. There are no component errors. `delete-hero` e2e test however is not clearing the newly added hero upon delete; we have to refresh to render the updated hero list. **Although they have a reputation of being "brittle", well-written, stable e2e tests have a high fault-finding capability, catching the defects that are not realized in a smaller focus**.
+Başka bileşenlerde kullanılan bir bileşene özellik ekledik. Büyük özellikler eklerken, gerileme olup olmadığını kontrol etmek için CT ve e2e test paketlerinin tamamını çalıştırmak önemlidir; `yarn cy:run-ct`, `yarn cy:run-e2e`. Teoride, hiçbir şey ters gitmemeli. Bileşen hataları yok. Ancak `delete-hero` e2e testi, silme işleminden sonra yeni eklenen kahramanı temizlemiyor; güncellenmiş kahraman listesini görmek için yenilememiz gerekiyor. **Kırılgan bir ünleri olsa bile, iyi yazılmış, kararlı e2e testlerinin yüksek hata bulma yeteneği vardır ve daha küçük bir odakta fark edilmeyen hataları yakalar**.
 
-To address the defect, we have to render the `HeroList` whenever `heroes` change. That is achieved with `useEffect` and the state we rely on - _heroes_ - in the dependency array (Green 1).
+Hataları gidermek için, `heroes` değiştiğinde `HeroList`i yeniden işlememiz gerekiyor. Bu, bağımlılık dizisindeki *heroes* ve `useEffect` ile elde edilir (Yeşil 1).
 
 `useEffect(() => setFilteredHeroes(heroes), [heroes])`
 
@@ -398,21 +398,21 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-## Concurrency with `useDeferredValue` & `useTransition`
+## `useDeferredValue` ve `useTransition` ile Eşzamanlılık
 
-The concept of Concurrency is new in React 18. While multiple state updates are occurring simultaneously, Concurrency refers to certain state updates having less priority over others, for the purpose of optimizing UI responsiveness. `useDeferredValue` & `useTransition` hooks are new in React 18. They are not needed in our application, but we will show where they may fit if we were loading vast amounts of data on a slow connection.
+Eşzamanlılık kavramı, React 18'de yenidir. Birden fazla durum güncellemesi eşzamanlı olarak gerçekleşirken, Eşzamanlılık, UI tepki süresini optimize etmek amacıyla bazı durum güncellemelerinin diğerlerinden daha düşük önceliğe sahip olmasını ifade eder. `useDeferredValue` ve `useTransition` kancaları React 18'de yenidir. Uygulamamızda gerekli değiller, ancak yavaş bir bağlantıda büyük miktarda veri yüklerken nerede uygun olabileceklerini göstereceğiz.
 
-`useTransition()` can be used to specify which state updates have a lower priority than all other state updates.
+`useTransition()` ile hangi durum güncellemelerinin diğer tüm durum güncellemelerinden daha düşük önceliğe sahip olduğunu belirleyebiliriz.
 
 `const [isPending, startTransition] = useTransition()`
 
-`isPending` is a boolean value, signifying if the low-priority state update is still pending.
+`isPending` boolean bir değerdir ve düşük öncelikli durum güncellemesinin hala beklemede olup olmadığını belirtir.
 
-`startTransition` is a function that we wrap around the low-priority state update.
+`startTransition` düşük öncelikli durum güncellemesini sarmalayan bir işlemdir.
 
-In our `HeroList` component, `setFilteredHeroes` can be treated as a low priority state update. This would make the user experience so that the search filter input stays responsive while the list is still loading, in case the hero list is very large and the network is very slow.
+`HeroList` bileşenimizde, `setFilteredHeroes` düşük öncelikli bir durum güncellemesi olarak kabul edilebilir. Bu, kahraman listesi çok büyük ve ağ çok yavaş olduğunda, arama filtresi girişinin listeyi hala yüklerken duyarlı kalmasını sağlar.
 
-The first change is in the return segment of `handleSearch`. `startTransition` wraps a function that returns `setFilteredHeroes`.
+İlk değişiklik, `handleSearch`ın dönüş bölümündedir. `startTransition`, `setFilteredHeroes` döndüren bir işleve sarar.
 
 ```tsx
 return startTransition(() =>
@@ -426,7 +426,7 @@ return startTransition(() =>
 );
 ```
 
-We can reduce the opacity of the entire component in case the transition `isPending`:
+Geçiş `isPending` olduğunda, bileşenin tümündeki opaklığı azaltabiliriz:
 
 ```tsx
  return (
@@ -442,7 +442,7 @@ We can reduce the opacity of the entire component in case the transition `isPend
    </div>
 ```
 
-Here are the `useTransition` updates to the `HeroList` component.
+İşte `HeroList` bileşenine yapılan `useTransition` güncellemeleri.
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -542,11 +542,11 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-With `useTransition` we have full control over the low priority code. Sometimes, we might not, for example if the data is coming in from the outside as a prop or if it is coming from external code. In such cases we can utilize `useDeferredValue`. In contrast to wrapping the state updating code with `useTransition` , with `useDeferredValue` we wrap the final value that got impacted. The end results of `useTransition` & `useDeferredValue` are the same; we tell React what the lower priority state updates are.
+`useTransition` ile düşük öncelikli kod üzerinde tam kontrol sağlarız. Bazen, verinin dışarıdan bir özellik olarak veya dış koddan geldiği durumlar gibi, tam kontrol sağlayamayabiliriz. Bu tür durumlarda `useDeferredValue` kullanabiliriz. Durum güncelleme kodunu `useTransition` ile sarmalamanın aksine, `useDeferredValue` ile etkilenen son değeri sararız. `useTransition` ve `useDeferredValue` sonuçları aynıdır; React'e hangi düşük öncelikli durum güncellemelerinin olduğunu söyleriz.
 
-If you have access to the state updating code, prefer `useTransition`. If you do not have access to the code but only to the final value, utilize `useDeferredValue`.
+Durum güncelleme koduna erişiminiz varsa, `useTransition` kullanın. Koda erişiminiz yoksa, sadece son değere erişiminiz varsa, `useDeferredValue` kullanın.
 
-In our `HeroList` component, the `hero` data is coming in as a prop, which is a good candidate for `useDeferredValue`.
+`HeroList` bileşenimizde, `hero` verisi bir özellik olarak gelmekte ve bu durum `useDeferredValue` için iyi bir adaydır.
 
 ```tsx
 export default function HeroList({heroes, handleDeleteHero}: HeroListProps) {
@@ -555,7 +555,7 @@ export default function HeroList({heroes, handleDeleteHero}: HeroListProps) {
   const [filteredHeroes, setFilteredHeroes] = useState(deferredHeroes)
 ```
 
-We can utilize the `isStale` value in the CSS like so:
+`isStale` değerini CSS'te şu şekilde kullanabiliriz:
 
 ```tsx
 <div
@@ -565,7 +565,7 @@ We can utilize the `isStale` value in the CSS like so:
   }}
 ```
 
-Here is the updated `HeroList` component (Refactor 1):
+İşte güncellenmiş `HeroList` bileşeni (Düzenleme 1):
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -669,7 +669,7 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-The conditional rendering gives another clue; do we need a search bar when there is no data? Let's add that feature, starting with a failing test. We will rearrange `HeroList.cy.tsx` a bit so that we can capture the test in two contexts; mount without hero data, and mount with hero data (Red 2).
+Koşullu işlem başka bir ipucu verir; veri yoksa arama çubuğuna ihtiyacımız var mı? Başarısız bir testle başlayarak bu özelliği ekleyelim. `HeroList.cy.tsx` dosyasını biraz yeniden düzenleyeceğiz, böylece testi iki bağlamda yakalayabiliriz; kahraman verisi olmadan monte etme ve kahraman verisiyle monte etme (Kırmızı 2).
 
 ```tsx
 // src/heroes/HeroList.cy.tsx
@@ -746,7 +746,7 @@ describe("HeroList", () => {
 });
 ```
 
-To satisfy the test, all we need is conditional rendering for the search bar.
+Testi tatmin etmek için, arama çubuğu için koşullu işlem yapmamız yeterlidir.
 
 ```tsx
 {
@@ -759,7 +759,7 @@ To satisfy the test, all we need is conditional rendering for the search bar.
 }
 ```
 
-Here is the `HeroList` component in its final form (Green 2):
+İşte `HeroList` bileşeni son haliyle (Yeşil 2):
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -867,14 +867,14 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 
 ## Suspense & ErrorBoundary
 
-### The setup
+### Kurulum
 
-To manage the amount of code loaded upon application startup - the initial bundle - we can use code splitting which aims to load the app's code in chunks in order to improve UI responsiveness. In React, [Suspense](https://reactjs.org/docs/code-splitting.html) and lazy loading are used to accomplish code splitting. They are usually talked about together with `ErrorBoundary`, because `Suspense` and `ErrorBoundary` components let us decouple the loading and error UI from individual components. Here are the key ideas:
+Uygulamanın başlangıcında yüklenen kod miktarını - başlangıç paketini - yönetmek için, UI tepki süresini artırmak amacıyla uygulamanın kodunu parçalara bölen ve yüklemeyi gerçekleştiren kod bölme işlemi kullanılabilir. React'te, [Suspense](https://reactjs.org/docs/code-splitting.html) ve tembel yükleme, kod bölme işlemini gerçekleştirmek için kullanılır. Genellikle `ErrorBoundary` ile birlikte anılırlar, çünkü `Suspense` ve `ErrorBoundary` bileşenleri, yükleme ve hata UI'sını bireysel bileşenlerden ayırmamıza olanak tanır. İşte ana fikirler:
 
-- While loading show the `Suspense` component, if error show the `ErrorBoundary` component, if success show the component we want to render.
-- Use `React.lazy` to load components only when they are first rendered.
+- Yükleme sırasında `Suspense` bileşenini göster, hata durumunda `ErrorBoundary` bileşenini göster, başarılı durumda ise göstermek istediğimiz bileşeni göster.
+- İlk kez işlem gördüklerinde bileşenleri yüklemek için `React.lazy` kullanın.
 
-Converting a component to a lazy component with the `lazy` function:
+Bir bileşeni `lazy` işlevi ile tembel bir bileşene dönüştürme:
 
 ```tsx
 // staticly imported component
@@ -884,7 +884,7 @@ import Heroes from "heroes/Heroes";
 const Heroes = lazy(() => import("heroes/Heroes"));
 ```
 
-Use the Suspense and ErrorBoundary components to wrap UI that contains one or more lazy components in its tree. Here is how they work together at a high level:
+Suspense ve ErrorBoundary bileşenlerini, ağacında bir veya daha fazla tembel bileşen içeren UI'ı sarmak için kullanın. İşte yüksek düzeyde nasıl birlikte çalıştıkları:
 
 ```tsx
 <ErrorBoundary fallback={<ErrorComp />}>
@@ -898,7 +898,7 @@ Use the Suspense and ErrorBoundary components to wrap UI that contains one or mo
 </ErrorBoundary>
 ```
 
-For setup, install `react-error-boundary` with `yarn add react-error-boundary`and update `App.tsx` like so:
+`useGetHeroes` kancasını, yapılandırma için üçüncü bir argüman alacak şekilde güncelleyin. `{suspense: true}` geçmek, `react-query`'deki `useQuery` için `Suspense` modunu etkinleştirir.
 
 ```tsx
 // src/App.tsx
@@ -945,7 +945,7 @@ function App() {
 export default App;
 ```
 
-Update the `useGetHeroes` hook to take a 3rd argument for configuration. Passing `{suspense: true}` will enable `Suspense` mode in `react-query`'s `useQuery`.
+`useGetHeroes` kancasını, yapılandırma için üçüncü bir argüman alacak şekilde güncelleyin. `{suspense: true}` geçmek, `react-query`'deki `useQuery` için `Suspense` modunu etkinleştirir.
 
 ```typescript
 // src/hooks/useGetHeroes.ts
@@ -969,13 +969,13 @@ export const useGetHeroes = () => {
 };
 ```
 
-### Tests for error cases
+### Hata durumları için testler
 
-#### `HeroDetail` component
+#### `HeroDetail` bileşeni
 
-Now we can begin writing failing tests for error edge cases. Where do we start? Any component test that is covering the positive cases, spying on or stubbing the network with `cy.intercept()` is a good candidate . Those are `HeroDetail` and `Heroes` component tests.
+Şimdi hata kenar durumları için başarısız testler yazmaya başlayabiliriz. Nereden başlarız? Pozitif durumları kapsayan, `cy.intercept()` ile ağı izlemeye alan veya ağı taklit eden herhangi bir bileşen testi iyi bir adaydır. Bunlar `HeroDetail` ve `Heroes` bileşen testleridir.
 
-Add a test to `HeroList` component test for a non-200 scenario. We use a delay option to be able to see the spinner (Red 3).
+`HeroList` bileşen testine 200 olmayan bir senaryo için test ekleyin. İşlemcinin görünmesini sağlamak için gecikme seçeneği kullanırız (Kırmızı 3).
 
 ```typescript
 it("should handle Save", () => {
@@ -1083,7 +1083,7 @@ describe("HeroDetail", () => {
 });
 ```
 
-Looking at the `HeroDetail` component, we have `status` from `usePostHero` and `isUpdating` from `usePutHero` hooks, which we can utilize. In case these are seen, render the `PageSpinner` (Green 2).
+`HeroDetail` bileşenine bakarak, `usePostHero` ve `usePutHero` kancalarından `status` ve `isUpdating` elde edebiliriz, bunları kullanabiliriz. Bu durumlar görülürse, `PageSpinner` işlemcisini işleme alın (Yeşil 2).
 
 ```
 if (status === "loading" || isUpdating) {
@@ -1164,7 +1164,7 @@ export default function HeroDetail() {
 }
 ```
 
-Running the component test, we can verify the spinner by hovering over the Cypress time travel debug. We also realize the stubbed `POST` request going out, which we can verify with a `cy.wait()` (Refactor 2). Being able to see all the transitions of a component via Cypress time travel debugger can hep us improve our tests
+Bileşen testini çalıştırarak, Cypress zaman yolculuğu hata ayıklama işleminin üzerine gelerek işlemciyi doğrulayabiliriz. Ayrıca taklit edilmiş `POST` isteğinin gittiğini de fark ederiz, bunu bir `cy.wait()` ile doğrulayabiliriz (Yeniden düzenleme 2). Cypress zaman yolculuğu hata ayıklayıcısı aracılığıyla bir bileşenin tüm geçişlerini görebilmek, testlerimizi geliştirmemize yardımcı olabilir.
 
 ```typescript
 it.only("should handle non-200 Save", () => {
@@ -1175,7 +1175,7 @@ it.only("should handle non-200 Save", () => {
 });
 ```
 
-Next we add a line to check for an error. The status code is 400, we should see some error in this test (Red 4).
+Sonraki adımda, bir hatayı kontrol etmek için bir satır ekliyoruz. Durum kodu 400 ise, bu testte bir hata görmeliyiz (Kırmızı 4).
 
 ```typescript
 it.only("should handle non-200 Save", () => {
@@ -1187,7 +1187,7 @@ it.only("should handle non-200 Save", () => {
 });
 ```
 
-Looking at the `HeroDetail` component, we have `postError` from `usePostHero` and `isUpdateError` from `usePutHero` hooks, which we can utilize (Green 3).
+`HeroDetail` bileşenine bakarak, `usePostHero` ve `usePutHero` kancalarından `postError` ve `isUpdateError` elde edebiliriz, bunları kullanabiliriz (Yeşil 3).
 
 ```
 if (status === "loading" || isUpdating) {
@@ -1277,9 +1277,9 @@ export default function HeroDetail() {
 }
 ```
 
-We do not have any way to check the update scenario in the component test, because we are not able to setup such state that would trigger a back-end modification. Any time we are not able to cover a test at a low level with component tests, move up to ui-integration tests. Most the time a ui-integration test will suffice, and when it is not enough we can use a true e2e that hits the backend. In our case ui-integration is preferred because it would be hard to have the backend respond with a 500 response. We also do not need a response from a real network to render the error . Therefore we can add a ui-integration test to `edit-hero.cy.ts` e2e test that covers the update scenario. We see the boundaries between test types begin to get thinner; we use the least costly kind of test to gain the highest confidence. Where they are in the pyramid is only relevant by the ability to perform that kind of test in the given context (Refactor 4).
+Bileşen testinde güncelleme senaryosunu kontrol etmenin herhangi bir yolu yoktur, çünkü arka uçta bir değişikliği tetikleyecek böyle bir durumu kuramayız. Düşük düzeyde bileşen testleri ile bir testi kapsayamadığımız her durumda, ui-entegrasyon testlerine geçin. Çoğu zaman bir ui-entegrasyon testi yeterli olacak ve yeterli olmadığında arka ucu etkileyen gerçek bir e2e testi kullanabiliriz. Bizim durumumuzda, ui-entegrasyon tercih edilir, çünkü arka uç tarafından 500 yanıtı ile cevap vermenin zor olacağından. Ayrıca gerçek bir ağdan gelen yanıta ihtiyacımız yoktur. Bu nedenle, güncelleme senaryosunu kapsayan `edit-hero.cy.ts` e2e testine bir ui-entegrasyon testi ekleyebiliriz. Test türleri arasındaki sınırların daha ince olduğunu görüyoruz; en yüksek güveni elde etmek için en düşük maliyetli test türünü kullanırız. Piramitte nerede oldukları, yalnızca verilen bağlamda bu tür testi gerçekleştirme yeteneğiyle ilgilidir (Düzenleme 4).
 
-The new test is similar to other ui-integration tests; we stub the network and visit the main route. We go to the edit page for any random hero. We setup the network stub that will happen on update via `cy.intercept`. Finally we repeat a similar spinner -> wait on network -> error flow from the component test. The only distinction here is `PUT` vs `POST`.
+Yeni test, diğer ui-entegrasyon testlerine benzerdir; ağı taklit ederiz ve ana rotayı ziyaret ederiz. Rastgele bir kahramanın düzenleme sayfasına gideriz. Güncelleme üzerinden gerçekleşecek olan ağ taklidini `cy.intercept` ile ayarlarız. Sonunda, bileşen testinden benzer bir işlemci -> ağı bekletme -> hata akışını tekrarlarız. Buradaki tek ayrım, `PUT` ve `POST` arasındadır.
 
 ```typescript
 it("should go through the PUT error flow (ui-integration)", () => {
@@ -1307,7 +1307,7 @@ it("should go through the PUT error flow (ui-integration)", () => {
 });
 ```
 
-Here is the side by side with the component test for comparison. The Act and Assert are the same, the network stub is `POST` vs `PUT` with less of a need to specify the url. Predominantly setting up the Arrange is different.
+Karşılaştırma için bileşen testiyle yan yana buradadır. Eylem ve İddia aynıdır, ağ taklidi `POST` ve `PUT` ile url'yi belirtme ihtiyacının daha az olmasıdır. Özellikle Arrange'ın kurulumu farklıdır.
 
 ```typescript
 // Arrange: beginning state (mount the component in beforeEach)
@@ -1336,7 +1336,7 @@ it("should handle non-200 Save", () => {
 });
 ```
 
-Here is the full e2e test after the refactor.
+İşte yeniden düzenlemenin ardından tam e2e testi.
 
 ```typescript
 // cypress/e2e/edit-hero.cy.ts
@@ -1447,9 +1447,9 @@ describe("Edit hero", () => {
 });
 ```
 
-#### `Heroes` component
+#### `Heroes` bileşeni
 
-The other component test that is using `cy.intercept` in a happy path flow is `Heroes.cy.tsx`. It is stubbing a `GET` call to `/heroes` route like so:
+Mutlu yol akışında `cy.intercept` kullanan diğer bileşen testi `Heroes.cy.tsx`'dir. `/heroes` rotasına bir `GET` çağrısını şu şekilde taklit etmektedir:
 
 ```tsx
 cy.intercept("GET", `${Cypress.env("API_URL")}/heroes`, {
@@ -1457,9 +1457,9 @@ cy.intercept("GET", `${Cypress.env("API_URL")}/heroes`, {
 }).as("getHeroes");
 ```
 
-By default, `cy.intecept` accepts the status code as 200. What happens when the status code is not 200?
+Varsayılan olarak, `cy.intecept` durum kodunu 200 olarak kabul eder. Durum kodu 200 değilse ne olur?
 
-`Heroes` component is using `HeroDetail`. Before we begin, we will slightly refactor the test to have 2 contexts; one for 200 flows, and the new test for the non-200 flow. The non-200 test we will create will come before the 200 flows.
+`Heroes` bileşeni, `HeroDetail`'i kullanmaktadır. Başlamadan önce, testi 2 bağlamda hafifçe yeniden düzenleyeceğiz; biri 200 akışları için ve
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -1524,7 +1524,7 @@ describe("Heroes", () => {
 });
 ```
 
-Let's start with the new test. We setup the network setup, mount the component, and expect to see an error.
+Yeni teste başlayalım. Ağı kurulumunu yapıyoruz, bileşeni yerleştiriyoruz ve bir hatayı görmeyi bekliyoruz.
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -1600,11 +1600,11 @@ describe("Heroes", () => {
 });
 ```
 
-Running the component test, we see that nothing renders, Axios retrying multiple times and throws an error (Red 5).
+Bileşen testini çalıştırıyoruz, hiçbir şey işlemez hale geliyor, Axios birkaç kez tekrar deniyor ve hata fırlatıyor (Kırmızı 5).
 
 ![SuspenseErrBoundary-Red4](../img/SuspenseErrBoundary-Red4.png)
 
-We can mirror the improvement that was done to `HeroDetail` in `Heroes`.
+`Heroes` içinde `HeroDetail`de yapılan iyileştirmeyi yansıtabiliriz.
 
 ```tsx
 // HeroDetail
@@ -1628,7 +1628,7 @@ if (getError || isDeleteError) {
 }
 ```
 
-Here is the `Heroes` component enhanced for rendering `Suspense` and `ErrorBoundary`.
+İşte `Suspense` ve `ErrorBoundary` ile `Heroes` bileşeni için yapılan geliştirme.
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -1708,7 +1708,7 @@ export default function HeroDetail() {
 }
 ```
 
-Still those Axios retries are taking long and nothing renders. We can speed up the network errors by using [`cy.clock`](https://docs.cypress.io/api/commands/clock) and [`cy.tick`](https://docs.cypress.io/api/commands/tick). We also tell Cypress that uncaught exceptions are expected using `Cypress.on('uncaught:exception', () => false)`.
+Yine de Axios yeniden denemeleri uzun sürüyor ve hiçbir şey işlemiyor. Ağ hatalarını [`cy.clock`](https://docs.cypress.io/api/commands/clock) ve [`cy.tick`](https://docs.cypress.io/api/commands/tick) kullanarak hızlandırabiliriz. Ayrıca Cypress'e yakalanmamış istisnaların beklendiğini `Cypress.on('uncaught:exception', () => false)` kullanarak söylüyoruz.
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -1732,11 +1732,11 @@ it.only("should go through the error flow", () => {
 });
 ```
 
-After that change, the only remaining failure is `data-cy` not rendering
+Bu değişiklikten sonra, kalan tek başarısızlık `data-cy` işlememesidir.
 
 ![SuspenseErrBoundary-Red4-Part2](../img/SuspenseErrBoundary-Red4-Part2.png)
 
-We need to remember that a component test is an independent, small scale app. Our application is being wrapped at the base level, and with that `ErrorBoundary` and `Suspense` are able to apply to every component under the App. Therefore we also need to wrap our mounted component (Green 5).
+Bileşen testinin bağımsız, küçük ölçekli bir uygulama olduğunu unutmamalıyız. Uygulamamız temel düzeyde sarılıyor ve bununla birlikte `ErrorBoundary` ve `Suspense`, App altındaki her bileşene uygulanabiliyor. Bu nedenle, monte edilmiş bileşenimizi de sarmamız gerekiyor (Yeşil 5).
 
 ```tsx
 // remember App.tsx
@@ -1754,7 +1754,7 @@ We need to remember that a component test is an independent, small scale app. Ou
 </QueryClientProvider>
 ```
 
-Compare to our new mount:
+Yeni monte ile karşılaştırın:
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -1771,7 +1771,7 @@ cy.mount(
 );
 ```
 
-Our test can work with that, but most likely the verbosity will be needed elsewhere. We can instead use a custom function for it like so:
+Testimiz bununla çalışabilir, ancak büyük olasılıkla başka yerlerde de ayrıntılılık gerekecektir. Bunun yerine şöyle bir özel işlev kullanabiliriz:
 
 ```tsx
 const wrappedMount = (
@@ -1799,7 +1799,7 @@ const wrappedMount = (
 wrappedMount(Heroes);
 ```
 
-It is optimal to make that a Cypress command which we can use in any component without having to import. We could replace most `cy.mount`s in the component test suite, with the exception of `App.cy.tsx` . Even when the custom mount is not needed, the additional wrappers will not hurt. Change `./cypress/support/component.ts` to a `tsx` file. We align the command better with `cy.mount` in command version of the `wrappedMount`.
+Bunu, herhangi bir bileşende içe aktarmadan kullanabileceğimiz bir Cypress komutu olarak yapmak en iyisidir. `App.cy.tsx` dışındaki bileşen test süitindeki çoğu `cy.mount`ı değiştirebiliriz. Özel montaj gerekmeyen durumlar bile olsa, ek sargılar zarar vermez. `./cypress/support/component.ts` dosyasını `tsx` dosyasına değiştirin. Komut sürümündeki `wrappedMount` ile `cy.mount`ı daha iyi hizalıyoruz.
 
 ```tsx
 // cypress/support/component.tsx
@@ -1832,7 +1832,7 @@ Cypress.Commands.add(
 );
 ```
 
-Add the definition to `cypress.d.ts.`
+`cypress.d.ts.` dosyasına tanımı ekleyin.
 
 ```tsx
 /** Mounts the component wrapped by all the providers:
@@ -1845,12 +1845,12 @@ wrappedMount(
 ): Cypress.Chainable<MountReturn>
 ```
 
-Here is the final version of the test with `cy.wrappedMount`. We included a check for the spinner before the error as a bonus (Refactor 5). You can optionally apply `cy.wrappedMount` refactor to a few of the component tests:
+İşte `cy.wrappedMount` ile yapılan testin nihai sürümü. Hata öncesinde dönen çarkı kontrol etmeyi de ekledik (Yeniden Düzenleme 5). İsteğe bağlı olarak `cy.wrappedMount` düzenlemesini bazı bileşen testlerine uygulayabilirsiniz:
 
 - `src/components/Heroes.cy.tsx`
 - `src/components/HeroList.cy.tsx`
 - `src/components/HeroDetail.cy.tsx`
-- Not as useful but still possible (they only use `BrowserRouter` as the wrapper):
+- Kullanışlı olmasa da hâlâ mümkün (sadece `BrowserRouter`'ı kılıf olarak kullanırlar):
   - `src/components/HeaderBar.cy.tsx`
   - `src/components/HeaderBarBrand.cy.tsx`
   - `src/components/ListHeader.cy.tsx`
@@ -2056,9 +2056,9 @@ describe("HeroDetail", () => {
 });
 ```
 
-### Updating the RTL tests
+### RTL testlerini güncelleme
 
-In RTL, being able to handle the spinner in the beginning is a bit different. We have to use an `act` to asynchronously wait. Here is the updated unit test:
+RTL'de başlangıçta dönen çarkı ele almak biraz farklıdır. Asenkron olarak beklemek için `act` kullanmamız gerekiyor. İşte güncellenmiş birim testi:
 
 ```tsx
 // src/App.test.tsx
@@ -2099,7 +2099,7 @@ describe("200 flow", () => {
 });
 ```
 
-To mirror `cy.wrappedMount` in RTL, create a custom `render` at `src/test-utils.tsx`. This file also exports `'@testing-library/react'`, so we can import `screen`, `userEvent`, `waitFor` from here in case we are using the `wrappedRender`. Similar to the component tests, `wrappedRender` is the most useful in 3 components under `heroes` folder.
+RTL'deki `cy.wrappedMount`'ı yansıtmak için, `src/test-utils.tsx`'de özel bir `render` oluşturun. Bu dosya ayrıca `'@testing-library/react'`i dışa aktarır, böylece `wrappedRender`'ı kullanıyorsak buradan `screen`, `userEvent`, `waitFor`'i içe aktarabiliriz. Bileşen testlerine benzer şekilde, `wrappedRender` `heroes` klasöründeki 3 bileşende en yararlı olanıdır.
 
 ```tsx
 // src/test-utils.tsx
@@ -2136,7 +2136,7 @@ export * from "@testing-library/react";
 export { wrappedRender };
 ```
 
-`HeroList.test.tsx` is the RTL mirror of `HeroList.cy.tsx`
+`HeroList.test.tsx`, `HeroList.cy.tsx`'in RTL yansımasıdır.
 
 ```tsx
 // src/heroes/HeroList.test.tsx
@@ -2214,9 +2214,9 @@ describe("HeroList", () => {
 });
 ```
 
-With [msw](https://testing-library.com/docs/react-testing-library/example-intro/#mock) - think of `cy.intercept` for RTL use - it is not recommended to verify XHR calls going out of the app. Instead, the advice is the verify the changes in the UI. Alas, sometimes there are no changes in the component itself therefore we cannot mirror every single Cypress component testing 1:1 with RTL. Here is the RTL mirror of `HeroDetail.cy.tsx`.
+[msw](https://testing-library.com/docs/react-testing-library/example-intro/#mock) ile - RTL kullanımı için `cy.intercept` düşünün - uygulamadan çıkan XHR çağrılarını doğrulamak önerilmez. Bunun yerine, kullanıcı arayüzündeki değişiklikleri doğrulamak önerilir. Ne yazık ki, bazen bileşende kendisinde değişiklik olmaz, bu nedenle her Cypress bileşen testini RTL ile 1:1 yansıtamayız. İşte `HeroDetail.cy.tsx`'in RTL yansıması.
 
-> Alternatively we could spy on the `react-query` hooks and verify they are called. While that is what most developers have been used to, it is an implementation detail because changes to our state management approach would break the tests.
+> Alternatif olarak, `react-query` kancalarını takip etmeyi ve çağrıldıklarını doğrulamayı düşünebiliriz. Bu, çoğu geliştiricinin alışkın olduğu şey olsa da, durum yönetimi yaklaşımımızda yapılan değişiklikler testlerin başarısız olmasına neden olacağı için uygulama ayrıntısıdır.
 
 ```tsx
 // src/heroes/HeroDetail.test.tsx
@@ -2278,7 +2278,7 @@ describe("HeroDetail", () => {
 });
 ```
 
-`Heroes.test.tsx` is the RTL mirror of `Heroes.cy.tsx`.
+`Heroes.test.tsx`, `Heroes.cy.tsx`'in RTL yansımasıdır.
 
 ```tsx
 // src/heroes/Heroes.test.tsx
@@ -2383,54 +2383,53 @@ describe("Heroes", () => {
 });
 ```
 
-## Summary
+## Özet
 
-We added new components to be used in the chapter.
-
-</br>
-
-We added a new test for a hero search / filter feature (Red 1).
-
-We added the implementation to `HeroList` component, and ensured that there are no CT or e2e regressions (Green 1).
-
-We enhanced the component with `useTransition` to wrap the code we have control over (`setFilteredHeroes`) and `useDeferredValue` to wrap the value we do not have control over (`heroes` value being passed in as a prop) (Refactor 1).
+Bu bölümde kullanılacak yeni bileşenler ekledik.
 
 </br>
 
-We added conditional rendering for the search-filter (Red 2, Green 2)
+Kahraman arama / filtreleme özelliği için yeni bir test ekledik (Kırmızı 1).
+
+`HeroList` bileşenine uygulamayı ekledik ve CT veya e2e regresyonlarının olmadığından emin olduk (Yeşil 1).
+
+Bileşeni, üzerinde kontrol sahibi olduğumuz kodu (`setFilteredHeroes`) sarmak için `useTransition` ve üzerinde kontrol sahibi olmadığımız değeri sarmak için (`heroes` değeri prop olarak geçirilir) `useDeferredValue` ile geliştirdik (Yeniden düzenleme 1).
 
 </br>
 
-We configured the application for `Suspense` and `ErrorBoundary`
+Arama-filtreleme için koşullu render ekledik (Kırmızı 2, Yeşil 2)
 
 </br>
 
-We wrote a non-200 / network error edge case for `HeroDetail` component which also hits the `Suspense` code using a `cy.intercept` delay option (Red 3, Red 4).
-
-We added conditional rendering to `HeroDetail` for loading and error conditions that may occur with a `POST` request (Green 3,
-Green 4)
-
-In order to cover `PUT` request loading and error condition, we utilized a ui-integration test, since it is aware of a state that can trigger a back-end modification, but doesn't necessarily have to receive a 500 response from a real network to render the error (Refactor 4)
+Uygulamayı `Suspense` ve `ErrorBoundary` için yapılandırdık
 
 </br>
 
-We wrote a non-200 / network error edge case for `Heroes` component which is `HeroDetail`'s parent.' It uses `GET` request to get the data (Red 5).
+`HeroDetail` bileşeni için 200 olmayan / ağ hatası kenar durumu yazdık. Bu, `cy.intercept` gecikme seçeneğini kullanarak `Suspense` kodunu da vurur (Kırmızı 3, Kırmızı 4).
 
-We wrapped the component test mount in the fashion the root app is wrapped by `ErrorBoundary` & `Suspense`. We took advantage of `cy.clock` , `cy.tick` and turned off test failure on expected error throws (Green 5).
+`HeroDetail`'e, `POST` isteğiyle meydana gelebilecek yükleme ve hata koşulları için koşullu render ekledik (Yeşil 3, Yeşil 4)
 
-We improved the component test to check for the spinner. Similar to the `POST` request error case, we covered the network error case for `DELETE` in a ui-integration test since it is aware of a state that can trigger a back-end modification, but doesn't necessarily have to receive a 500 response from a real network to render the error (Refactor 5).
+`PUT` isteği yükleme ve hata koşulunu kapsamak için, gerçek bir ağdan 500 yanıtı almak zorunda olmamasına rağmen arka uç değişikliği tetikleyebilecek bir durumun farkında olan bir ui-entegrasyon testi kullandık (Yeniden düzenleme 4)
 
 </br>
 
-We modified the RTL unit test to work with `Suspense`
+`HeroDetail`'in üst bileşeni olan `Heroes` bileşeni için 200 olmayan / ağ hatası kenar durumu yazdık. Verileri almak için `GET` isteğini kullanır (Kırmızı 5).
 
-## Takeaways
+Bileşen testini monte etmeyi, kök uygulamanın `ErrorBoundary` ve `Suspense` ile sarılma şeklinde gerçekleştirdik. `cy.clock`, `cy.tick`'i kullanarak ve beklenen hata atılırken test başarısızlığını kapatarak avantaj sağladık (Yeşil 5).
 
-- When adding major features, it is important to execute the CT as well as e2e test suites to ensure there are no regressions. Small incremental steps coupled by confident tests make error diagnosis easier.
-- Although they have a reputation of being "brittle", well-written, stable e2e or ui-integration tests have a high fault-finding capability, catching the defects that are not realized in an isolated component, or unit test.
-- While multiple state updates are occurring simultaneously, Concurrency refers to certain state updates having less priority over others, for the purpose of optimizing UI responsiveness. `useTransition` & `useDeferredValue` can be used to specify what is of lower priority. If you have access to the state updating code, prefer `useTransition` and wrap that code. If you do not have access to the code but only to the final value, utilize `useDeferredValue` to wrap that value.
-- `Suspense` with `lazy` loading is used to code-split the initial application bundle, in order to improve UI responsiveness. Together with `ErrorBoundary` , they de-couple the loading and error UI from individual components. While loading show the `Suspense` component, if error show the `ErrorBoundary` component, if success show the component we want to render.
-- When beginning to write tests for error cases, any test that is covering the positive flows to spy on or stub the network with `cy.intercept()` is a good candidate to begin with. Start at the component level and move up to ui-integration when further tests are not possible.
-- Any time we are not able to cover a test at a low level with component tests, move up to ui-integration tests. Most the time a ui-integration test will suffice, and when it is not enough we can use a true e2e that hits the backend. Use the least costly kind of test to gain the highest confidence; where they are in the pyramid is only relevant by the ability to perform that kind of test in the given context.
-- We can speed up the network errors by using [`cy.clock`](https://docs.cypress.io/api/commands/clock) and [`cy.tick`](https://docs.cypress.io/api/commands/tick). When covering error case we also tell Cypress that uncaught exceptions are expected using `Cypress.on('uncaught:exception', () => false)`.
-- Remember that a component test is an independent, small scale application. Whatever is wrapping the base `App` component may need to be wrapping a component test mount as well (`Providers`, `ErrorBoundary`, `Suspense`, `Router` etc.).
+Dönen çarkı kontrol etmek için bileşen testini geliştirdik. `POST` isteği hata durumuna benzer şekilde, gerçek bir ağdan 500 yanıtı almak zorunda olmamasına rağmen arka uç değişikliği tetikleyebilecek bir durumun farkında olan bir ui-entegrasyon testinde `DELETE` için ağ hatası durumunu kapsadık (Yeniden düzenleme 5).
+
+</br>
+
+RTL birim testini `Suspense` ile çalışacak şekilde değiştirdik.
+
+## Çıkarılacak Dersler
+
+- Büyük özellikler eklerken, regresyon olmadığından emin olmak için CT ve e2e test süitlerini çalıştırmak önemlidir. Küçük artımlı adımlar ve güvenilir testler, hata teşhisini kolaylaştırır.
+- "Kırılgan" olarak ünleri olsa da, iyi yazılmış, kararlı e2e veya ui-entegrasyon testlerinin yüksek hata bulma yeteneği vardır ve izole bileşenlerde ya da birim testlerde fark edilmeyen hataları yakalar.
+- Eşzamanlı olarak birden fazla durum güncellemesi gerçekleşirken, Concurrency (Eşzamanlılık), UI yanıt verme hızını optimize etmek amacıyla bazı durum güncellemelerinin diğerlerine göre daha düşük önceliğe sahip olmasını ifade eder. `useTransition` ve `useDeferredValue`, daha düşük öncelikli olanı belirtmek için kullanılabilir. Durum güncelleme koduna erişiminiz varsa, `useTransition`'ı tercih edin ve kodu onunla sarın. Kod erişiminiz yoksa, ancak son değere erişiminiz varsa, değeri sarmak için `useDeferredValue` kullanın.
+- `Suspense` ile `lazy` yükleme, başlangıç uygulama paketini kod bölme amacıyla kullanılır ve UI yanıt verme hızını artırır. `ErrorBoundary` ile birlikte, yükleme ve hata UI'sini bireysel bileşenlerden ayırırlar. Yükleme sırasında `Suspense` bileşenini gösterin, hata durumunda `ErrorBoundary` bileşenini gösterin, başarı durumunda render etmek istediğimiz bileşeni gösterin.
+- Hata durumları için test yazmaya başlarken, ağ üzerinde casusluk etmek veya `cy.intercept()` ile ağı taklit etmek amacıyla pozitif akışları kapsayan herhangi bir test, başlamak için iyi bir adaydır. Bileşen düzeyinde başlayın ve daha fazla test mümkün olmadığında ui-entegrasyona geçin.
+- Bir bileşen testi ile düşük düzeyde bir testi kapsayamadığımız her zaman, ui-entegrasyon testlerine geçin. Çoğu zaman bir ui-entegrasyon testi yeterli olacak ve yeterli olmadığında, arka ucu etkileyen gerçek bir e2e kullanabiliriz. En yüksek güveni elde etmek için en düşük maliyetli test türünü kullanın; piramitte nerede oldukları, yalnızca verilen bağlamda o tür testi gerçekleştirme yeteneğiyle ilgilidir.
+- Ağ hatalarını hızlandırmak için [`cy.clock`](https://docs.cypress.io/api/commands/clock) ve [`cy.tick`](https://docs.cypress.io/api/commands/tick) kullanabiliriz. Hata durumunu kapsarken, Cypress'a yakalanmamış istisnaların beklendiğini `Cypress.on('uncaught:exception', () => false)` kullanarak söyleriz.
+- Bir bileşen testinin bağımsız, küçük ölçekli bir uygulama olduğunu unutmayın. Temel `App` bileşenini saran ne varsa, bir bileşen testi montajını da sarması gerekebilir (`Providers`, `ErrorBoundary`, `Suspense`, `Router` vb.).
