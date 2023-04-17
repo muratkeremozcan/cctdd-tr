@@ -156,7 +156,7 @@ function App() {
 export default App;
 ```
 
-`react-router` kullanarak render'ı biraz daha geliştirebiliriz (Refactor 3).
+`react-router` kullanarak render'ı biraz daha geliştirebiliriz (Düzenleme 3).
 
 ```tsx
 // src/App.tsx
@@ -288,7 +288,7 @@ export default App;
 
 ![react-router-Green4](../img/react-router-Green4.png)
 
-test eklemeyi düşünmek istiyoruz. URL kontrollerini ekleyerek testleri, bir url'ye yönlendirirken bileşen render'ının yanı sıra destekleyebiliriz (Refactor 4).
+test eklemeyi düşünmek istiyoruz. URL kontrollerini ekleyerek testleri, bir url'ye yönlendirirken bileşen render'ının yanı sıra destekleyebiliriz (Düzenleme 4).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -376,7 +376,7 @@ function App() {
 export default App;
 ```
 
-İlk testi, `HeaderBar` ve `NavBar`ın tüm yönlendirme testlerinde doğru olduğunu kontrol eden testi değiştirebiliriz. Burada, yönlendirmeye yönelik yeni bir test yazmak yerine testi değiştirmek tercih edilir. Mevcut testi değiştirmek için fırsatlar arayın, yeni özellikler için kısmen yinelenen testler yazmak yerine. Bir test açısından önemli olan şey, bir testin başlangıç durumudur; bu duruma ulaşmak ortaksa, o zaman bu test iyileştirmesi için bir fırsattır ve kısmi test çoğaltma yerine. Ayrıca `/heroes` rotası için doğrudan gezinme işlevselliğini kontrol eden yeni bir test ekleyebiliriz (Refactor 5).
+İlk testi, `HeaderBar` ve `NavBar`ın tüm yönlendirme testlerinde doğru olduğunu kontrol eden testi değiştirebiliriz. Burada, yönlendirmeye yönelik yeni bir test yazmak yerine testi değiştirmek tercih edilir. Mevcut testi değiştirmek için fırsatlar arayın, yeni özellikler için kısmen yinelenen testler yazmak yerine. Bir test açısından önemli olan şey, bir testin başlangıç durumudur; bu duruma ulaşmak ortaksa, o zaman bu test iyileştirmesi için bir fırsattır ve kısmi test çoğaltma yerine. Ayrıca `/heroes` rotası için doğrudan gezinme işlevselliğini kontrol eden yeni bir test ekleyebiliriz (Düzenleme 5).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
@@ -413,7 +413,7 @@ describe("Routes and navigation", () => {
 });
 ```
 
-Bu noktada başka hangi testleri düşünebiliriz? Rota geçmişi hakkında ne dersiniz? Bunun için düşük maliyetli ve güvenilir bir e2e testi ile kapsayabileceğimiz bir test ekleyebiliriz. Testi, kahramanlar -> kötü adamlar -> hakkında'dan farklı bir rota sırası kullanarak daha ilginç hale getirebiliriz (Refactor 5).
+Bu noktada başka hangi testleri düşünebiliriz? Rota geçmişi hakkında ne dersiniz? Bunun için düşük maliyetli ve güvenilir bir e2e testi ile kapsayabileceğimiz bir test ekleyebiliriz. Testi, kahramanlar -> kötü adamlar -> hakkında'dan farklı bir rota sırası kullanarak daha ilginç hale getirebiliriz (Düzenleme 5).
 
 ```tsx
 // cypress/e2e/routes-nav.cy.ts
