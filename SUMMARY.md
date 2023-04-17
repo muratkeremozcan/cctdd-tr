@@ -13,7 +13,7 @@
 - [ch09-NotFound](ch09-NotFound/README.md)
 - [ch10-HeroDetail](ch10-HeroDetail/README.md)
 - [ch11-HeroList](ch11-HeroList/README.md)
-- [ch12-Heroes-part1-lifting-state](ch12-Heroes-part1-lifting-state/README.md/README.md)
+- [ch12-Heroes-part1-lifting-state](ch12-Heroes-part1-lifting-state/README.md)
 - [ch13-react-router](ch13-react-router/README.md)
 - [ch14-Heroes-part2-react-router](ch14-Heroes-part2-react-router/README.md)
 - [ch15-api-json-server](ch15-api-json-server/README.md)
