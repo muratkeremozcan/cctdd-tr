@@ -1,30 +1,34 @@
 # react-query
 
-### Caching and [`react-query`](https://react-query-v3.tanstack.com/overview)
+### Önbellekleme ve [`react-query`](https://react-query-v3.tanstack.com/overview)
 
-Having learned well from Kent C. Dodds, In the previous chapters we stated that we can drastically simplify our UI state management if we split out the server cache into something separate. State can be lumped into two buckets:
+Kent C. Dodds'tan iyi dersler alarak, önceki bölümlerde sunucu önbelleğini ayrı bir şeye bölersek, kullanıcı arayüzü durum yönetimini büyük ölçüde basitleştirebileceğimizi belirttik. Durum iki kümeye ayrılabilir:
 
-1. UI state: Modal is open, item is highlighted, etc. _(we used `useState` hook for this)_
-2. Server cache: User data, tweets, contacts, etc. _(`react-query` is useful here)_
+1. Kullanıcı arayüzü durumu: Modal açık, öğe vurgulanmış vb. *(bunun için `useState` kancaını kullandık)*
+2. Sunucu önbelleği: Kullanıcı verileri, tweet'ler, kişiler vb. *(`react-query` burada yararlıdır)*
 
-Why `react-query`? To prevent duplicated data-fetching, we want to move all the data-fetching code into a central store and access that single source from the components that need it. With React Query, we don’t need to do any of the work involved in creating such a store. It lets us keep the data-fetching code in the components that need the data, but behind the scenes it manages a data cache, passing already-fetched data to components when they ask for them.
+Neden `react-query`? Yeniden çoğaltılmış veri almayı önlemek için, tüm veri alıcı kodunu merkezi bir depoya taşımak ve ona ihtiyaç duyan bileşenlerden bu tek kaynağa erişmek istiyoruz. React Query ile böyle bir depo oluşturma işleminde herhangi bir iş yapmamıza gerek yok. Veri alıcı kodunu veriye ihtiyaç duyan bileşenlerde tutmamıza izin verir, ancak arka planda bir veri önbelleği yönetir ve bileşenler onları istediğinde zaten alınan verileri iletir.
 
-React-query's [`useQuery`](https://tanstack.com/query/v4/docs/reference/useQuery) hook is for fetching data by key and caching it, while updating cache. Think of it similar to a `GET` request. The key arg is a unique identifier for the query / data in cache; string, array or object. The 2nd arg an async function that returns the data.
+React-query'nin [`useQuery`](https://tanstack.com/query/v4/docs/reference/useQuery) kancası, veriyi anahtarla alarak ve önbelleğe alarak güncellemek içindir. Bunu bir `GET` isteği gibi düşünün. Anahtar argümanı, önbellekteki sorgu / veri için benzersiz bir tanımlayıcıdır; dize, dizi veya nesne. İkinci argüman, veriyi döndüren bir async işlevidir.
 
-`const { data, status, error } = useQuery(key, () => fetch(url))`
+```
+const { data, status, error } = useQuery(key, () => fetch(url))
+```
 
-`useMutation` is the write mirror of `useQuery`. Think of it similar to our `PUT` and `POST` requests. `useMutation` yields data, status, error just like useQuery. The first arg is a function that that executes a non-idempotent request. The second arg is an object with onMutate property.
+`useMutation`, `useQuery`'nin yazma yansımasıdır. Bunu `PUT` ve `POST` isteklerimize benzer şekilde düşünün. `useMutation`, data, status, error gibi useQuery ile aynı değerleri sağlar. İlk argüman, idempotent olmayan bir isteği yürüten bir işlevidir. İkinci argüman, onMutate özelliğine sahip bir nesnedir.
 
-`const { dataToMutate, status, error } = useMutation((*url*) => fetch(*url*) {...})`
+```
+const { dataToMutate, status, error } = useMutation((*url*) => fetch(*url*) {...})
+```
 
-- `useQuery` fetches state: UI state <- server/url , and caches it.
-- `useMutation` is just the opposite: UI state -> server , and still caches it.
+- `useQuery` durumu alır: Kullanıcı arayüzü durumu <- sunucu / url ve onu önbelleğe alır.
+- `useMutation` tam tersidir: Kullanıcı arayüzü durumu -> sunucu ve yine de önbelleğe alır.
 
-In this chapter we will be creating our api, creating hooks for CRUD operations on heroes, and we will be using them in the components.
+Bu bölümde API'mizi oluşturacak, kahramanlar üzerinde CRUD işlemleri için kancalar oluşturacak ve bunları bileşenlerde kullanacağız.
 
 ### API
 
-We will be replicating the `getItem` function in the `useAxios` hook, and making it compatible with the rest of the CRUD requests. Create a file `src/hooks/api.ts` and paste in the following code. We have a type protected `client` function which wraps `Axios`, with which we can make any CRUD request. We wrap them again in functions with less arguments, which are easier to use.
+`useAxios` kancasındaki `getItem` işlevini çoğaltacağız ve diğer CRUD istekleriyle uyumlu hale getireceğiz. `src/hooks/api.ts` adında bir dosya oluşturun ve aşağıdaki kodu yapıştırın. `Axios`'u saran tür korumalı bir `client` işlevimiz var, bununla herhangi bir CRUD isteği yapabiliriz. Daha az argümanlı işlevlerle bunları tekrar sararız, bu şekilde kullanmaları daha kolaydır.
 
 ```typescript
 // src/hooks/api.ts
@@ -58,15 +62,15 @@ export const getItem = (route: string) => client(route, "GET");
 
 ### `useGetHeroes`
 
-We can create a simple hook and replace our complex `useAxios`, while showcasing the performance gains of cache management by `react-query`. `yarn add react-query`, and create a file `src/hooks/useGetHeroes.ts`. `react-query`'s [`useQuery`](https://tanstack.com/query/v4/docs/reference/useQuery) is similar to our custom useAxios: takes a url, returns an object of data, status & error.
+Basit bir kanca oluşturabilir ve karmaşık `useAxios`'umuzu, `react-query` tarafından önbellek yönetiminin performans kazanımlarını gösterirken değiştirebiliriz. `yarn add react-query` kullanarak ekleyin ve `src/hooks/useGetHeroes.ts` adında bir dosya oluşturun. `react-query`'in [`useQuery`](https://tanstack.com/query/v4/docs/reference/useQuery) işlevi, özel useAxios'umuza benzer: bir url alır, veri, durum ve hata nesnesi döndürür.
 
 `const { data, status, error } = useQuery(key, () => fetch(url))`
 
-Compare to `useAxios`, which also returns a status and error that we did not use:
+Durumu ve kullanmadığımız hatayı da döndüren `useAxios` ile karşılaştırın:
 
 `const {data: heroes = []} = useAxios('heroes')`
 
-Whenever any component subsequently calls useQuery with the key, `react-query` will return the previously fetched data from its cache and then fetch the latest data in the background (very similar to PWAs and service workers). Our query key here is the string `heroes` and the callback function is `getItem` from our api, calling the `/heroes` route. `useQuery` returns `data`, `status`, and `error`, we reshape those nicely for an easier use in our component.
+Herhangi bir bileşen daha sonra anahtarla useQuery'yi çağırdığında, `react-query` önbelleğinden önceden alınan verileri döndürür ve ardından arka planda en son verileri alır (PWAs ve hizmet işçilerine çok benzer). Sorgu anahtarımız burada `heroes` dizisi ve geri çağırma işlevi api'den `/heroes` rotasını çağıran `getItem`'dır. `useQuery` `data`, `status` ve `error` döndürür, bunları bileşenimizde daha kolay kullanım için güzel bir şekilde yeniden şekillendiririz.
 
 ```tsx
 // src/hooks/useGetHeroes.ts
@@ -88,7 +92,7 @@ export const useGetHeroes = () => {
 };
 ```
 
-Before replacing `useAxios` in `Heroes` component, we have to wrap our app JSX in a provider component called `QueryClientProvider` , instantiate a `queryClient` and use it as the `client` prop of `QueryClientProvider`. This is how we make the cache available for components to access and share.
+`Heroes` bileşeninde `useAxios`'u değiştirmeden önce, uygulama JSX'ini `QueryClientProvider` adlı bir sağlayıcı bileşenle sarmamız, bir `queryClient` örneği oluşturmamız ve bunu `QueryClientProvider`'ın `client` prop'u olarak kullanmamız gerekmektedir. Böylece önbelleği bileşenlerin erişip paylaşabileceği şekilde kullanılabilir hale getiririz.
 
 ```tsx
 // src/App.tsx
@@ -127,7 +131,7 @@ function App() {
 export default App;
 ```
 
-`useGetHeroes` is a drop-in replacement for `useAxios`, and it does not even need an argument. We will use `status` and `getError` in the next chapter.
+`useGetHeroes`, `useAxios` için yer değiştirme özelliğine sahiptir ve hatta bir argümana bile ihtiyaç duymaz. `status` ve `getError`'ı bir sonraki bölümde kullanacağız.
 
 ```tsx
 import { useNavigate, Routes, Route } from "react-router-dom";
@@ -197,11 +201,11 @@ export default function Heroes() {
 }
 ```
 
-Serve the app with `yarn dev`, and toggle `useAxios` vs `useGetHeroes`. Switch between the tabs and observe the performance difference thanks to caching.
+Uygulamayı `yarn dev` ile çalıştırın ve `useAxios` ile `useGetHeroes` arasında geçiş yapın. Sekmeler arasında geçiş yaparak önbelleğin sağladığı performans farkını gözlemleyin.
 
 ### `usePostHero`
 
-Until now we have not had a feature to add a hero. Our backend supports it, but our front end does not. Let's start with a failing test which goes through the add hero flow. Our new test simply visits the main route, clicks the add button, verifies the new page, fills in randomized hero name and description, saves the changes (Red 1)
+Şimdiye kadar kahraman eklemek için bir özelliğe sahip değildik. Arka uç tarafı bunu destekliyor, ancak ön uç tarafı desteklemiyor. Kahraman ekleme akışı ile başarısız olan bir testle başlayalım. Yeni testimiz, ana yolu ziyaret etmek, ekle düğmesine tıklamak, yeni sayfayı doğrulamak, rastgele kahraman adı ve açıklaması doldurmak ve değişiklikleri kaydetmek için basitçe çalışır (Kırmızı 1).
 
 ```tsx
 // cypress/e2e/create-hero.cy.ts
@@ -257,23 +261,23 @@ describe("Create hero", () => {
 });
 ```
 
-Let's remember [`useMutation`](https://tanstack.com/query/v4/docs/reference/useMutation) before proceeding further.
+[`useMutation`](https://tanstack.com/query/v4/docs/reference/useMutation) hatırlayalım ve daha ileri gitmeden önce.
 
-- useParams (from `react-router`) and useQuery (from `react-query`) fetch state:
+- useParams (`react-router`'dan) ve useQuery (`react-query`'den) durumu getirir:
 
-  UI state <- server/url , and caches it
+  UI durumu <- sunucu/url ve bunu önbelleğe alır
 
-- useMutation is just the opposite:
+- useMutation tam tersidir:
 
-  UI state -> server , and still caches it
+  UI durumu -> sunucu ve yine de bunu önbelleğe alır
 
-`useMutation` yields data, status, error just like useQuery.
+`useMutation` tıpkı useQuery gibi veri, durum ve hata sağlar.
 
 `const { mutate, status, error } = useMutation((item) => createItem(route, item)), {onSuccess: ...}`
 
-The first arg is a function that that executes a non-idempotent request. The second arg is an object with onSuccess property.
+İlk argüman, idempotent olmayan bir isteği gerçekleştiren bir fonksiyondur. İkinci argüman, başarı durumunda bir nesnedir.
 
-Here is our incomplete hook we derive off of that knowledge. We expect that it will create something in the backend with our api call, it will log some new data, and it will navigate to `/heroes`
+Bu bilgiden türetilen eksik kancamız şu şekildedir. Api çağrımızla arka planda bir şeyler oluşturacağını, bazı yeni verileri günlüğe kaydedeceğini ve `/heroes` adresine yönlendireceğini bekliyoruz.
 
 ```tsx
 // src/hooks/usePostHero.ts
@@ -299,25 +303,25 @@ export function usePostHero() {
 }
 ```
 
-In `HeroDetail` component we have a `createHero` function that `console.log`s. Our replacement `createHero` function can be the `mutate` value yielded from the hook. We can cast the return values of the hook like so:
+`HeroDetail` bileşeninde, `console.log` kullanan bir `createHero` fonksiyonumuz var. Yerine koyabileceğimiz `createHero` fonksiyonu, kancadan elde edilen `mutate` değeri olabilir. Kancanın dönüş değerlerini şu şekilde atayabiliriz:
 
 `const {mutate: createHero, status: postStatus, error: postError} = usePostHero()`
 
-We can remove `const createHero = () => console.log('createHero')`, instead use the `createHero` yielded from the hook. We need to pass to it an item argument. The type for it comes from our `usePostHero` hook's `useMutation` callback:
+`const createHero = () => console.log('createHero')` ifadesini kaldırabiliriz, bunun yerine kancadan elde edilen `createHero`'yu kullanabiliriz. Ona bir öğe argümanı iletmemiz gerekiyor. Türü, `usePostHero` kancasının `useMutation` geri çağrısından gelir:
 
 `useMutation((item: Hero) => createItem('heroes', item)`
 
-We can pass it the `hero` we get from the already existing `useState`:
+Zaten mevcut olan `useState`'ten elde ettiğimiz `hero`'yu iletebiliriz:
 
 `const [hero, setHero] = useState({id, name, description})`
 
-There is one final update for the ternary operator in `handleSave`. Currently it is working off of `hero.name`, and `hero` is driven by state, so `hero.name` is what we type in. It will always be true. We need to base it on something that does not exist in the case of a new hero, and that can be the name and description we get from the url:
+`handleSave` içindeki üçlü operatör için son bir güncelleme yapmamız gerekiyor. Şu anda `hero.name` üzerinde çalışıyor ve `hero` durum tarafından yönlendirildiği için, `hero.name` bizim yazdığımız şeydir. Her zaman doğru olacaktır. Yeni bir kahraman durumunda mevcut olmayan bir şeye dayandırmamız gerekiyor ve bu, url'den aldığımız ad ve açıklama olabilir:
 
 `const {name, description} = useHeroParams()`
 
-When there is no hero, there are no url search parameters. Therefore we can replace the ternary operator and the `{hero.name}` jsx for `card-header-title` with just `name`.
+Kahraman yoksa, url arama parametreleri de yoktur. Bu nedenle, üçlü operatörü ve `card-header-title` için `{hero.name}` jsx'ini sadece `name` ile değiştirebiliriz.
 
-Here is the updated `HeroDetail` component (Green 1):
+İşte güncellenmiş `HeroDetail` bileşeni (Yeşil 1):
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -393,7 +397,7 @@ export default function HeroDetail() {
 
 ![ReactQuery-Green1](../img/ReactQuery-Green1.png)
 
-Now we can verify if the hero we just created appears in the list after the save. For brevity we are showing only the running test (Red 2).
+Şimdi, kaydettikten sonra listeye yeni oluşturulan kahramanın görünüp görünmediğini doğrulayabiliriz. Kısaltma amacıyla yalnızca çalışan testi (Kırmızı 2) gösteriyoruz.
 
 ```typescript
 // cypress/e2e/create-hero.cy.ts
@@ -424,7 +428,7 @@ it.only("should go through the add hero flow (ui-e2e)", () => {
 });
 ```
 
-We see the new entity created at the backend (`db.json` got updated), and if we navigate to another tab and back we also see the newly created entity. Alas, it is not in the `HeroList` immediately after saving. This points to a shortcoming in cache management. When we mutate the backend, we also have to update the new cache. For this we use `queryClient`'s `setQueryData` method. [`setQueryData`](https://tanstack.com/query/v4/docs/reference/QueryClient#queryclientsetquerydata) takes a key as the first arg, the 2nd arg is a callback that takes the old query cache and returns the new one. With that enhancement, our test is passing (Green 2).
+Yeni oluşturulan varlığı arka uçta (`db.json` güncellendi) görüyoruz ve başka bir sekmeye gidip geri dönersek, yeni oluşturulan varlığı da görüyoruz. Ne yazık ki, kaydettikten hemen sonra `HeroList`'te değil. Bu, önbellek yönetimindeki bir eksikliğe işaret ediyor. Arka ucunu değiştirdiğimizde, aynı zamanda yeni önbelleği de güncellememiz gerekiyor. Bunun için `queryClient`'ın `setQueryData` metodunu kullanıyoruz. [`setQueryData`](https://tanstack.com/query/v4/docs/reference/QueryClient#queryclientsetquerydata), ilk argüman olarak bir anahtar, ikinci argüman olarak eski sorgu önbelleğini alan ve yeni olanını döndüren bir geri arama alır. Bu geliştirmelerle, testimiz geçiyor (Yeşil 2).
 
 ```typescript
 // src/hooks/usePostHero.ts
@@ -453,7 +457,7 @@ export function usePostHero() {
 }
 ```
 
-Here is our e2e test at the moment:
+İşte şu anki e2e testimiz:
 
 ```typescript
 // cypress/e2e/create-hero.cy.ts
@@ -513,17 +517,17 @@ describe("Create hero", () => {
 });
 ```
 
-#### ui-e2e vs ui-integration tests
+#### ui-e2e ile ui-integration testleri arasındaki fark
 
-Pay attention to the first two tests. They end the add flow with cancel or refresh. Neither of them sends a write request to the backend, they just read the data from it. The fact that we are reading the data from the backend, and the fact that we are writing to the backend is covered in the 3rd test, which should stay e2e. But the first two tests can entirely stub the network, and thereby become ui-integration tests. What are `ui-integration` tests? From [List of Test Methodologies](https://dev.to/muratkeremozcan/mostly-incomplete-list-of-test-methodologies-52no) post:
+İlk iki teste dikkat edin. Ekleme akışını iptal veya yenileme ile bitiriyorlar. İkisi de arka uca yazma isteği göndermez, sadece veriyi oradan okurlar. Veriyi arka uçtan okuduğumuz gerçeği ve arka uca yazdığımız gerçeği, e2e olarak kalması gereken 3. testte kapsanmıştır. Ancak ilk iki test tamamen ağı taklit ederek ui-integration testlerine dönüşebilir. `ui-integration` testleri nedir? [Test Metodolojileri Listesi](https://dev.to/muratkeremozcan/mostly-incomplete-list-of-test-methodologies-52no) yazısından:
 
-_These look like UI e2e tests but they fully stub the network, and they are run without hitting a real server. They are faster, and less brittle than traditional UI e2e tests since the network is not a concern. They are great for shift-left approach and to isolate the ui functionality prior to testing on deployments where the backend matters._
+*Bunlar, UI e2e testlerine benzer, ancak ağı tamamen taklit ederler ve gerçek bir sunucuya çarpmadan çalıştırılırlar. Ağ endişesi olmadığından daha hızlıdırlar ve geleneksel UI e2e testlerinden daha az kırılgandırlar. Shift-left yaklaşımı için harikadırlar ve arka uç önemli olduğunda dağıtımlarda test etmeden önce kullanıcı arayüzü işlevini izole etmek için kullanışlıdırlar.*
 
-If you have been through Kent C. Dodd's [Epic React](https://epicreact.dev/login) you might have seen his version of integration tests, using React Testing Library. The distinction here is that we are using the real UI, and testing the integration of components at a higher level, only stubbing the network data. For some, seeing the real browser, in fact the real app itself is easier and more confident, and that is the path we will follow in this course.
+Eğer Kent C. Dodd'un [Epic React](https://epicreact.dev/login) serisinden geçtiyseniz, React Testing Library kullanarak entegrasyon testlerinin kendi sürümünü görmüş olabilirsiniz. Buradaki ayrım, gerçek kullanıcı arayüzünü kullanarak bileşenlerin entegrasyonunu daha yüksek bir düzeyde test ediyor olmamız ve sadece ağ verilerini taklit etmemizdir. Bazıları için gerçek tarayıcıyı, hatta gerçek uygulamayı görmek daha kolay ve güvenilir olabilir ve bu, bu kurs boyunca izleyeceğimiz yoldur.
 
-Always evaluate if you need the backend to gain confidence in your app's functionality. You should only use true e2e tests when you need this confidence, and you should not have to repeat the same costly tests everywhere. Instead utilize ui-integration tests. If your backend is tested by its own e2e tests, your true e2e needs at the front end are even less; be careful not to duplicate the backend effort. In our repo, `cypress/e2e/backend/crud.cy.ts` is a good example of a backend e2e test. Coincidentally we will be using some of its commands in our e2e to reset or setup db state.
+Uygulamanızın işlevselliğine güven duymak için arka uca ihtiyacınız olup olmadığını her zaman değerlendirin. Bu güvene ihtiyaç duyduğunuzda yalnızca gerçek e2e testleri kullanmalı ve aynı maliyetli testleri her yerde tekrarlamamalısınız. Bunun yerine ui-integration testlerini kullanın. Eğer arka ucunuz kendi e2e testleriyle test edilmişse, ön ucun gerçek e2e ihtiyaçları daha da azdır; arka uç çabalarını çoğaltmamaya dikkat edin. Repo'muzda, `cypress/e2e/backend/crud.cy.ts` arka uç e2e testinin iyi bir örneğidir. Tesadüfen e2e'mizde veritabanı durumunu sıfırlamak veya kurmak için bazı komutlarını kullanacağız.
 
-Let's refactor our test file to use ui-integration tests for cancel and refresh flows. Instead of the network data, we will use the `heroes.json` file under `cypress/fixtures`. We will also refactor some of the common navigation between the tests (Refactor 2).
+Test dosyamızı iptal ve yenileme akışları için ui-integration testlerini kullanacak şekilde yeniden düzenleyelim. Ağ verileri yerine, `cypress/fixtures` altındaki `heroes.json` dosyasını kullanacağız. Ayrıca testler arasındaki ortak gezinmeyi de yeniden düzenleyeceğiz (Düzenleme 2).
 
 ```typescript
 // cypress/e2e/create-hero.cy.ts
@@ -587,11 +591,11 @@ describe("Create hero", () => {
 });
 ```
 
-Since our delay for `json-server` is 1 second, the test is now 2 seconds faster, less flakey, and our confidence has not reduced because we already cover the real `GET` request in the third test.
+`json-server` için gecikmemiz 1 saniye olduğundan, test şimdi 2 saniye daha hızlı, daha az kırılgan ve üçüncü testte gerçek `GET` isteğini zaten kapsadığımız için güvenimiz azalmamıştır.
 
-There are two more refactors remaining. We will be needing to visit the baseUrl in stubbed and natural ways, so those two can become Cypress commands. We are also bloating the db every time the third test is executed. We can use the delete command from the backend-e2e suite, and we can also reset the database just like the backend suite does.
+İki yeniden düzenleme daha kaldı. Stub'lanmış ve doğal yollarla baseUrl'e gitmemiz gerekeceği için, bu ikisi Cypress komutları haline gelebilir. Ayrıca, üçüncü test her çalıştırıldığında veritabanını şişiriyoruz. Arka uç-e2e süitinden sil komutunu kullanabiliriz ve aynı zamanda arka uç süiti gibi veritabanını sıfırlayabiliriz.
 
-Add 3 commands `getEntityByName`, `visitStubbedHeroes`, `visitHeroes` to the commands file.
+`getEntityByName`, `visitStubbedHeroes`, `visitHeroes` komutlarını commands dosyasına ekleyin.
 
 ```typescript
 // cypress/support/commands.ts
@@ -659,7 +663,7 @@ Cypress.Commands.add("visitHeroes", () => {
 });
 ```
 
-Add the type definitions to `cypress.d.ts`
+`cypress.d.ts` dosyasına tip tanımlarını ekleyin.
 
 ````typescript
 // cypress.d.ts
@@ -753,9 +757,9 @@ declare global {
 }
 ````
 
-In the refactored test we reset the db before every execution, we use the commands and helpers for initial navigation (Arrange), finally in the third test we extract the hero from the name we gave it and then delete it using an api command.
+Yeniden düzenlenmiş testte, her çalıştırmadan önce veritabanını sıfırlarız, başlangıç navigasyonu için komutlar ve yardımcıları kullanırız (Düzenleme) ve en sonunda üçüncü testte ona verdiğimiz isimden kahramanı çıkarır ve bir API komutu kullanarak onu sileriz.
 
-Before finishing, take a look at the test `cypress/e2e/network.cy.ts`. The main checks in this test are making sure the `Heroes` component and `HeroList` components are rendering:
+Bitirmeden önce, `cypress/e2e/network.cy.ts` testine bir göz atın. Bu testin ana kontrolleri, `Heroes` bileşeninin ve `HeroList` bileşenlerinin render edilmesini sağlamaktır:
 
 ```typescript
 // cypress/e2e/network.cy.ts
@@ -763,11 +767,11 @@ cy.getByCy("heroes").should("be.visible");
 cy.getByCyLike("hero-list-item").should("have.length.gt", 0);
 ```
 
-We recall from chapter 13 takeaways:
+Bölüm 13 sonuçlarından hatırlıyoruz:
 
-_Always look for opportunities to tweak what test is already existing as opposed to writing partially duplicated tests for new specs. What matters from a test perspective is the beginning state of a test; if reaching that state is common, then it is an opportunity for a test enhancement vs partial test duplication._
+*Yeni özellikler için kısmen yinelenen testler yazmaktansa, zaten mevcut olan testi değiştirmek için fırsatlar aramaya her zaman dikkat edin. Bir test açısından önemli olan şey, bir testin başlangıç durumudur; bu duruma ulaşmak ortaksa, bu, test geliştirmesi ve kısmi test yinelemesi arasında bir fırsattır.*
 
-We can include the two checks in the createhero e2e test when navigating back to heroes list, and we can remove the `cypress/e2e/network.cy.ts` entirely. We are saving 8 lines of code and a few seconds of testing, without adding any new time in testing; this would not be an easy call to make in a BDD framework.
+Kahramanlar listesine geri dönerken, createhero e2e testine iki kontrolü ekleyebilir ve `cypress/e2e/network.cy.ts` dosyasını tamamen kaldırabiliriz. Test ve birkaç saniye test etmeden 8 satır kod tasarrufu yapıyoruz ve test süresinde yeni bir zaman eklemiyoruz; bu, BDD çerçevesinde kolay bir karar olmazdı.
 
 ```typescript
 // cypress/e2e/create-hero.cy.ts
@@ -831,9 +835,9 @@ describe("Create hero", () => {
 });
 ```
 
-There is one more ui-integration enhancement we can make in `cypress/e2e/routes-nav.cy.ts`. The tests are simply covering the routes of the application, irrelevant of the back-end. So long as there is any data, they are satisfied. We can stub the network to make this one into a ui-integration test.
+`cypress/e2e/routes-nav.cy.ts` dosyasında bir ui-integration iyileştirmesi daha yapabiliriz. Testler, uygulamanın yollarını, arka ucun önemsiz olduğu şekilde kapsamaktadır. Herhangi bir veri olduğu sürece memnundurlar. Ağı taklit ederek bunu bir ui-integration testine dönüştürebiliriz.
 
-> Tip: In a large project, you might be separating `ui-integration` from `ui-e2e` tests in folders. And/or you might be applying other types of selective testing ([there are over 32](https://dev.to/muratkeremozcan/the-32-ways-of-selective-testing-with-cypress-a-unified-concise-approach-to-selective-testing-in-ci-and-local-machines-1c19)), such as tagging the tests with [`cypress-grep`](https://github.com/cypress-io/cypress-grep).
+> İpucu: Büyük bir projede, `ui-integration` testlerini `ui-e2e` testlerinden klasörlerde ayırıyor olabilirsiniz. Ve/veya seçici testin diğer türlerini uygulayabilirsiniz ([32'den fazlası var](https://dev.to/muratkeremozcan/the-32-ways-of-selective-testing-with-cypress-a-unified-concise-approach-to-selective-testing-in-ci-and-local-machines-1c19)), örneğin testleri [`cypress-grep`](https://github.com/cypress-io/cypress-grep) ile etiketleyerek.
 
 ```typescript
 // cypress/e2e/routes-nav.cy.ts
@@ -894,9 +898,9 @@ describe("routes navigation", () => {
 
 ### `usePutHero`
 
-We will start with a test that adds a hero via an api call, and then begins to edit it.
+Bir API çağrısıyla bir kahraman ekleyen ve ardından düzenlemeye başlayan bir testle başlayacağız.
 
-Start by adding `findHeroIndex` command and its type definition. For brevity we are showing only the new parts of the files.
+`findHeroIndex` komutunu ve tip tanımını ekleyerek başlayın. Kısalık adına sadece dosyaların yeni bölümlerini gösteriyoruz.
 
 ```
 // cypress/support/commands.ts
@@ -929,7 +933,7 @@ findHeroIndex(
   ): number
 ```
 
-Now we can add a hero to the database via an api call, visit the app, get the hero index, and click on the nth Edit button. So far we are not testing anything relevant to the feature, just navigating to a hero which is existing functionality.
+Şimdi bir API çağrısıyla veritabanına bir kahraman ekleyebilir, uygulamayı ziyaret edebilir, kahramanın indeksini alabilir ve nth Düzenle düğmesine tıklayabiliriz. Şu ana kadar, mevcut işlevselliğe bağlı bir kahramana yönlendirmek dışında, özellikle ilgili bir şey test etmiyoruz.
 
 ```typescript
 // cypress/e2e/edit-hero.cy.ts
@@ -1007,7 +1011,7 @@ describe("Edit hero", () => {
 });
 ```
 
-If we look at the first two tests, we are already covering click-navigation from the `HeroList` to `HeroDetails` in them. We are repeating the same in the final test. We could instead direct-navigate via url. We can pass the query parameters to [`cy.visit`](https://docs.cypress.io/api/commands/visit#Arguments). With e2e tests, always think if you are duplicating the test effort covered elsewhere. If the cost does not add any confidence, then find opportunities to cover different functionalities. In this case we are gaining confidence on direct navigation but also being able to extract state from the url (remember `useParams` & `useSearchParams`).
+İlk iki testimize bakarsak, `HeroList` ile `HeroDetails` arasındaki tıklama-navigasyonunu zaten kapsıyoruz. Aynısını son testte tekrar ediyoruz. Bunun yerine url üzerinden doğrudan yönlendirebiliriz. Sorgu parametrelerini [`cy.visit`](https://docs.cypress.io/api/commands/visit#Arguments) komutuna iletebiliriz. E2e testlerle, test çabasını başka yerlerde tekrar ettiğinizi düşünün. Maliyet ek bir güven sağlamıyorsa, farklı işlevleri kapsama fırsatları bulun. Bu durumda, doğrudan yönlendirme konusunda güven kazanıyoruz, ancak aynı zamanda url'den durumu çıkarma yeteneği (hatırlayın `useParams` ve `useSearchParams`).
 
 ```typescript
 // cypress/e2e/edit-hero.cy.ts
@@ -1026,7 +1030,7 @@ it.only("should go through the edit flow (ui-e2e)", () => {
 });
 ```
 
-In the rest of the test all we have to do is change the name & description, hit save, end up on `HeroList` and verify the new data. Mind how spacing is used to communicate separation between the tasks to ease readability. This is our first failing test (Red 3).
+Testin geri kalanında yapmamız gereken tek şey adı ve açıklamayı değiştirmek, kaydetmeye tıklamak, `HeroList` üzerinde son bulmak ve yeni verileri doğrulamaktır. Okunabilirliği kolaylaştırmak için görevler arasındaki ayrımı iletmek amacıyla nasıl boşluk kullanıldığına dikkat edin. Bu, ilk başarısız testimiz (Kırmızı 3).
 
 ```typescript
 // cypress/e2e/edit-hero.cy.ts
@@ -1065,11 +1069,11 @@ it.only("should go through the edit flow (ui-e2e)", () => {
 });
 ```
 
-Time for our custom hook `usePutHero`. Create a file `src/hooks/usePutHero.ts`. Replicate a similar usage to `usePostHero`, this time utilizing `editItem` from our api :
+`usePutHero` adlı özel kancamız için zamanı geldi. `src/hooks/usePutHero.ts` adlı bir dosya oluşturun. `usePostHero`ya benzer bir kullanımı taklit edin, bu sefer API'den `editItem` kullanarak:
 
 `(item: Hero) => editItem(`heroes/${_item_.id}`, item)`
 
-For the return, instead of name aliasing the variables at the component, we can showcase how to return an object and alias in place.
+Döndürme için, bileşende değişkenlerin adlarını takma ad olarak kullanmak yerine, bir nesneyi yerinde takma ad olarak döndürme şeklinde nasıl yapılacağını gösterebiliriz.
 
 ```typescript
 // src/hooks/usePutHero.ts
@@ -1104,13 +1108,13 @@ export function usePutHero() {
 }
 ```
 
-We are back again to `HeroDetail`. We can remove our `updateHero` placeholder function:
+Artık `HeroDetail`e geri döndük. `updateHero` adlı yer tutucu işlevimizi kaldırabiliriz:
 
 `const updateHero = () => console.log('updateHero')`
 
-We can instead use the `updateHero` returned from our hook. Similar to `usePostHero,` the `mutate` (which we cast as `createHero` and `updateHero` respectively) takes a hero argument, which is what `updateHero` is expecting.
+Hook'umuzdan dönen `updateHero`yu kullanabiliriz. `usePostHero`ya benzer şekilde, `mutate` (sırasıyla `createHero` ve `updateHero` olarak adlandırdığımız) bir kahraman argümanı alır ve bu, `updateHero`nun beklediğidir.
 
-With the below changes, we are sending out the `PUT` request and changing the hero after having edited it. We can confirm it in the runner, and in `db.json`. We also auto-navigate back to heroes list. However, we have a similar cache problem; if we navigate away and come back the edited item is there, but it does not update immediately.
+Aşağıdaki değişikliklerle, `PUT` isteğini gönderiyoruz ve düzenledikten sonra kahramanı değiştiriyoruz. Bunu koşucuda ve `db.json`da doğrulayabiliriz. Ayrıca kahramanlar listesine geri dönmekteyiz. Ancak, benzer bir önbellek sorunumuz var; başka bir yere gidip geri dönersek düzenlenmiş öğe orada, ancak hemen güncellenmiyor.
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -1185,7 +1189,7 @@ export default function HeroDetail() {
 }
 ```
 
-We need a way to replace the hero in the cache with the updated version. First we get all the heroes from the cache. Then we find the index in the cache of the hero that's been edited. If the hero is found, replace the pre-edited hero with the updated one, else we do not do anything. With that change, our e2e edit test passes (Green 3)
+Önbellekteki kahramanı güncellenmiş sürümle değiştirmenin bir yoluna ihtiyacımız var. Önce önbellekteki tüm kahramanları alırız. Sonra düzenlenen kahramanın önbellekteki indeksini buluruz. Kahraman bulunursa, düzenlenmeden önceki kahramanı güncellenmiş olanla değiştiririz, aksi takdirde bir şey yapmayız. Bu değişiklikle, e2e düzenleme testi geçer (Yeşil 3)
 
 ```typescript
 // src/hooks/usePutHero.ts
@@ -1242,13 +1246,13 @@ function updateHeroesCache(updatedHero: Hero, queryClient: QueryClient) {
 }
 ```
 
-We can begin to refactor our test and commands. Similar to add hero flow, the final test reads the real backend and writes to the real backend. The rest of the tests are cancel flows, and the edge case to cover navigating to add from an existing hero. In these tests, the backend is read, and it does not really matter what the data is, so long as there is some data. Therefore we can once again apply ui-integration testing.
+Testimizi ve komutlarımızı yeniden düzenlemeye başlayabiliriz. Kahraman ekleme akışına benzer şekilde, son test gerçek arka ucunu okuyor ve gerçek arka uca yazıyor. Diğer testler iptal akışları ve mevcut bir kahramandan ekleme işlemine yönlendirmeyi kapsayan kenar durumudur. Bu testlerde, arka uç okunur ve verilerin ne olduğu önemli değildir, yeter ki bir veri olsun. Bu nedenle, bir kez daha ui-integrasyon testi uygulayabiliriz.
 
-We can also use randomization to cover hero n vs hero n + 1 index in the array; since the data is stubbed and constant, randomization is okay in this case.
+Dizideki kahraman n ve kahraman n + 1 indeksini kapsamak için rastgeleleştirme de kullanabiliriz; veriler çubuklu ve sabit olduğu için, bu durumda rastgeleleştirme uygundur.
 
-Let's also not forget to reset the database in the beginning, and clean up after the e2e test by deleting the seeded hero as we did in the add hero flow. We can upgrade the command `getEntityByName` to get the entity by any property passed in.
+Başlangıçta veritabanını sıfırlamayı ve e2e testinin ardından eklenen kahramanı silerek temizlemeyi unutmayalım. `getEntityByName` komutunu herhangi bir özellikle iletilen varlığı alacak bu şekilde yükseltebiliriz.
 
-Here are the refactored files (Refactor 3):
+İşte yeniden düzenlenmiş dosyalar (Düzenleme 3):
 
 ```typescript
 // cypress/support/commands.ts
@@ -1521,7 +1525,7 @@ describe("Edit hero", () => {
 
 ### `useDeleteHero`
 
-We start the creation of our final hook with a test, as usual. We want to use the api to create a new hero, we want to know the hero's index, then we want to attempt to delete it. We have a `cy.findHeroIndex` command which gets all heroes and finds the index of the hero we are looking for. We can enhance it to return an object instead, which returns both the hero index and the heroes array. Modify the `findHeroIndex` command and the type definition as such:
+Son kancamızın yaratılmasına her zamanki gibi bir test ile başlıyoruz. Api'yi kullanarak yeni bir kahraman yaratmak, kahramanın indeksini bilmek ve ardından onu silmeye çalışmak istiyoruz. Kahramanın indeksini bulmak için `cy.findHeroIndex` komutumuz var, bu komut tüm kahramanları alır ve aradığımız kahramanın indeksini bulur. Onun yerine bir nesne döndüren ve kahramanın indeksini ve kahramanlar dizisini döndüren bir komut kullanabiliriz. `findHeroIndex` komutunu ve tip tanımını şu şekilde değiştirin:
 
 ```typescript
 // cypress/support/commands.ts
@@ -1544,7 +1548,7 @@ findHeroIndex(
   ): Cypress.Chainable<{heroIndex: number; heroesArray: Hero[]}>
 ```
 
-Here is our entire test. We are covering the cancel delete flow as a ui-integration test. We delete the hero and expect to not find it on the list (Red 4).
+İşte tüm testimiz. Kahramanı silmeyi iptal etme akışını bir ui-entegrasyon testi olarak kapsıyoruz. Kahramanı siliyoruz ve listede bulamayı beklemiyoruz (Kırmızı 4).
 
 ```typescript
 // cypress/e2e/delete-hero.cy.ts
@@ -1586,7 +1590,7 @@ describe("Delete hero", () => {
 });
 ```
 
-As the test fails, we see a `console.log` of `handleDeleteFromModal` which exists in the `Heroes` component. For our hook, we are going to utilize `useMutation` once again. We are using `deleteItem` from our api. `onSuccess`, which has used the first argument until now (the created / edited item) is going to be using the second argument which is the original (deleted) item. Cache will need management once again; we need to get all the heroes from the cache, and set the cache without the deleted hero. We should consistently use the same cache key which we used for `POST` and `PUT` operations; `['heroes']`. We will apply a similar return value to `usePutHero` hook.
+Test başarısız olduğunda, `Heroes` bileşeninde bulunan `handleDeleteFromModal` adlı bir `console.log` görüyoruz. Kancamız için `useMutation`'ı tekrar kullanacağız. Api'den `deleteItem` kullanıyoruz. `onSuccess` şimdiye kadar kullanılan ilk argümanı kullanacak (oluşturulan / düzenlenen öğe), ikinci argüman olan orijinal (silinen) öğeyi kullanacaktır. Önbellek tekrar yönetilmelidir; önbellekteki tüm kahramanları almalı ve silinen kahraman olmadan önbelleği ayarlamalıyız. `POST` ve `PUT` işlemleri için kullanılan aynı önbellek anahtarını kullanmalıyız; `['heroes']`. `usePutHero` kanca için benzer bir dönüş değeri uygulayacağız.
 
 ```typescript
 // src/hooks/useDeleteHero.ts
@@ -1631,11 +1635,11 @@ export function useDeleteHero() {
 }
 ```
 
-Our `Heroes` component can begin to use the hook like so:
+`Heroes` bileşenimiz şu şekilde kullanmaya başlayabilir:
 
 `const {deleteHero, isDeleteError} = useDeleteHero()`
 
-Alas, in these two handler functions, we have to pass the hook a `hero` to mutate:
+Ne yazık ki, bu iki işleyici fonksiyonda, kanca için dönüştürülmesi gereken bir `hero` vermemiz gerekiyor:
 
 ```typescript
 // src/heroes/Heroes.tsx
@@ -1648,7 +1652,7 @@ const handleDeleteFromModal = () => {
 };
 ```
 
-The component not only needs to know which hero to delete, it is displaying the whole list, but it also needs to tell `HeroList` that information in a prop `handleDeleteHero`. We can identify the hero via `useState`; in the beginning we do not know it, when we are letting `HeroList` know about it then we can identify the hero.
+Bileşen sadece hangi kahramanı silmesi gerektiğini bilmekle kalmaz, tüm listeyi görüntülerken, aynı zamanda bu bilgiyi `HeroList` bileşenine bir özellik olan `handleDeleteHero` ile iletmelidir. Kahramanı `useState` aracılığıyla tanımlayabiliriz; başlangıçta kahramanı bilmiyoruz, `HeroList`e bildirdiğimizde kahramanı tanımlayabiliriz.
 
 ```typescript
 // src/heroes/Heroes.tsx
@@ -1665,7 +1669,7 @@ const handleDeleteFromModal = () => {
 };
 ```
 
-Before moving forward, we need to make a slight modification to `HeroList`. The prop `handleDeleteHero` needs to take a hero as an argument. Additionally the click handler for `handleDeleteHero` needs to become a function that returns `handleDeleteHero`, similar to `handleSelectHero`.
+İlerlemeye devam etmeden önce, `HeroList`e küçük bir değişiklik yapmamız gerekiyor. `handleDeleteHero` özelliği, bir kahramanı argüman olarak almalıdır. Ayrıca, `handleDeleteHero` için tıklama işleyicisi, `handleSelectHero`ya benzer şekilde, `handleDeleteHero`yu döndüren bir işleve dönüşmelidir.
 
 ```tsx
 // src/heroes/HeroList.tsx
@@ -1715,7 +1719,7 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-Now we can apply the key changes to `Heroes` component (Green 4).
+Şimdi `Heroes` bileşenine anahtar değişiklikleri uygulayabiliriz (Yeşil 4).
 
 ```typescript
 // we identify the hero to delete as state
@@ -1817,11 +1821,11 @@ export default function Heroes() {
 }
 ```
 
-We can see the `DELETE` request going out, and the test verifies that the hero is removed from the list.
+`DELETE` isteğinin gittiğini görebiliriz ve test, kahramanın listeden kaldırıldığını doğrular.
 
 ### ![ReactQuery-Green4](../img/ReactQuery-Green4.png)
 
-We have a similar refactor opportunity with the event handlers in chapter 14. In `HeroList` we can change the event handlers like so:
+Bölüm 14'teki olay işleyicileriyle benzer bir yeniden düzenleme fırsatına sahibiz. `HeroList`te olay işleyicilerini şu şekilde değiştirebiliriz:
 
 ```typescript
 onClick={() => handleDeleteHero(hero)}
@@ -1829,7 +1833,7 @@ onClick={() => handleDeleteHero(hero)}
 onClick{handleDeleteHero(hero)}
 ```
 
-To accomplish that we need to curry `handleSelectHero`. Similar to chapter 14, the outer function takes our custom argument and returns a function that takes the event. We need to align the prop type to communicate that.
+Bunu başarmak için, `handleSelectHero` işlevini köri yapmamız gerekiyor. Bölüm 14'e benzer şekilde, dış işlev özel argümanımızı alır ve olayı alan bir işlevi döndürür. İletişim kurmak için özellik türünü hizalamamız gerekiyor.
 
 ```tsx
 import { useNavigate } from "react-router-dom";
@@ -1880,7 +1884,7 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-We only need to apply the same refactor to `handleDeleteHero` in `Heroes` component (Refactor 4).
+Sadece `Heroes` bileşenindeki `handleDeleteHero`ya aynı yeniden düzenlemeyi uygulamamız gerekiyor (Düzenleme 4).
 
 ```typescript
 // src/heroes/Heroes.tsx
@@ -1959,11 +1963,11 @@ export default function Heroes() {
 }
 ```
 
-### Updating the component tests
+### Bileşen testlerini güncelleme
 
-Now that `react-query`'s `QueryClientProvider` is being used, `Heroes` and `HeroDetail` components will also need to be wrapped in `QueryClientProvider`. Running the component tests, we get an error: `(uncaught exception)**Error: No QueryClient set, use QueryClientProvider to set one`.
+Şimdi `react-query`'nin `QueryClientProvider` kullanıldığına göre, `Heroes` ve `HeroDetail` bileşenleri de `QueryClientProvider` içinde sarılmalıdır. Bileşen testlerini çalıştırdığımızda şu hatayı alıyoruz: ``(uncaught exception)**Error: No QueryClient set, use QueryClientProvider to set one`.`.
 
-Update `HeroDetail` component test as below. When covering the test `should handle Save`, we now see an aborted `POST` going out which we can verify and satisfy the todo item. Other than that, the only change is that we are wrapping the component mounts in `QueryClientProvider`.
+`HeroDetail` bileşen testini aşağıdaki gibi güncelliyoruz. `should handle Save` testini kapsadığımızda, artık gönderilen iptal edilmiş bir `POST` isteği görüyoruz ve bunu doğrulayabilir ve yapılacaklar listesini tamamlayabiliriz. Bunun dışında, sadece bileşen yüklemelerini `QueryClientProvider` içinde sarmalıyoruz.
 
 ```tsx
 // src/heroes/HeroDetail.cy.tsx
@@ -2050,7 +2054,7 @@ describe("HeroDetail", () => {
 });
 ```
 
-In `Heroes` component test, we wrap the component in `QueryClientProvider`. We can also stop spying on console.log and instead stub the `DELETE` request going out when going through the delete hero modal flow.
+`Heroes` bileşen testinde bileşeni `QueryClientProvider` içinde sarmalıyoruz. Ayrıca `console.log` üzerinde casusluk yapmayı durdurabilir ve bunun yerine kahramanı silme modül akışı sırasında gönderilen `DELETE` isteğini öğelerine ayırabiliriz.
 
 ```tsx
 // src/heroes/Heroes.cy.tsx
@@ -2114,47 +2118,47 @@ describe("Heroes", () => {
 
 ### Summary
 
-We replaced `useAxios` with `useGetHeroes` and saw performance increases thanks to caching.
+`useAxios` hook'ünü `useGetHeroes` ile değiştirdik ve önbellekleme sayesinde performans artışı gördük.
 
 </br>
 
-We wrote an e2e test to add a hero with the UI and check the redirect (Red 1).
+UI üzerinden bir kahraman ekleyip yönlendirme işlemini kontrol eden bir e2e testi yazdık (Red 1).
 
-We wrote the `usePostHero` hook and used it in `HeroDetail` component (Green 1).
-
-</br>
-
-We enhanced the test to check that the new hero is in the list (Red 2).
-
-We used `queryClient`'s `setQueryData` to update the cache in the `usePostHero` hook, so that the hero appears in the list upon adding it (Green 2).
-
-We refactored some of our tests into ui-integration tests since they did not necessarily have to read backend data (Refactor 2).
-
-We created commands to be able to use natural or stubbed data upon loading the baseUrl. We also ensured that the test are stateless; resetting the db before each test, and cleaning up after themselves using the api commands we created previously.
+`usePostHero` hook'unu yazdık ve `HeroDetail` bileşeninde kullandık (Green 1).
 
 </br>
 
-We wrote an e2e test to navigate to a hero, edit it, verify the redirect and the updated data on the hero list (Red 3).
+Testi geliştirerek, yeni kahramanın listeye eklenip eklenmediğini kontrol ettik (Red 2).
 
-We wrote the `usePutHero` hook, with caching support for update, and used it in `HeroDetail` component (Green 3).
+`usePostHero` hook'unda, kahramanın eklenmesiyle birlikte listeye görünmesini sağlamak için `queryClient`'ın `setQueryData` özelliğini kullandık (Green 2).
 
-We onced again refactored the tests that do not need the backend into ui-integration tests (Refactor 3).
+Backend verilerine ihtiyaç duymayan testlerimizi ui-integrasyon testlerine dönüştürdük (Düzenleme 2).
+
+`baseUrl` yüklendiğinde doğal veya taklit veriler kullanabilmek için komutlar oluşturduk. Ayrıca, testlerin stateless olmasını sağladık; her testten önce db'yi sıfırlayarak ve oluşturduğumuz api komutlarını kullanarak kendini temizleyerek.
 
 </br>
 
-We wrote a test to delete a hero (Red 4)
+Bir kahramana gitmek, düzenlemek, yönlendirmeyi ve güncellenmiş verileri kontrol eden bir e2e testi yazdık (Red 3).
 
-We wrote the `useDeleteHero` hook and used it in `Heroes` component (Green 4).
+`usePutHero` hook'unu, güncelleme için önbellekleme desteğiyle birlikte yazdık ve `HeroDetail` bileşeninde kullandık (Green 3).
 
-We refactored the event handlers with currying and updated the component tests (Refactor 4).
+Backend verilerine ihtiyaç duymayan testleri tekrar ui-integrasyon testlerine dönüştürdük (Düzenleme 3).
 
-### Takeaways
+</br>
 
-- `useQuery` fetches state: UI state <- server/url , and caches it.
-- `useMutation` is just the opposite: UI state -> server , and still caches it.
-- When we mutate the backend, we also have to update the new cache.
-- When using `react-query`, some of our component test mounts may need to be wrapped with `QueryClientProvider`.
-- Always evaluate if you need the backend to gain confidence in your app's functionality. You should only use true e2e tests when you need this confidence, and you should not have to repeat the same costly e2e tests everywhere. Instead utilize ui-integration tests. If your backend is tested by its own e2e tests, your UI e2e needs at the front end are even less; be careful not to duplicate too much of the backend effort.
-- Order-independent, stateless tests must be fundamental anywhere so that tests can pass and fail in isolation without side effects. This is especially important in e2e tests which make non-idempotent requests. This is why we reset the db before each test, and clean up after ourselves using the api commands we created previously.
-- When writing tests, always think if you are duplicating the test effort covered elsewhere. If the cost does not add any confidence, then find opportunities to cover different functionalities. We removed a test that was duplicating the coverage that can be provided by another test. We used direct navigation to not repeat click navigation.
-- Use spacing to communicate intent and separate tasks / actions within the e2e test.
+Bir kahramanı silmek için bir test yazdık (Red 4).
+
+`useDeleteHero` hook'umuzu yazdık ve `Heroes` bileşeninde kullandık (Green 4).
+
+Event handler'ları currying ile yeniden düzenledik ve bileşen testlerini güncelledik (Düzenleme 4).
+
+### Çıkarılacak Dersler
+
+- `useQuery`, durumu getirir: UI state <- sunucu/url , ve önbelleğe alır.
+- `useMutation`, tam tersi olarak çalışır: UI state -> sunucu , ve yine önbelleğe alır.
+- Backend'i değiştirdiğimizde, yeni önbelleği de güncellememiz gerekiyor.
+- `react-query` kullandığımızda, bazı component test mount'larımız `QueryClientProvider` ile sarmalanması gerekebilir.
+- Uygulamanızın işlevselliğinde güven kazanmak için backend'e ihtiyacınız olup olmadığını her zaman değerlendirin. Güveninizi sağlamak için gerçek e2e testler yalnızca gerektiğinde kullanmalı ve aynı maliyetli e2e testleri her yerde tekrarlamamalısınız. Bunun yerine, ui-integration testlerini kullanın. Backend, kendi e2e testleriyle test ediliyorsa, UI e2e ihtiyacınız daha azdır; backend çabasını fazla tekrarlamamaya dikkat edin.
+- Sırası önemli olmayan, durumsuz testler, yan etkiler olmadan izole bir şekilde geçebilmesi gereken temel unsurlar olmalıdır. Bu, özellikle idempotent olmayan istekler yapan e2e testlerinde önemlidir. Bu nedenle, önceki turlarda oluşturduğumuz API komutlarını kullanarak her testten önce veritabanını sıfırlıyor ve kendi kendimize temizliyoruz.
+- Testler yazarken, herhangi bir yerde kapsama sağlayan testleri tekrarlamadığınızı düşünün. Maliyet herhangi bir güven sağlamıyorsa, farklı işlevsellikleri kapsayacak fırsatlar bulun. Kapsam sağlayan başka bir test tarafından sağlanabilen kapsama tekrarlamasını kaldırdık. Tıklama gezinimini tekrarlamamak için doğrudan yönlendirmeyi kullandık.
+- E2e testinde amaçları / eylemleri iletişim kurmak ve ayırmak için boşluk kullanın.
