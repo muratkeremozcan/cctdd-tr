@@ -1,6 +1,6 @@
-# Update the current app to be more generic
+# Uygulamayı Daha Genel Hale Getirme
 
-Create new interfaces and types that will be utilized throughout the hero and villain groups of components.
+Kahraman ve kötü adam bileşen gruplarında kullanılacak yeni arayüzler ve türler oluşturun.
 
 ```typescript
 // src/models/Villain.ts
@@ -27,11 +27,11 @@ export type EntityRoute = "heroes" | "villains";
 export type EntityType = "hero" | "villain";
 ```
 
-## Update the hooks
+## Hook'ları Güncelleme
 
-We want to make our hooks more generic so that they can seamlessly be used in the villains group of components. In short, we will replace `useCRUDhero` hooks with `useCRUDentity`.
+Hook'larımızı daha genel hale getirerek, kötü adam bileşenlerinde sorunsuz bir şekilde kullanılabilmesini sağlamak istiyoruz. Kısacası, `useCRUDhero` hook'larını `useCRUDentity` ile değiştireceğiz.
 
-`useDeleteEntity` replaces `useDeleteHero`.
+`useDeleteEntity`, `useDeleteHero` yerine geçer.
 
 ```typescript
 // src/hooks/useDeleteEntity.ts
@@ -80,7 +80,7 @@ export function useDeleteEntity(entityType: EntityType) {
 }
 ```
 
-`useEntityParams` replaces `useHeroParams`.
+`useEntityParams`, `useHeroParams`  yerine geçer..
 
 ```
 // src/hooks/useEntityParams.ts
@@ -95,7 +95,7 @@ export function useEntityParams() {
 }
 ```
 
-`useGetEntities` replaces `useGetHeroes`.
+`useGetEntities`, `useGetHeroes` yerine geçer.
 
 ```typescript
 // src/hooks/useGetEntities.ts
@@ -120,7 +120,7 @@ export const useGetEntities = (entityRoute: EntityRoute) => {
 };
 ```
 
-`usePostEntity` replaces `usePostHero`.
+`usePostEntity`, `usePostHero` yerine geçer..
 
 ```typescript
 // src/hooks/usePostEntity.ts
@@ -153,7 +153,7 @@ export function usePostEntity(entityType: EntityType) {
 }
 ```
 
-`usePutEntity` replaces `usePutHero`.
+`usePutEntity`, `usePutHero` yerine geçer..
 
 ```typescript
 // src/hooks/usePutEntity.ts
@@ -220,9 +220,9 @@ function updateEntityCache(
 }
 ```
 
-### Update the hero components
+### Kahraman bileşenlerini güncelleyin
 
-Having changed the hooks, the hero group of components need slight modifications.
+Hook'ları değiştirdikten sonra, kahraman bileşenleri küçük değişikliklere ihtiyaç duyar.
 
 ```tsx
 // src/heroes/HeroDetail.tsx
@@ -498,17 +498,17 @@ export default function HeroList({ heroes, handleDeleteHero }: HeroListProps) {
 }
 ```
 
-### Note about testing implementation details
+### Uygulama ayrıntıları test etmeyle ilgili not
 
-There are no modifications needed to Cypress e2e, CT, or RTL tests with MSW because we did not test implementation details in any of them. They will all work as they are at the moment.
+Cypress e2e, CT veya RTL testlerinde MSW ile herhangi bir uygulama ayrıntısı test etmediğimiz için bu testlerde herhangi bir değişiklik yapmaya gerek yoktur. Şu anki halleriyle çalışacaklardır.
 
-With `cy.intercept` and MSW we checked that a network request goes out versus checking that the operation caused a hook to be called. Consequently changing the hooks had no impact on the tests, or the functionality. This is why we want to test at a slightly higher level of abstraction, and why we want to verify the consequences of the implementation vs the implementation details themselves.
+`cy.intercept` ve MSW ile, ağ isteğinin dışarı çıktığını kontrol ettik ve işlemi gerçekleştiren hook'un çağrıldığını kontrol ettik. Bu nedenle, hook'ları değiştirmek, testlerin veya işlevselliğin üzerinde herhangi bir etkisi olmamıştır. İşte bu yüzden biraz daha yüksek bir soyutlama düzeyinde test etmek istiyoruz ve uygulama ayrıntılarına karşı uygulamanın sonuçlarını doğrulamak istiyoruz.
 
-### Modify the e2e commands to be more generic
+### E2e komutlarını daha genel hale getirin
 
-The e2e tests for villains will look exactly the same, however our commands are a specific to heroes. They can also be more generic so that mirroring the hero group of tests into villains is easier.
+Kötü adamların e2e testleri tamamen aynı görünecek, ancak komutlarımız kahramanlara özgüdür. Aynı zamanda daha genel hale getirilebilirler, böylece kahramanlar grubundaki testleri kötü adamlara yansıtmak daha kolay olur.
 
-In the commands file we will change most references to `hero` to `entity`, and for types we will include the `villain` varieties next to `hero`. The change will require small updates to type definitions and e2e tests.
+Komutlar dosyasında, `hero` ifadelerini `entity` ile değiştiriyoruz ve türler için `villain` çeşitlerini `hero` yanına ekliyoruz. Bu değişiklik, tür tanımları ve e2e testlerine küçük güncellemeler gerektirecektir.
 
 ```tsx
 // cypress/support/commands.ts
@@ -938,15 +938,15 @@ describe("Edit hero", () => {
 });
 ```
 
-## Create a villains mirror of the heroes
+## Kahramanların kötü adamların aynası oluşturun
 
-Aligned with the theme of the book, we will first create villain related tests.
+Kitabın temasına uygun olarak, önce kötü adamlarla ilgili testler oluşturacağız.
 
-> If your local copy of heroes versions of the test are slightly different, you can optionally tweak them.
+> Yerel kahramanlar test kopyanız biraz farklıysa, isteğe bağlı olarak onları düzenleyebilirsiniz.
 
-### Mirror the e2e tests
+### E2e testlerinin aynasını oluşturun
 
-We create 3 new e2e tests, which are villain mirrors of the hero versions. We also enhance the remaining tests to check for villain related features.
+Kahraman versiyonlarının kötü adamların aynası olan 3 yeni e2e testi oluşturuyoruz. Ayrıca, kalan testleri kötü adamlarla ilgili özellikleri kontrol etmek için geliştiriyoruz.
 
 ```typescript
 // cypress/e2e/create-villain.cy.ts
@@ -1167,7 +1167,7 @@ describe("Edit villain", () => {
 });
 ```
 
-The backend test needs a new block to cover villains.
+Arka uç testi, kötü adamları kapsamak için yeni bir bloğa ihtiyaç duyar.
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -1263,7 +1263,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-The routes-nav needs a new test to cover villains route.
+Yönlendirme-gezinme, kötü adamlar rotasını kapsamak için yeni bir teste ihtiyaç duyar.
 
 ```typescript
 // cypress/e2e/routes-nav.cy.ts
@@ -1329,7 +1329,7 @@ describe("routes navigation (ui-integration)", () => {
 });
 ```
 
-### Mirror the Cypress component tests
+### Cypress bileşen testlerinin aynasını oluşturun.
 
 ```tsx
 // src/villains/VillainDetail.cy.tsx
@@ -1539,7 +1539,7 @@ describe("Villains", () => {
 });
 ```
 
-Create a new fixture for villains at `cypress/fixtures/villains.json`.
+`cypress/fixtures/villains.json` adresinde kötü adamlar için yeni bir düzeltme oluşturun.
 
 ```json
 [
@@ -1566,7 +1566,7 @@ Create a new fixture for villains at `cypress/fixtures/villains.json`.
 ]
 ```
 
-### Mirror the RTL tests
+### RTL testlerinin aynasını oluşturun.
 
 ```tsx
 // src/villains/VillainDetail.test.tsx
@@ -1809,7 +1809,7 @@ describe("Villains", () => {
 });
 ```
 
-### Enhance `App.cy.tsx` and `App.test.tsx`
+### `App.cy.tsx` ve `App.test.tsx`'yi geliştirin.
 
 ```tsx
 // src/App.cy.tsx
@@ -1886,9 +1886,9 @@ describe("200 flow", () => {
 });
 ```
 
-### Mirror the 3 hero components to villain components
+### 3 kahraman bileşenini kötü adam bileşenlerine yansıtın
 
-We are creating 3 components for villains, mirroring heroes group as they are.
+Kötü adamlar için 3 bileşen oluşturuyoruz, kahramanlar grubunu olduğu gibi yansıtıyoruz.
 
 ```tsx
 // src/villains/VillainDetail.tsx
@@ -2152,7 +2152,7 @@ export default function Villains() {
 }
 ```
 
-Add `/villains` route to `App.tsx`.
+`App.tsx`'ye `/villains` rotasını ekleyin.
 
 ```tsx
 // src/App.tsx
