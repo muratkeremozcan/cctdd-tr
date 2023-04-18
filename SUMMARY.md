@@ -24,6 +24,3 @@
   - [Prerequisite](ch19-Villains-context-api/prerequisite.md)
 - [ch20-TheBoys-ramda-with-react](ch20-TheBoys-ramda-with-react/README.md)
   - [Prerequisite](ch20-TheBoys-ramda-with-react/prerequisite.md)
-- [ch30-Appendix](ch30-Appendix/README.md)
-  - [Combined Code Coverage](ch30-Appendix/combined-code-coverage.md)
-  - [React Dev Tools](ch30-Appendix/react-dev-tools.md)
