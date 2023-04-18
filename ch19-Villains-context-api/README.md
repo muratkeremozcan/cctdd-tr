@@ -1,25 +1,24 @@
 # Context API
 
-Before starting this section,
-make sure to go through the [prerequisite](./prerequisite.md) where we update the application to be more generic between Heroes and Villains.
+Bu bölüme başlamadan önce, uygulamayı Kahramanlar ve Kötüler arasında daha genel hale getirmek için [önbilgi](https://chat.openai.com/prerequisite.md) bölümünden geçtiğinizden emin olun.
 
-In this chapter we will mirror heroes into villains, and apply the Context api to villains. Context api lets us pass a value deep into the component tree, without explicitly threading it through every component. This will give us a nice contrast between passing the state as prop to child components, versus using the context to share the state down the component tree.
+Bu bölümde, kahramanları kötülere yansıtacağız ve Context api'yi kötülere uygulayacağız. Context api, değeri bileşen ağacının derinliklerine geçirmemize olanak tanır, bunu her bileşenden açıkça geçirerek yapmamız gerekmez. Bu, bileşen ağacında durumu paylaşmak için context'i kullanmak ile durumu alt bileşenlere prop olarak geçirmek arasında güzel bir karşılaştırma sunacaktır.
 
-`Heroes.tsx` passes `heroes` as a prop to `HeroList.tsx`.
+`Heroes.tsx`, `heroes` özelliğini `HeroList.tsx`'e aktarır.
 
-`HeroDetail` gets `hero` `{id, name, description}` state from the url with `useParams` & `useSearchParams` .
+`HeroDetail`, `hero` `{id, name, description}` durumunu URL'den `useParams` ve `useSearchParams` ile alır.
 
-This is the extent of state management in our app. We do not really need context, but we will explore how things can be different with the context api.
+Bu, uygulamamızdaki durum yönetiminin sınırlarıdır. Gerçekte context'e ihtiyacımız yoktur, ancak context api ile şeylerin nasıl farklı olabileceğini inceleyeceğiz.
 
-## Context API for villains
+## Kötüler için Context API
 
-At the moment we have a full mirror of heroes to villains, functioning and being tested exactly the same way. We will however modify the villains group and take advantage of Context api while doing so.
+Şu anda kahramanlardan kötülere tam bir yansıma elde ettik, işlevsellik ve testler tam olarak aynı şekilde gerçekleştiriliyor. Bununla birlikte, kötüler grubunu değiştirecek ve bunu yaparken Context api'den faydalanacağız.
 
-`Villains.tsx` passes `villains` as a prop to `VillainList.tsx`. We will instead use the Context api so that `villains` is available in all components under `Villains.txt`.
+`Villains.tsx`, `villains` özelliğini `VillainList.tsx`'e aktarır. Bunun yerine Context api'yi kullanarak `villains`'in `Villains.txt` altındaki tüm bileşenlerde kullanılabilir olmasını sağlayacağız.
 
-Here are the general steps with Context api:
+Context api ile genel adımlar şunlardır:
 
-1.  Create the context and export it. Usually this is in a separate file, acting as an arbiter.
+1.  Context'i oluşturun ve dışa aktarın. Genellikle bu ayrı bir dosyada bulunur ve arabulucu görevi görür.
 
     ```tsx
     // src/villains/VillainsContext.tsx (the common node)
@@ -30,7 +29,7 @@ Here are the general steps with Context api:
     export default VillainsContext;
     ```
 
-2.  Identify the state to be passed down to child components. Import the context there.
+2.  Alt bileşenlere geçirilecek durumu belirleyin. Orada context'i içe aktarın.
 
     ```tsx
     // src/villains/Villains.tsx
@@ -41,7 +40,7 @@ Here are the general steps with Context api:
     const { villains, status, getError } = useGetEntity();
     ```
 
-3.  Wrap the UI with the context’s Provider component, assign the state to be passed down to the `value` prop:
+3.  UI'ı context'in Provider bileşeni ile sarın, geçirilecek durumu `value` özelliğine atayın:
 
     ```tsx
     // src/villains/Villains.tsx (the sharer)
@@ -51,7 +50,7 @@ Here are the general steps with Context api:
     </VillainsContext.Provider>
     ```
 
-4.  In any component that is needing the state, consume Context API; import the `useContext` hook, and the context object:
+4.  Duruma ihtiyaç duyan herhangi bir bileşende, Context API'sini tüketin; `useContext` kancasını ve context nesnesini içe aktarın:
 
     ```tsx
     // src/villains/VillainList.tsx
@@ -59,19 +58,19 @@ Here are the general steps with Context api:
     import { VillainsContext } from "./VillainsContext";
     ```
 
-5.  Call useContext with the shared context, assign to a var:
+5.  Paylaşılan context ile useContext'i çağırın, bir değişkene atayın:
 
     ```tsx
     // src/villains/VillainList.tsx (the sharee)
     import { useContext } from "react";
     import { VillainsContext } from "./VillainsContext";
-
+    
     // ..
-
+    
     const villains = useContext(VillainsContext);
     ```
 
-Following step 1, we create the context at a new file, and export it:
+İlk adımı takiben, yeni bir dosyada context'i oluşturuyoruz ve dışa aktarıyoruz:
 
 ```tsx
 // src/villains/VillainsContext.ts
@@ -83,7 +82,7 @@ const VillainsContext = createContext<Villain[]>([]);
 export default VillainsContext;
 ```
 
-In our example, from `Villains.tsx`, we are passing `villains` to `VillainDetail.tsx`. We get `villains` from the hook `useGetEntity` . We are currently using a prop to pass `villains` to `VillainDetail.tsx`, and we want to instead use the context api. So we import the context, and wrap the routes with the context provider, which has a `value` prop with `villains` assigned to it (Steps 2, 3).
+Örneğimizde, `Villains.tsx` dosyasından, `villains`'i `VillainDetail.tsx`'e geçiriyoruz. `villains`'i `useGetEntity` adlı kancadan alıyoruz. Şu anda `villains`'i bir özellik olarak `VillainDetail.tsx`'e geçiriyoruz ve bunun yerine context api'yi kullanmak istiyoruz. Bu yüzden context'i içe aktarıyoruz ve context sağlayıcıyı, içinde `villains`'e atanmış bir `value` özelliği olan rotalarla sarıyoruz (Adımlar 2, 3).
 
 ```tsx
 // src/villains/Villains.tsx
@@ -175,7 +174,7 @@ export default function Villains() {
 }
 ```
 
-`VillainsList.tsx` needs to be passed down the state via context versus a prop. So we import the context, and import`useContext` from React. We invoke `useContext` with the shared context as its argument, and assign to a variable `villains` (Steps 4, 5). Now, instead of the prop, we are getting the state from the `VillainsContext`.
+`VillainsList.tsx` bileşenine context aracılığıyla durumu iletmemiz gerekiyor. Bu nedenle context'i ve React'tan `useContext`'i içe aktarıyoruz. Paylaşılan context'i argüman olarak içeren `useContext`'i çağırıyoruz ve `villains` adlı bir değişkene atıyoruz (Adımlar 4, 5). Şimdi, özelliğin yerine, durumu `VillainsContext`'ten alıyoruz.
 
 ```tsx
 // src/villains/VillainList.tsx
@@ -291,7 +290,7 @@ export default function VillainList({ handleDeleteVillain }: VillainListProps) {
 }
 ```
 
-Update the component test to also use the context provider when mounting.
+Bileşen testini güncelleyin ve bağlama sırasında context sağlayıcıyı da kullanın.
 
 ```tsx
 // src/villains/VillainList.cy.tsx
@@ -368,7 +367,7 @@ describe("VillainList", () => {
 });
 ```
 
-Update the RTL test to also use context provider when rendering.
+RTL testini, bağlam sağlayıcıyı kullanarak renderlarken de güncelleyin.
 
 ```tsx
 // src/villains/VillainList.test.tsx
@@ -449,11 +448,11 @@ describe("VillainList", () => {
 });
 ```
 
-### Using a custom hook for sharing context
+### Özel bir kanca kullanarak bağlamı paylaşma
 
-The context, created at `VillainsContext` is acting as the arbiter. `Villains.tsx` uses the context to share `villains` state to its child `VillainList`. `VillainList` acquires the state from `VillainsContext`. Instead of `VillainsContext` we can use a hook that will reduce the imports.
+`VillainsContext`'te oluşturulan bağlam, hakem görevi görüyor. `Villains.tsx` bağlamı, `villains` durumunu alt bileşeni `VillainList`'e iletmek için kullanır. `VillainList` durumunu `VillainsContext`'ten alır. `VillainsContext` yerine, içe aktarmaları azaltacak bir kanca kullanabiliriz.
 
-Remove `src/villains/VillainsContext.ts` and instead create a hook `src/hooks/useVillainsContext.ts`. The first half of the hook is the same as `VillainsContext`. We add a setter, so that the components that get passed down the state also gain the ability to set it. Additionally we manage the state and effects related to the hook’s functionality within the hook and return only the value(s) that components need.
+`src/villains/VillainsContext.ts` dosyasını kaldırın ve bunun yerine `src/hooks/useVillainsContext.ts` adlı bir kanca oluşturun. Kancanın ilk yarısı `VillainsContext` ile aynıdır. Durumu ayarlamak için bir ayarlayıcı ekleriz, böylece durumu alan bileşenler de onu ayarlama yeteneği kazanır. Ayrıca kancanın işlevselliğiyle ilgili durumu ve etkileri kancanın içinde yönetir ve yalnızca bileşenlerin ihtiyaç duyduğu değer(ler)i döndürürüz.
 
 ```typescript
 // src/hooks/useVillainsContext.ts
@@ -483,7 +482,7 @@ export function useVillainsContext() {
 }
 ```
 
-At `Villains.tsx` the only change is the import location of `VillainsContext`.
+`Villains.tsx`'deki tek değişiklik, `VillainsContext`'in içe aktarma konumudur.
 
 ```tsx
 // src/villains/Villains.tsx
@@ -575,7 +574,7 @@ export default function Villains() {
 }
 ```
 
-Similarly, at `VillainsList` component test, only the import changes. We are using the hook `useVillainsContext`. The same applies to `VillainList.test.tsx`.
+Benzer şekilde, `VillainsList` bileşen testinde yalnızca içe aktarma değişir. `useVillainsContext` adlı kancayı kullanıyoruz. Aynı durum `VillainList.test.tsx` için de geçerlidir.
 
 ```tsx
 // src/villains/VillainList.cy.tsx
@@ -731,7 +730,7 @@ describe("VillainList", () => {
 });
 ```
 
-At `VillainList.tsx`, as in `Villains.tsx` the import changes. Additionally, we do not need to import `useContext`. We now de-structure villains; `const [villains] = useVillainsContext()`. If we needed to we could also get the setter out of the hook to set the context.
+`VillainList.tsx`'de, `Villains.tsx`'de olduğu gibi içe aktarma değişir. Ayrıca, `useContext`'i içe aktarmaya gerek kalmaz. Şimdi `villains`'i de yapılandırıyoruz; `const [villains] = useVillainsContext()`. Gerekirse, bağlamı ayarlamak için kancadan ayarlayıcıyı da alabiliriz.
 
 ```tsx
 // src/villains/VillainList.tsx
@@ -847,8 +846,8 @@ export default function VillainList({ handleDeleteVillain }: VillainListProps) {
 }
 ```
 
-## Summary & Takeaways
+## Özet ve Çıkarımlar
 
-- Context api lets us pass a value deep into the component tree, without explicitly threading it through every component.
-- Use a custom hook, manage state and effects within the hook, and only return the values that the components need which may be a value and a setValue.
-- With `cy.intercept` and MSW we checked that a network request goes out versus checking that the operation caused a hook to be called. Consequently changing the hooks had no impact on the tests, or the functionality. This is why we want to test at a slightly higher level of abstraction, and why we want to verify the consequences of the implementation vs the implementation details themselves.
+- Context API, değeri her bileşenden açıkça geçirmeye gerek kalmadan bileşen ağacının derinliklerine geçirmemizi sağlar.
+- Özel bir kanca kullanın, durumu ve etkileri kancanın içinde yönetin ve bileşenlerin ihtiyaç duyduğu değerleri döndürün, bu değer ve setValue olabilir.
+- `cy.intercept` ve MSW ile, bir ağ isteğinin dışarı çıktığını kontrol ettik ve işlemin bir kancanın çağrılmasına neden olduğunu kontrol ettik. Sonuç olarak, kancaların değiştirilmesinin testler üzerinde veya işlevsellik üzerinde hiçbir etkisi olmadı. İşte bu yüzden biraz daha yüksek bir soyutlama düzeyinde test etmek istiyoruz ve uygulamanın sonuçlarını uygulama ayrıntılarına kıyasla doğrulamak istiyoruz.
