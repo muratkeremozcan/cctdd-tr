@@ -1,6 +1,6 @@
-# Update the current app to be more generic
+# Mevcut uygulamayı daha genel hale getirin
 
-Create new interfaces and types that will be utilized throughout the hero and villain groups of components.
+Kahraman ve kötü adam bileşen grupları boyunca kullanılacak olan yeni arayüzler ve türler oluşturun.
 
 ```typescript
 // src/models/Boy.ts
@@ -42,13 +42,13 @@ export const entityRoute = (entityType: EntityType) =>
 /* istanbul ignore file */
 ```
 
-## Move `api.ts` to its own folder
+## `api.ts`'yi kendi klasörüne taşıyın
 
-From `./src/hooks/api.ts` to `./src/api/api.ts`. Your IDE should update the dependencies should automatically.
+`./src/hooks/api.ts` adresinden `./src/api/api.ts` adresine. IDE'niz bağımlılıkları otomatik olarak güncellemelidir.
 
-## Update the hooks
+## Hook'ları güncelleyin
 
-`useDeleteEntity` gets updated for `Boy`..
+`useDeleteEntity`, `Boy` için güncellenir.
 
 ```typescript
 // src/hooks/useDeleteEntity.ts
@@ -98,12 +98,12 @@ export function useDeleteEntity(entityType: EntityType) {
 }
 ```
 
-`useGetEntities` just needs the comment to be updated
+`useGetEntities` yalnızca yorumun güncellenmesi gereklidir
 
-- _Helper for GET to `/heroes` or `/villains` routes_
-- _Helper for GET to `/heroes` , `/villains` or `/boys` routes_.
+- *`/heroes` veya `/villains` yollarına GET için yardımcı*
+- *`/heroes`, `/villains` veya `/boys` yollarına GET için yardımcı*.
 
-`usePostEntity` gets updated for `Boy`.
+`usePostEntity` `Boy` için güncellenir.
 
 ```typescript
 // src/hooks/usePostEntity.ts
@@ -141,7 +141,7 @@ export function usePostEntity(entityType: EntityType) {
 }
 ```
 
-`usePutEntity` gets updated for `Boys`.
+`usePutEntity` `Boys` için güncellenir.
 
 ```typescript
 // src/hooks/usePutEntity.ts
@@ -209,13 +209,13 @@ function updateEntityCache(
 }
 ```
 
-## Modify the e2e commands
+## E2E komutlarını değiştirin
 
-Between the 3 files under `./cypress/support`, we can compartmentalize the imports in favor of relevance
+`./cypress/support` altındaki 3 dosya arasında, alakalılık lehine içe aktarmaları bölmek mümkündür
 
-- `commands.ts`: all plugin imports, and commands common to e2e & CT (ex: `cy.getByCY`).
-- `component.ts`: the commands specific to component tests (ex: `cy.mount`, `cy.wrappedMount`).
-- `e2e.ts`: the commands specific to e2e (ex: `cy.crud`).
+- `commands.ts`: tüm eklenti içe aktarmaları ve e2e & CT ile ortak komutlar (ör: `cy.getByCY`).
+- `component.ts`: bileşen testlerine özgü komutlar (ör: `cy.mount`, `cy.wrappedMount`).
+- `e2e.ts`: e2e'ye özgü komutlar (ör: `cy.crud`).
 
 ```typescript
 // cypress/support/commands.ts
@@ -235,7 +235,7 @@ Cypress.Commands.add("getByClassLike", (selector, ...args) =>
 );
 ```
 
-`component.tsx` and `e2e.ts` will import `commands.ts` so that CT and e2e files have access to common commands and plugins.
+`component.tsx` ve `e2e.ts`, CT ve e2e dosyalarının ortak komutlara ve eklentilere erişimi olması için `commands.ts`'yi içe aktaracaktır.
 
 ```tsx
 // cypress/support/component.tsx
@@ -362,7 +362,7 @@ Cypress.Commands.add("visitEntities", (entityRoute: EntityRoute) => {
 });
 ```
 
-Update the type definitions in the repo root.
+Repo kökündeki tip tanımlarını güncelleyin.
 
 ````typescript
 // cypress.d.ts
@@ -486,94 +486,11 @@ declare global {
 }
 ````
 
-## Create a boys mirror of the heroes
+## Kahramanların boys aynasını oluşturun
 
-### Update `./db.json`
+### `./db.json`'i güncelleyin
 
-Add `boys` group.
-
-```json
-{
-  "heroes": [
-    {
-      "id": "HeroAslaug",
-      "name": "Aslaug",
-      "description": "warrior queen"
-    },
-    {
-      "id": "HeroBjorn",
-      "name": "Bjorn Ironside",
-      "description": "king of 9th century Sweden"
-    },
-    {
-      "id": "HeroIvar",
-      "name": "Ivar the Boneless",
-      "description": "commander of the Great Heathen Army"
-    },
-    {
-      "id": "HeroLagertha",
-      "name": "Lagertha the Shieldmaiden",
-      "description": "aka Hlaðgerðr"
-    },
-    {
-      "id": "HeroRagnar",
-      "name": "Ragnar Lothbrok",
-      "description": "aka Ragnar Sigurdsson"
-    },
-    {
-      "id": "HeroThora",
-      "name": "Thora Town-hart",
-      "description": "daughter of Earl Herrauðr of Götaland"
-    }
-  ],
-  "villains": [
-    {
-      "id": "VillainMadelyn",
-      "name": "Madelyn",
-      "description": "the cat whisperer"
-    },
-    {
-      "id": "VillainHaley",
-      "name": "Haley",
-      "description": "pen wielder"
-    },
-    {
-      "id": "VillainElla",
-      "name": "Ella",
-      "description": "fashionista"
-    },
-    {
-      "id": "VillainLandon",
-      "name": "Landon",
-      "description": "Mandalorian mauler"
-    }
-  ],
-  "boys": [
-    {
-      "id": "BoyHomelander",
-      "name": "Homelander",
-      "description": "Like Superman, but a jerk."
-    },
-    {
-      "id": "BoyAnnieJanuary",
-      "name": "Annie January",
-      "description": "The Defender of Des Moines."
-    },
-    {
-      "id": "BoyBillyButcher",
-      "name": "Billy Butcher",
-      "description": "A former member of the British special forces turned vigilante."
-    },
-    {
-      "id": "BoyBlackNoir",
-      "name": "Black Noir",
-      "description": "Master Martial Artist, expert hand-to-hand combatant highly trained in various forms of martial arts."
-    }
-  ]
-}
-```
-
-Mirror it to `./cypress/fixtures/db.json` so that we can reset the db state correctly.
+`boys` grubunu ekleyin.
 
 ```json
 {
@@ -656,7 +573,90 @@ Mirror it to `./cypress/fixtures/db.json` so that we can reset the db state corr
 }
 ```
 
-### Add fixture `./cypress/fixtures/boys.json`
+Veritabanı durumunu doğru şekilde sıfırlayabilmemiz için bunu `./cypress/fixtures/db.json`'a yansıtın.
+
+```json
+{
+  "heroes": [
+    {
+      "id": "HeroAslaug",
+      "name": "Aslaug",
+      "description": "warrior queen"
+    },
+    {
+      "id": "HeroBjorn",
+      "name": "Bjorn Ironside",
+      "description": "king of 9th century Sweden"
+    },
+    {
+      "id": "HeroIvar",
+      "name": "Ivar the Boneless",
+      "description": "commander of the Great Heathen Army"
+    },
+    {
+      "id": "HeroLagertha",
+      "name": "Lagertha the Shieldmaiden",
+      "description": "aka Hlaðgerðr"
+    },
+    {
+      "id": "HeroRagnar",
+      "name": "Ragnar Lothbrok",
+      "description": "aka Ragnar Sigurdsson"
+    },
+    {
+      "id": "HeroThora",
+      "name": "Thora Town-hart",
+      "description": "daughter of Earl Herrauðr of Götaland"
+    }
+  ],
+  "villains": [
+    {
+      "id": "VillainMadelyn",
+      "name": "Madelyn",
+      "description": "the cat whisperer"
+    },
+    {
+      "id": "VillainHaley",
+      "name": "Haley",
+      "description": "pen wielder"
+    },
+    {
+      "id": "VillainElla",
+      "name": "Ella",
+      "description": "fashionista"
+    },
+    {
+      "id": "VillainLandon",
+      "name": "Landon",
+      "description": "Mandalorian mauler"
+    }
+  ],
+  "boys": [
+    {
+      "id": "BoyHomelander",
+      "name": "Homelander",
+      "description": "Like Superman, but a jerk."
+    },
+    {
+      "id": "BoyAnnieJanuary",
+      "name": "Annie January",
+      "description": "The Defender of Des Moines."
+    },
+    {
+      "id": "BoyBillyButcher",
+      "name": "Billy Butcher",
+      "description": "A former member of the British special forces turned vigilante."
+    },
+    {
+      "id": "BoyBlackNoir",
+      "name": "Black Noir",
+      "description": "Master Martial Artist, expert hand-to-hand combatant highly trained in various forms of martial arts."
+    }
+  ]
+}
+```
+
+### `./cypress/fixtures/boys.json` eklentisini ekleyin.
 
 ```json
 [
@@ -683,11 +683,11 @@ Mirror it to `./cypress/fixtures/db.json` so that we can reset the db state corr
 ]
 ```
 
-### Mirror the components
+### Bileşenleri yansıtın
 
-We are creating 3 components for boys, mirroring heroes group as they are. We also have to update some of the base components.
+Kahramanlar grubunun olduğu gibi boys için 3 bileşen oluşturuyoruz. Ayrıca bazı temel bileşenleri güncellememiz gerekiyor.
 
-For `ListHeader` only the type changes for `title`.
+`ListHeader` için yalnızca `title` için tip değişir.
 
 ```tsx
 // src/components/ListHeader.tsx
@@ -727,7 +727,7 @@ export default function ListHeader({
 }
 ```
 
-The rest are mirrors. Create a folder `./src/boys/` and the 3 mirror files under it.
+Diğerleri aynalardır. `./src/boys/` altında bir klasör ve onun altında 3 ayna dosyası oluşturun.
 
 ```tsx
 // src/boys/BoyDetail.tsx
@@ -995,7 +995,7 @@ export default function Boys() {
 }
 ```
 
-Add Boys route to `App.tsx`
+Boys rotasını `App.tsx`'e ekleyin.
 
 ```tsx
 // src/App.tsx
@@ -1044,7 +1044,7 @@ export default function App() {
 }
 ```
 
-Add `Boys` to `NavBar` component.
+`Boys`'u `NavBar` bileşenine ekleyin.
 
 ```tsx
 // src/components/NavBar.tsx
@@ -1076,9 +1076,9 @@ export default function NavBar() {
 }
 ```
 
-### Mirror the e2e tests
+### E2E testlerinin aynasını oluşturun
 
-We create 3 new e2e tests, which are boy mirrors of the hero versions.
+Kahraman sürümlerinin boys aynaları olan 3 yeni e2e testi oluşturuyoruz.
 
 ```typescript
 // cypress/e2e/create-boy.cy.ts
@@ -1296,7 +1296,7 @@ describe("Edit boy", () => {
 });
 ```
 
-The backend test needs a new block to cover villains.
+Arka uç testi, kötü adamları kapsayacak yeni bir bloğa ihtiyaç duyar.
 
 ```typescript
 // cypress/e2e/backend/crud.cy.ts
@@ -1427,7 +1427,7 @@ describe("Backend e2e", () => {
 });
 ```
 
-The routes-nav needs a new test to cover villains route.
+routes-nav, kötü adamlar rotasını kapsayacak yeni bir teste ihtiyaç duyar.
 
 ```typescript
 // cypress/e2e/routes-nav.cy.ts
@@ -1493,9 +1493,9 @@ describe("routes navigation (ui-integration)", () => {
 });
 ```
 
-### Mirror the Cypress component tests
+### Cypress bileşen testlerini yansıtın
 
-First, update `Navbar` and `App` tests. For `Navbar.cy` we just need to add `boys` to the `routes` array
+Öncelikle, `Navbar` ve `App` testlerini güncelleyin. `Navbar.cy` için, `routes` dizisine `boys` eklememiz yeterlidir.
 
 ```tsx
 // src/components/NavBar.cy.tsx
@@ -1528,7 +1528,7 @@ describe("NavBar", () => {
 });
 ```
 
-For `App.cy` we need to intercept the `boys` route and add a check for `boys`.
+`App.cy` için, `boys` rotasını engellememiz ve `boys` için bir kontrol eklememiz gerekmektedir.
 
 ```tsx
 // src/App.cy.tsx
@@ -1566,7 +1566,7 @@ describe("ct sanity", () => {
 });
 ```
 
-We need 3 new component tests for the 3 components under `boys`.
+`boys` altındaki 3 bileşen için 3 yeni bileşen testine ihtiyacımız var.
 
 ```tsx
 // src/boys/BoyDetail.cy.tsx
@@ -1776,9 +1776,9 @@ describe("Boys", () => {
 });
 ```
 
-### Mirror the RTL tests
+### RTL testlerini yansıtın
 
-We just need to replicate what was done with Cy CT to RTL.
+Cy CT ile yapılanın aynısını RTL'ye uygulamamız yeterlidir.
 
 ```tsx
 // src/boys/BoyDetail.test.tsx
@@ -2017,7 +2017,7 @@ describe("Boys", () => {
 });
 ```
 
-`App.test` needs a `msw` handler and a new route check.
+`App.test` için bir `msw` işleyici ve yeni bir rota kontrolüne ihtiyaç duyar.
 
 ```tsx
 // src/App.test.tsx
@@ -2071,7 +2071,7 @@ describe('200 flow', () => {
 })
 ```
 
-`Navbar.test` needs the same `routes` variable update to include `Boys`.
+`Navbar.test` için `routes` değişkeninin aynı güncellemeye, yani `Boys` eklemeye ihtiyaç duyar.
 
 ```tsx
 // src/components/NavBar.test.tsx

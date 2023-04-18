@@ -1,18 +1,20 @@
-# Ramda with React
+# Ramda ile React
 
 Before starting this section, make sure to go through the [prerequisite](./prerequisite.md) where were mirror `Heroes` to `Boys`.
 
-## Why Functional Programming, why Ramda?
+Bu bölüme başlamadan önce, `Heroes`ı `Boys`a yansıttığımız [önkoşul](https://chat.openai.com/prerequisite.md) bölümünden geçtiğinizden emin olun.
 
-If we take a look at the recent proposals to EcmaScript, we will realize that FP is the way and that new JS features will closely resemble [RamdaJS](https://ramdajs.com/docs/) utilities. Check out [So what's new in ES2025](https://www.youtube.com/watch?v=FaQA0qU5e6o) for a premier. We believe that learning FP and Ramda today will build a future-proof JS skillset, at least for the next decade.
+## Neden Fonksiyonel Programlama, neden Ramda?
 
-We have a React app with solid tests built by TDD at all levels and 100% code coverage. In the prerequisites we mirrored `Heroes` group of entities to `Boys`. Now we can try out daring refactors and see if things still work.
+Eğer EcmaScript'e yapılan son önerilere bir göz atarsak, FP'nin yolunun olduğunu ve yeni JS özelliklerinin [RamdaJS](https://ramdajs.com/docs/) yardımcı programlarına benzer şekilde olacağını fark ederiz. Bir özet için [ES2025'te neler yeni?](https://www.youtube.com/watch?v=FaQA0qU5e6o) başlıklı videoya göz atın. Bugün FP ve Ramda'yı öğrenmenin, en azından önümüzdeki on yıl için geleceğe dayanıklı bir JS beceri seti oluşturacağına inanıyoruz.
 
-While the literature on FP is plenty, there is a lack of real world examples of using FP and Ramda, especially with modern React and TypeScript. We are hopeful that this section addresses that gap.
+Tüm seviyelerde TDD ile oluşturulmuş sağlam testlere sahip bir React uygulamamız ve %100 kod kapsamımız var. Önkoşullarda `Heroes` varlık grubunu `Boys`a yansıttık. Şimdi cesur yeniden yapılandırmalar deneyebilir ve her şeyin hala çalışıp çalışmadığını görebiliriz.
 
-## Functional Programming JS resources
+FP üzerine yazılmış çok sayıda kaynak bulunsa da, özellikle modern React ve TypeScript ile FP ve Ramda kullanımına dair gerçek dünya örneklerine yönelik eksiklikler bulunmaktadır. Bu bölümün bu boşluğu doldurmasını umuyoruz.
 
-Here are the resources that inspired this work. You do not have to be fluent in FP to benefit from this section, but if you choose to back-fill your knowledge at a later time, these resources are highly recommended.
+## Fonksiyonel Programlama JS kaynakları
+
+Bu çalışmayı ilham kaynağı olarak kullanılan kaynaklar şunlardır. Bu bölümden yararlanmak için FP konusunda akıcı olmanız gerekmez, ancak daha sonra bilginizi tamamlamayı tercih ederseniz, bu kaynakları şiddetle önerilir.
 
 - [Functional Light JS](https://www.manning.com/books/functional-light-javascript "https://www.manning.com/books/functional-light-javascript")
 - [FP in JS](https://www.amazon.com/Functional-Programming-JavaScript-functional-techniques-ebook-dp-B09781W9HY/dp/B09781W9HY/ref=mt_other?_encoding=UTF8&me=&qid= "https://www.amazon.com/Functional-Programming-JavaScript-functional-techniques-ebook-dp-B09781W9HY/dp/B09781W9HY/ref=mt_other?_encoding=UTF8&me=&qid=")
@@ -22,18 +24,18 @@ Here are the resources that inspired this work. You do not have to be fluent in 
 - [Composing Software](https://leanpub.com/composingsoftware)
 - [Functional JavaScript](https://www.amazon.com/gp/product/1449360726)
 
-## Install the Ramda package
+## Ramda paketini yükleyin
 
 ```bash
 yarn add ramda ramda-adjunct
 yarn add -D @types/ramda
 ```
 
-In the following sections we will give practical examples of using Ramda, then apply the knowledge to 3 Boys components; `BoyDetail.tsx`, `BoyList.tsx` and `Boys.tsx`.
+İlerleyen bölümlerde Ramda kullanarak pratik örnekler sunacağız ve bu bilgileri 3 Boys bileşenine uygulayacağız; `BoyDetail.tsx`, `BoyList.tsx` ve `Boys.tsx`.
 
 ## [`partial`](https://ramdajs.com/docs/#partial)
 
-Create any function with `n` arguments and wrap it with `partial` . Declare which args are pre-packaged, and the rest of the args will be waited for. In simple terms; if you have a function with five parameters, and you supply three of the arguments, you end up with a function that expects the last two.
+`n` bağımsız değişkenli herhangi bir işlev oluşturun ve bunu `partial` ile sarın. Önceden paketlenmiş olan bağımsız değişkenleri bildirin ve geri kalan bağımsız değişkenler beklenir. Basit bir şekilde anlatmak gerekirse; beş parametreli bir işleve sahipseniz ve bağımsız değişkenlerin üçünü sağlarsanız, son ikisini bekleyen bir işlevle karşılaşırsınız.
 
 ```typescript
 // standalone example, copy paste anywhere
@@ -72,7 +74,7 @@ sayHelloMs; // // [λ]
 sayHelloMs("Jane", "Jones"); // Hello, Ms Jane Jones!
 ```
 
-Where can `partial` apply in the React world? Any event handler, where an anonymous function returns a named function with an argument. The below two are the same:
+`partial` React dünyasında nerede uygulanabilir? İsimsiz bir işlemin, bir bağımsız değişkenle adlandırılmış bir işlev döndürdüğü herhangi bir olay işleyici. Aşağıdaki iki örnek aynıdır:
 
 ```typescript
 // src/boys/BoyDetail.tsx
@@ -81,9 +83,9 @@ const handleCancel = () => navigate("/boys");
 const handleCancel = partial(navigate, ["/boys"]);
 ```
 
-`handleCancel` will wait for the click event - ` onClick={handleCancel}` - and navigate to `/boys` route.
+`handleCancel`, tıklama olayını bekleyecektir - `onClick={handleCancel}` - ve `/boys` rotasına yönlendirecektir.
 
-Similar applications of partial are in `Boys.tsx`
+Partial'ın benzer uygulamaları `Boys.tsx` dosyasında bulunabilir.
 
 ```typescript
 // src/boys/Boys.tsx
@@ -98,7 +100,7 @@ const handleRefresh = partial(navigate, ["/boys"]);
 
 ## [`curry`](https://ramdajs.com/docs/#curry)
 
-No FP premier is complete without curry. We will cover a simple example here, and recall how we used classic curry before.
+Hiçbir FP tanıtımı, curry'siz tamamlanmış sayılmaz. Burada basit bir örnek üzerinde duracağız ve daha önce klasik curry'i nasıl kullandığımızı hatırlayacağız.
 
 ```typescript
 // standalone example, copy paste anywhere
@@ -153,7 +155,7 @@ greetCurriedR("hello")("John")("Doe"); //? hello, John Doe
 greetCurriedR("hello", "John", "Doe"); //? hello, John Doe
 ```
 
-How is currying used in the React world? You will recall that we used currying in `Heroes.tsx`, `HeroesList.tsx`, `VillianList.tsx` `VillainList.tsx` components. We did not use Ramda curry, because it would be too complex at that time. You can optionally change them now.
+Curry, React dünyasında nasıl kullanılır? `Heroes.tsx`, `HeroesList.tsx`, `VillianList.tsx` `VillainList.tsx` bileşenlerinde curry'i kullandığımızı hatırlayacaksınız. O zaman Ramda curry'i kullanmadık, çünkü o zaman çok karmaşık olurdu. İsteğe bağlı olarak şimdi onları değiştirebilirsiniz.
 
 ```tsx
 // src/heroes/Heroes.tsx
@@ -193,7 +195,7 @@ const handleSelectHero = curry(
 );
 ```
 
-Let's make sure to use Ramda curry in the `BoysList.tsx` components for sure.
+`BoysList.tsx` bileşenlerinde Ramda curry'i kullanalım.
 
 ```tsx
 // src/boys/BoyList.tsx
@@ -219,7 +221,7 @@ const handleSelectBoy = curry(
 
 ## [`ifElse`](https://ramdajs.com/docs/#ifElse)
 
-Takes 3 functions; predicate, truthy-result, false-result. The advantage over classic if else or ternary operator is that we can get very creative with function expressions vs conditions inside an if statement, or a ternary value. Easily explained with an example:
+3 işlev alır; yargı, doğru-sonuç, yanlış-sonuç. Klasik if else veya üçlü operatöre göre avantajı, işlev ifadeleriyle iç içe geçmiş ifadeler veya üçlü değerlerle çok daha yaratıcı hale gelebiliriz. Basit bir örnek ile açıklanabilir:
 
 ```typescript
 // standalone example, copy paste anywhere
@@ -253,7 +255,7 @@ const logAccessRamda = ifElse(
 logAccessRamda(hasAccess); // Access granted | Access denied
 ```
 
-Where can `ifElse` apply in the React world? Anywhere where there is complex conditional logic, which might be hard to express with classic if else statements or ternary operators. The example in `BoyDetail.tsx` is simple, but good for practicing Ramda `ifElse`.
+`ifElse` React dünyasında nerede uygulanabilir? Klasik if else ifadeleri veya üçlü operatörlerle ifade etmesi zor olan karmaşık koşullu mantık bulunan her yerde. `BoyDetail.tsx`'deki örnek basit olsa da, Ramda çalışmak icin uygun.
 
 ```typescript
 // src/boys/BoyDetail.tsx
@@ -269,7 +271,7 @@ const handleSave = ifElse(
 );
 ```
 
-Here is the `BoyDetail.tsx` component after the above changes. It can be compared to `HeroDetail.tsx` side by side to see the distinction between using Ramda and classic array methods.
+Yukarıdaki değişikliklerin ardından `BoyDetail.tsx` bileşeni burada. `HeroDetail.tsx` ile yan yana kıyaslanarak, Ramda kullanımı ve klasik dizi yöntemleri arasındaki fark görülebilir.
 
 ```tsx
 // src/boys/BoyDetail.tsx
@@ -362,7 +364,7 @@ export default function BoyDetail() {
 
 ## [`pipe`](https://ramdajs.com/docs/#pipe)
 
-`pipe` is the bread and butter of Ramda; it is used to perform left-to-right function composition - the opposite of [`compose`](https://ramdajs.com/docs/#compose) which is right-to-left. Explained with a simple example:
+`pipe`, Ramda'nın temelidir; soldan sağa işlev bileşimi gerçekleştirmek için kullanılır - [`compose`](https://ramdajs.com/docs/#compose) ise sağdan sola işlev bileşimidir. Basit bir örnek ile açıklanır:
 
 ```typescript
 // standalone example, copy paste anywhere
@@ -386,9 +388,9 @@ pipeRamda("chocolate");
 // CHOCOLATE IS A GREAT FLAVOR. I want it
 ```
 
-Where can `pipe` apply in the React world? Any sequence of actions would be a fit.
+React dünyasında `pipe` nerede uygulanabilir? Herhangi bir işlem dizisi uygun olacaktır.
 
-The below 3 varieties of `handleCloseModal` function from `Boys.tsx` are equivalent.
+Aşağıdaki 3 çeşit `handleCloseModal` fonksiyonu `Boys.tsx` dosyasından eşdeğerdir.
 
 ```typescript
 // src/boys/Boys.tsx
@@ -408,7 +410,7 @@ const handleCloseModal = pipe(
 );
 ```
 
-The below 3 varieties of `handleDeleteBoy` function from `Boys.tsx` are also equivalent.
+`Boys.tsx` dosyasından aşağıdaki 3 çeşit `handleDeleteBoy` fonksiyonu da eşdeğerdir.
 
 ```typescript
 // src/boys/Boys.tsx
@@ -427,7 +429,7 @@ const handleDeleteBoy = (boy: Boy) =>
   pipe(partial(setBoyToDelete, [boy]), partial(setShowModal, [true]));
 ```
 
-The below 3 varieties of `handleDeleteFromModal` function from `Boys.tsx` are also equivalent.
+`Boys.tsx` dosyasından aşağıdaki 3 çeşit `handleDeleteFromModal` fonksiyonu da eşdeğerdir.
 
 ```typescript
 // src/boys/Boys.tsx
@@ -445,7 +447,7 @@ const handleDeleteFromModal3 = pipe(
 );
 ```
 
-Here is the `Boys.tsx` component after the above changes. It can be compared to `Heroes.tsx` to see the distinction between using Ramda and classic array methods.
+Yukarıdaki değişikliklerin ardından `Boys.tsx` bileşeni burada. Ramda ve klasik dizi yöntemleri arasındaki farkı görmek için `Heroes.tsx` ile karşılaştırılabilir.
 
 ```tsx
 // src/boys/Boys.tsx
@@ -528,9 +530,9 @@ export default function Boys() {
 }
 ```
 
-## Refactoring search-filter with array methods to Ramda
+## Dizi yöntemleriyle arama filtresini Ramda'ya yeniden düzenleme
 
-For this example, we will extract search-filter logic in `BoyList.tsx` into a standalone TS file, alongside types and data. Given the data `heroes` array, we want to filter by any property (`id`, `name`, `description`) and display 1 or more objects. To accomplish this, we use 2 lego-functions `searchExistsC` & `propertyExistsC` that builds up to `searchPropertiesC`, `C` for classic.
+Bu örnekte, `BoyList.tsx` içindeki arama filtresi mantığını, tipler ve verilerle birlikte bağımsız bir TS dosyasına çıkaracağız. Veri `heroes` dizisine göre (`id`, `name`, `description` gibi) herhangi bir özellikle filtrelemek ve 1 veya daha fazla nesne göstermek istiyoruz. Bunu başarmak için, `searchExistsC` ve `propertyExistsC` adlı 2 lego-fonksiyon kullanarak `searchPropertiesC`'ye, `C` ise klasik anlamında ulaşırız.
 
 ```typescript
 // standalone example, copy paste anywhere
@@ -603,9 +605,9 @@ searchPropertiesC(heroes, textToSearch);
 */
 ```
 
-Although we have partitioned the functions like legos, the logic isn't very easy to follow while reading the code. The reason is having to use multiple arguments, and how the data changes from an array to an array item (an object), while also having to change the placement of the arguments. Using Ramda, we can make the code easier to read and use.
+İşlevleri legolar gibi bölmüş olsak da, kodu okurken mantığı çok kolay takip etmek mümkün değildir. Bunun nedeni, birden fazla argüman kullanmak zorunda olmak ve verinin bir dizi öğesinden (bir nesne) bir dizi öğesine değişmesi, ayrıca argümanların yerini değiştirmek zorunda olmaktır. Ramda kullanarak kodu daha okunaklı ve kullanışlı hale getirebiliriz.
 
-Here is a quick comparison of `.toLowerCase()` vs `toLower()` and `.indexOf()` vs `indexOf`. Instead of chaining on the data, Ramda helpers `indexOf` and `toLower` are functions that take the data as an argument:
+`.toLowerCase()` ve `toLower()` ile `.indexOf()` ve `indexOf` arasında hızlı bir karşılaştırma yapalım. Veri üzerinde zincirleme yerine, Ramda yardımcıları `indexOf` ve `toLower`, veriyi argüman olarak alan işlevlerdir:
 
 - `someData.toLowerCase()` vs `toLower(someData)`
 - `array.indexOf(arrayItem)` vs `indexOf(arrayItem, array)`
@@ -617,7 +619,7 @@ toLower("HELLO"); // hello
 indexOf(3, [1, 2, 3, 4]); // 2
 ```
 
-We can refactor `searchExistsC` to use Ramda. Here is the before and after side by side:
+`searchExistsC`'yi Ramda kullanacak şekilde yeniden düzenleyebiliriz. İşte önce ve sonra yan yana:
 
 ```typescript
 import { indexOf, toLower } from "ramda";
@@ -630,7 +632,7 @@ const searchExists = (searchField: string, searchProperty: HeroProperty) =>
   indexOf(toLower(searchField), toLower(searchProperty)) !== -1;
 ```
 
-Below is a quick comparison of `array.find` vs Ramda `find`, `Object.values` vs Ramda `values`. Notice with Ramda version how the data comes at the end, with this style we can save an arg for later.
+Aşağıda, `array.find` ile Ramda `find`, `Object.values` ile Ramda `values` arasında hızlı bir karşılaştırma bulunmaktadır. Ramda sürümünde verinin sonunda nasıl geldiğine dikkat edin; bu stil ile daha sonra kullanmak üzere bir argümanı kaydedebiliriz.
 
 ```typescript
 // data.find(callback)
@@ -643,7 +645,7 @@ find((property: HeroProperty) => property === "Ragnar Lothbrok")(
 );
 ```
 
-Here is the refactor of `propertyExistsC` to use Ramda, before and after side by side. We can amplify the Ramda version with `pipe` to make the flow more similar to the classic version.
+İşte `propertyExistsC`'nin Ramda kullanacak şekilde yeniden düzenlenmesi, önce ve sonra yan yana. Akışı klasik sürüme daha benzer hale getirmek için Ramda sürümünü `pipe` ile güçlendirebiliriz.
 
 ```typescript
 const propertyExistsC = (searchField: string, item: Hero) =>
@@ -670,7 +672,7 @@ const propertyExistsNew = curry((searchField: string, item: Hero) =>
 );
 ```
 
-Our final function `searchExistsC` uses the previous two. Here are the classic and Ramda versions side by side. We can evolve the Ramda version to take 1 argument, and get the data later whenever it is available.
+Son işlevimiz `searchExistsC` önceki ikisini kullanır. İşte klasik ve Ramda sürümleri yan yana. Ramda sürümünü geliştirerek 1 argüman alacak hale getirebilir ve veriyi, ne zaman kullanılabilir olduğunu sonra alabiliriz.
 
 ```typescript
 // (2 args) => data.filter(callback)
@@ -691,7 +693,7 @@ const searchPropertiesBest = (searchField: string) =>
   filter(propertyExistsNew(searchField));
 ```
 
-Here is the full example file that can be copy pasted anywhere
+İşte her yere kopyalanıp yapıştırılabilen tam örnek dosyası:
 
 ```typescript
 // standalone example, copy paste anywhere
@@ -795,9 +797,9 @@ searchPropertiesBetter(textToSearch, heroes); //?
 searchPropertiesBest(textToSearch)(heroes); //?
 ```
 
-With that, we can replace `searchProperties` and the lego-functions that lead up to it with their Ramda versions.
+Bununla birlikte, `searchProperties` ve ona yol açan lego-fonksiyonları Ramda sürümleriyle değiştirebiliriz.
 
-Here is the comparison of the key changes:
+İşte ana değişikliklerin karşılaştırması:
 
 ```tsx
 // src/boys/BoyList.tsx (before)
@@ -858,7 +860,7 @@ const handleSearch =
   };
 ```
 
-Here is the final form of the component:
+İşte bileşenin son hali:
 
 ```tsx
 // src/boys/BoyList.tsx
@@ -980,6 +982,6 @@ export default function BoyList({ boys, handleDeleteBoy }: BoyListProps) {
 }
 ```
 
-Our tooling and tests are still intact after the changes, and that is the luxury of having very high coverage. We were able to apply daring, experimental refactors to our code, and are still confident that nothing regressed while the code became easier to read and work with using FP and Ramda. 
+Araçlarımız ve testlerimiz, değişikliklerden sonra hala sağlam durumda ve bu, çok yüksek kapsamaya sahip olmanın lüksüdür. Kodumuza cesur, deneysel yeniden düzenlemeler uygulayabildik ve FP ve Ramda kullanarak kodun daha okunaklı ve çalışılabilir hale gelirken hiçbir şeyin gerilemediğinden emin olduk.
 
-To take a look at the before and after, you can find the PR for this section at https://github.com/muratkeremozcan/tour-of-heroes-react-cypress-ts/pull/110. You can also compare the Boys group of files to Heroes or Villains.
+Önce ve sonraya bakmak için, bu bölümle ilgili PR'ı şu adreste bulabilirsiniz: https://github.com/muratkeremozcan/tour-of-heroes-react-cypress-ts/pull/110. Ayrıca Boys dosyalarını Heroes veya Villains ile karşılaştırabilirsiniz.
